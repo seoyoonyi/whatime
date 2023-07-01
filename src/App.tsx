@@ -1,4 +1,6 @@
 import React from 'react';
+import '@fortawesome/fontawesome-free/css/all.css';
+
 import './App.css';
 import MainPage from './page/MainPage';
 
