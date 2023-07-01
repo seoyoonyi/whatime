@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
+
 // import mockData from '../../data/mock.json';
-import YouTube from 'react-youtube';
+import YouTube, { YouTubeProps } from 'react-youtube';
 import Modal from './Modal';
 
 interface ISong {
@@ -14,7 +15,10 @@ interface ISong {
 	url: string;
 	releaseDate: string;
 }
-
+interface IPlayer {
+	playVideo: () => void;
+	pauseVideo: () => void;
+}
 interface IMusicPlayerModalProps {
 	open: boolean;
 	onClose: () => void;
@@ -33,54 +37,71 @@ const songs: ISong[] = [
 		url: 'https://www.youtube.com/watch?v=uw_HR9jIJww',
 		releaseDate: '2018-03-08',
 	},
-	{
-		id: 2,
-		rank: 2,
-		songTitle: 'Pink Venom',
-		artist: 'BLACKPINK',
-		thumbnail: 'https://i.ytimg.com/vi/gQlMMD8auMs/default.jpg',
-		duration: '3:13',
-		viewCount: 1234123,
-		url: 'https://www.youtube.com/watch?v=gQlMMD8auMs',
-		releaseDate: '2023-01-01',
-	},
 ];
 
 const MusicPlayerModal = ({ open, onClose }: IMusicPlayerModalProps) => {
+	const playerRef = useRef<IPlayer | null>(null);
+
 	const [currentSong, setCurrentSong] = useState<string>('');
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
+	const opts: YouTubeProps['opts'] = {
+		playerVars: {
+			autoplay: isPlaying ? 1 : 0,
+		},
+	};
+
 	const handlePlayClick = (url: string) => {
-		const videoId = new URL(url).searchParams.get('v'); // Get video ID from URL
+		const videoId = new URL(url).searchParams.get('v');
 		setCurrentSong(videoId || '');
 		setIsPlaying(true);
+		playerRef.current?.playVideo();
 	};
 
 	const handlePauseClick = () => {
 		setIsPlaying(false);
+		playerRef.current?.pauseVideo();
 	};
 
-	const opts = {
-		playerVars: {
-			autoplay: isPlaying ? 1 : 0, // If isPlaying is true, set autoplay to 1. Otherwise, set to 0.
-		},
+	const handleReady = (event: { target: IPlayer }) => {
+		playerRef.current = event.target;
 	};
 
 	return (
 		<Modal open={open} onClose={onClose}>
-			<div className="flex">
-				{songs.map((song) => (
-					<div key={song.id}>
-						<img src={song.thumbnail} alt={song.songTitle} />
-						<div>{song.songTitle}</div>
-						<div>{song.artist}</div>
-						<button onClick={() => handlePlayClick(song.url)}>Play</button>
-						<button onClick={handlePauseClick}>Pause</button>
+			{songs.map((song) => (
+				<div key={song.id}>
+					<img src={song.thumbnail} alt={song.songTitle} />
+					<div>{song.songTitle}</div>
+					<div>{song.artist}</div>
+
+					<div className="flex justify-between">
+						<button>
+							<i className="fa fa-backward"></i>
+						</button>
+						{isPlaying ? (
+							<button onClick={handlePauseClick}>
+								<i className="fa fa-pause"></i>
+							</button>
+						) : (
+							<button onClick={() => handlePlayClick(song.url)}>
+								<i className="fa fa-play"></i>
+							</button>
+						)}
+						<button>
+							<i className="fa fa-forward"></i>
+						</button>
 					</div>
-				))}
-			</div>
+				</div>
+			))}
+
 			{currentSong && (
-				<YouTube videoId={currentSong} opts={opts} onEnd={() => setIsPlaying(false)} />
+				<YouTube
+					videoId={currentSong}
+					opts={opts}
+					onEnd={() => setIsPlaying(false)}
+					onReady={handleReady}
+				/>
 			)}
 		</Modal>
 	);

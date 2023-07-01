@@ -15,7 +15,7 @@ const MainPage = () => {
 	return (
 		<div>
 			<h1>Main Page</h1>
-			<button onClick={handleModalOpen}>Open Music Player</button>
+			<button onClick={handleModalOpen}>Music</button>
 
 			<MusicPlayerModal open={isModalOpen} onClose={handleModalClose} />
 		</div>

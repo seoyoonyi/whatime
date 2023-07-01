@@ -1,5 +1,4 @@
 import React from 'react';
-import styles from './Modal.module.css';
 
 interface IModalComponentProps {
 	open: boolean;
@@ -11,15 +10,19 @@ const Modal = ({ open, onClose, children }: IModalComponentProps) => {
 	if (!open) return null;
 
 	return (
-		<div className={styles.modalOverlay}>
-			<div className={styles.modal}>
-				<button className={styles.closeButton} onClick={onClose}>
-					Close
-				</button>
+		<>
+			<div className="w-[600px] border">
+				<div className="relative flex justify-center">
+					<h1 className="">Music</h1>
+					<div className="absolute right-0 icon-group">
+						<button onClick={onClose}>
+							<i className="fas fa-times-circle"></i>
+						</button>
+					</div>
+				</div>
 				{children}
 			</div>
-			<h1></h1>
-		</div>
+		</>
 	);
 };
 
