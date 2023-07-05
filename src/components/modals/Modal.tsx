@@ -1,28 +1,22 @@
 import React from 'react';
+import OutsetShadowContainer from '../OutsetShadowContainer';
+import ModalHeader from './ModalHeader';
 
 interface IModalComponentProps {
 	open: boolean;
 	onClose: () => void;
 	children: React.ReactNode;
+	title: string;
 }
 
-const Modal = ({ open, onClose, children }: IModalComponentProps) => {
+const Modal = ({ open, onClose, children, title }: IModalComponentProps) => {
 	if (!open) return null;
 
 	return (
-		<>
-			<div className="w-[600px] border">
-				<div className="relative flex justify-center">
-					<h1 className="">Music</h1>
-					<div className="absolute right-0 icon-group">
-						<button onClick={onClose}>
-							<i className="fas fa-times-circle"></i>
-						</button>
-					</div>
-				</div>
-				{children}
-			</div>
-		</>
+		<OutsetShadowContainer className="p-[3px] laptop:w-[610px]">
+			<ModalHeader title={title} onClose={onClose} />
+			{children}
+		</OutsetShadowContainer>
 	);
 };
 

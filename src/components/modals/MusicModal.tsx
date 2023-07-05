@@ -1,8 +1,12 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-// import mockData from '../../data/mock.json';
+import mockData from '../../data/mock.json';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Modal from './Modal';
+import ProgressBar from '../ProgressBar';
+import InsetShadowContainer from '../InsetShadowContainer';
+import VolumeBar from '../volumebar/VolumeBar';
+import Button from '../Button';
 
 interface ISong {
 	id: number;
@@ -16,34 +20,27 @@ interface ISong {
 	releaseDate: string;
 }
 interface IPlayer {
+	getCurrentTime(): React.SetStateAction<number>;
+	getDuration(): React.SetStateAction<number>;
 	playVideo: () => void;
 	pauseVideo: () => void;
+	seekTo: (seconds: number) => void;
+	unMute: () => void;
 }
 interface IMusicPlayerModalProps {
 	open: boolean;
 	onClose: () => void;
 }
 
-const songs: ISong[] = [
-	{
-		id: 1,
-		rank: 1,
-		songTitle: 'Jenga(feat. GAEKO)',
-		artist: 'Heize(헤이즈)',
-		thumbnail:
-			'https://lh3.googleusercontent.com/jxsyG-455VfZ0oK-QE-WHtVNGDYgVyWMb2JYJJYcmoJVsQE9VFOT7R8MFgvec3ZoVaGiYCymepe_M0ED8A=w544-h544-l90-rj',
-		duration: '3:31',
-		viewCount: 2932983,
-		url: 'https://www.youtube.com/watch?v=uw_HR9jIJww',
-		releaseDate: '2018-03-08',
-	},
-];
+const songs: ISong[] = mockData;
 
-const MusicPlayerModal = ({ open, onClose }: IMusicPlayerModalProps) => {
+const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const playerRef = useRef<IPlayer | null>(null);
 
-	const [currentSong, setCurrentSong] = useState<string>('');
+	const [currentSongIndex, setCurrentSongIndex] = useState<number>(0);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
+	const [currentTime, setCurrentTime] = useState<number>(0);
+	const [duration, setDuration] = useState<number>(0);
 
 	const opts: YouTubeProps['opts'] = {
 		playerVars: {
@@ -51,10 +48,9 @@ const MusicPlayerModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		},
 	};
 
-	const handlePlayClick = (url: string) => {
-		const videoId = new URL(url).searchParams.get('v');
-		setCurrentSong(videoId || '');
+	const handlePlayClick = () => {
 		setIsPlaying(true);
+		playerRef.current?.unMute();
 		playerRef.current?.playVideo();
 	};
 
@@ -65,46 +61,105 @@ const MusicPlayerModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 
 	const handleReady = (event: { target: IPlayer }) => {
 		playerRef.current = event.target;
+		setDuration(event.target.getDuration());
 	};
 
+	const handleTimeUpdate = (newTime: number) => {
+		if (playerRef.current) {
+			playerRef.current.seekTo(newTime);
+			setCurrentTime(newTime);
+		}
+	};
+
+	const currentSong = songs[currentSongIndex];
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			if (playerRef.current && isPlaying) {
+				setCurrentTime(playerRef.current.getCurrentTime()); // 현재 재생 시간 업데이트
+			}
+		}, 1000);
+
+		return () => {
+			clearInterval(timer);
+		};
+	}, [isPlaying]);
+
 	return (
-		<Modal open={open} onClose={onClose}>
-			{songs.map((song) => (
-				<div key={song.id}>
-					<img src={song.thumbnail} alt={song.songTitle} />
-					<div>{song.songTitle}</div>
-					<div>{song.artist}</div>
+		<Modal open={open} onClose={onClose} title="🎧 Music">
+			<div>
+				<nav className="py-[5px] pl-[6px]">
+					<ul className="flex space-x-[10px] font-eng font-medium">
+						<li>
+							<u>c</u>
+							<span>hart</span>
+						</li>
+						<li>
+							<u>p</u>
+							<span>laylist</span>
+						</li>
+					</ul>
+				</nav>
 
-					<div className="flex justify-between">
-						<button>
-							<i className="fa fa-backward"></i>
-						</button>
-						{isPlaying ? (
-							<button onClick={handlePauseClick}>
-								<i className="fa fa-pause"></i>
-							</button>
-						) : (
-							<button onClick={() => handlePlayClick(song.url)}>
-								<i className="fa fa-play"></i>
-							</button>
-						)}
-						<button>
-							<i className="fa fa-forward"></i>
-						</button>
+				<InsetShadowContainer className="py-[19px] px-[21px]">
+					<div className="flex space-x-[20px]">
+						<div className=" flex-shrink-0 w-[218px] h-[122px] bg-black flex justify-center items-center overflow-hidden">
+							<img
+								className="h-full"
+								src={currentSong.thumbnail}
+								alt={currentSong.songTitle}
+							/>
+						</div>
+						<div className="w-full">
+							<h3 className="text-xl font-semibold font-kor">
+								{currentSong.songTitle}
+							</h3>
+							<p className="text-lg font-semibold font-kor mb-[24px]">
+								{currentSong.artist}
+							</p>
+
+							<ProgressBar
+								duration={duration}
+								initialCurrentTime={currentTime}
+								onTimeUpdate={handleTimeUpdate}
+								className="h-[4px] mb-[13px]"
+							/>
+
+							<div className="flex items-center justify-between">
+								<div>00:00 / 00:00</div>
+								<VolumeBar />
+							</div>
+						</div>
 					</div>
-				</div>
-			))}
+					<div className="flex justify-between">
+						<Button className="px-[27px]">
+							<i className="fa fa-step-backward"></i>
+						</Button>
 
-			{currentSong && (
-				<YouTube
-					videoId={currentSong}
-					opts={opts}
-					onEnd={() => setIsPlaying(false)}
-					onReady={handleReady}
-				/>
-			)}
+						{isPlaying ? (
+							<Button onClick={handlePauseClick} className="px-[27px]">
+								<i className="fa fa-pause"></i>
+							</Button>
+						) : (
+							<Button onClick={handlePlayClick} className="px-[27px]">
+								<i className="fa fa-play"></i>
+							</Button>
+						)}
+						<Button className="px-[27px]">
+							<i className="fa fa-step-forward"></i>
+						</Button>
+					</div>
+					<YouTube
+						videoId={new URL(currentSong.url).searchParams.get('v') || ''}
+						opts={opts}
+						onEnd={() => setIsPlaying(false)}
+						onReady={handleReady}
+						// style={{ display: 'none' }}
+					/>
+				</InsetShadowContainer>
+			</div>
 		</Modal>
 	);
 };
 
-export default MusicPlayerModal;
+export default MusicModal;
