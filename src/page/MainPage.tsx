@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import MusicPlayerModal from '../components/modals/MusicPlayerModal';
+import MusicModal from '../components/modals/MusicModal';
 
 const MainPage = () => {
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [isMusicModalOpen, setIsMusicModalOpen] = useState(true);
 
 	const handleModalOpen = () => {
-		setIsModalOpen(true);
+		setIsMusicModalOpen(true);
 	};
 
 	const handleModalClose = () => {
-		setIsModalOpen(false);
+		setIsMusicModalOpen(false);
 	};
 
 	return (
@@ -17,7 +17,7 @@ const MainPage = () => {
 			<h1>Main Page</h1>
 			<button onClick={handleModalOpen}>Music</button>
 
-			<MusicPlayerModal open={isModalOpen} onClose={handleModalClose} />
+			<MusicModal open={isMusicModalOpen} onClose={handleModalClose} />
 		</div>
 	);
 };
