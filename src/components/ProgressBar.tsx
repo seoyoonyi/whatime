@@ -5,12 +5,16 @@ interface IProgressBarProps {
 	initialCurrentTime: number;
 	onTimeUpdate: (newTime: number) => void;
 	className?: string;
+	onPlayClick: () => void;
+	isPlaying: boolean;
 }
 
 const ProgressBar = ({
 	duration,
 	initialCurrentTime = duration / 2,
 	onTimeUpdate,
+	onPlayClick,
+	isPlaying,
 	className,
 }: IProgressBarProps) => {
 	const [progressBar, setProgressBar] = useState<HTMLDivElement | null>(null);
@@ -27,8 +31,8 @@ const ProgressBar = ({
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 			if (progressBar) {
 				const progressContainerWidth = progressBar.offsetWidth;
-				const clickedX = e.clientX - progressBar.getBoundingClientRect().left;
-				const newTime = (clickedX / progressContainerWidth) * duration;
+				const clickedX = Math.max(e.clientX - progressBar.getBoundingClientRect().left, 0); // Add Math.max to ensure clickedX is never negative
+				const newTime = Math.max((clickedX / progressContainerWidth) * duration, 0); // Add Math.max to ensure newTime is never negative
 				currentTimeRef.current = newTime;
 				onTimeUpdate(newTime);
 			}
@@ -42,6 +46,9 @@ const ProgressBar = ({
 				case 'mousedown':
 					setDragging(true);
 					calculateProgress(e);
+					if (!isPlaying) {
+						onPlayClick();
+					}
 					break;
 				case 'mouseup':
 				case 'mouseleave':
@@ -58,7 +65,7 @@ const ProgressBar = ({
 					break;
 			}
 		},
-		[isDragging, calculateProgress],
+		[isDragging, calculateProgress, onPlayClick],
 	);
 
 	useEffect(() => {

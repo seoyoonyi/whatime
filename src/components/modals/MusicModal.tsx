@@ -20,13 +20,14 @@ interface ISong {
 	releaseDate: string;
 }
 interface IPlayer {
-	getCurrentTime(): React.SetStateAction<number>;
-	getDuration(): React.SetStateAction<number>;
+	getCurrentTime(): number;
+	getDuration(): number;
 	playVideo: () => void;
 	pauseVideo: () => void;
 	seekTo: (seconds: number) => void;
 	unMute: () => void;
 }
+
 interface IMusicPlayerModalProps {
 	open: boolean;
 	onClose: () => void;
@@ -42,6 +43,8 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const [currentTime, setCurrentTime] = useState<number>(0);
 	const [duration, setDuration] = useState<number>(0);
 
+	const currentSong = songs[currentSongIndex];
+
 	const opts: YouTubeProps['opts'] = {
 		playerVars: {
 			autoplay: isPlaying ? 1 : 0,
@@ -49,14 +52,18 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	};
 
 	const handlePlayClick = () => {
-		setIsPlaying(true);
-		playerRef.current?.unMute();
-		playerRef.current?.playVideo();
+		if (playerRef.current) {
+			setIsPlaying(true);
+			playerRef.current.unMute();
+			playerRef.current.playVideo();
+		}
 	};
 
 	const handlePauseClick = () => {
-		setIsPlaying(false);
-		playerRef.current?.pauseVideo();
+		if (playerRef.current) {
+			setIsPlaying(false);
+			playerRef.current.pauseVideo();
+		}
 	};
 
 	const handleReady = (event: { target: IPlayer }) => {
@@ -66,17 +73,23 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 
 	const handleTimeUpdate = (newTime: number) => {
 		if (playerRef.current) {
+			setIsPlaying(false);
 			playerRef.current.seekTo(newTime);
 			setCurrentTime(newTime);
+			setIsPlaying(true);
 		}
 	};
-
-	const currentSong = songs[currentSongIndex];
+	const formatTime = (seconds: number): string => {
+		if (seconds < 0) seconds = 0;
+		const mins = Math.floor(seconds / 60);
+		const secs = Math.floor(seconds % 60);
+		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	};
 
 	useEffect(() => {
 		const timer = setInterval(() => {
 			if (playerRef.current && isPlaying) {
-				setCurrentTime(playerRef.current.getCurrentTime()); // 현재 재생 시간 업데이트
+				setCurrentTime(Math.round(playerRef.current.getCurrentTime()));
 			}
 		}, 1000);
 
@@ -122,11 +135,14 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 								duration={duration}
 								initialCurrentTime={currentTime}
 								onTimeUpdate={handleTimeUpdate}
+								onPlayClick={handlePlayClick}
+								isPlaying={isPlaying}
 								className="h-[4px] mb-[13px]"
 							/>
 
 							<div className="flex items-center justify-between">
-								<div>00:00 / 00:00</div>
+								<div>{`${formatTime(currentTime)} / ${formatTime(duration)}`}</div>
+
 								<VolumeBar />
 							</div>
 						</div>
@@ -152,7 +168,10 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 					<YouTube
 						videoId={new URL(currentSong.url).searchParams.get('v') || ''}
 						opts={opts}
-						onEnd={() => setIsPlaying(false)}
+						onEnd={() => {
+							setIsPlaying(false);
+							setTimeout(() => setCurrentTime(duration), 1000);
+						}}
 						onReady={handleReady}
 						// style={{ display: 'none' }}
 					/>
