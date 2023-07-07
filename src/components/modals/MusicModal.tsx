@@ -19,13 +19,15 @@ interface ISong {
 	url: string;
 	releaseDate: string;
 }
-interface IPlayer {
+export interface IPlayer {
+	setVolume(arg0: number): unknown;
 	getCurrentTime(): number;
 	getDuration(): number;
 	playVideo: () => void;
 	pauseVideo: () => void;
 	seekTo: (seconds: number) => void;
 	unMute: () => void;
+	on: (event: string, callback: () => void) => void;
 }
 
 interface IMusicPlayerModalProps {
@@ -42,8 +44,14 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
 	const [currentTime, setCurrentTime] = useState<number>(0);
 	const [duration, setDuration] = useState<number>(0);
+	const [playerReady, setPlayerReady] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 
 	const currentSong = songs[currentSongIndex];
+
+	if (!currentSong) {
+		return <div>No song selected</div>;
+	}
 
 	const opts: YouTubeProps['opts'] = {
 		playerVars: {
@@ -69,6 +77,14 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const handleReady = (event: { target: IPlayer }) => {
 		playerRef.current = event.target;
 		setDuration(event.target.getDuration());
+		setPlayerReady(true);
+		setLoading(false);
+	};
+
+	const handleStateChange = (event: { data: number }) => {
+		if (event.data === 1) {
+			setLoading(false);
+		}
 	};
 
 	const handleTimeUpdate = (newTime: number) => {
@@ -100,83 +116,89 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 
 	return (
 		<Modal open={open} onClose={onClose} title="🎧 Music">
-			<div>
-				<nav className="py-[5px] pl-[6px]">
-					<ul className="flex space-x-[10px] font-eng font-medium">
-						<li>
-							<u>c</u>
-							<span>hart</span>
-						</li>
-						<li>
-							<u>p</u>
-							<span>laylist</span>
-						</li>
-					</ul>
-				</nav>
+			{loading ? (
+				<div>Loading...</div>
+			) : (
+				<div>
+					<nav className="py-[5px] pl-[6px]">
+						<ul className="flex space-x-[10px] font-eng font-medium">
+							<li>
+								<u>c</u>
+								<span>hart</span>
+							</li>
+							<li>
+								<u>p</u>
+								<span>laylist</span>
+							</li>
+						</ul>
+					</nav>
 
-				<InsetShadowContainer className="py-[19px] px-[21px]">
-					<div className="flex space-x-[20px]">
-						<div className=" flex-shrink-0 w-[218px] h-[122px] bg-black flex justify-center items-center overflow-hidden">
-							<img
-								className="h-full"
-								src={currentSong.thumbnail}
-								alt={currentSong.songTitle}
-							/>
-						</div>
-						<div className="w-full">
-							<h3 className="text-xl font-semibold font-kor">
-								{currentSong.songTitle}
-							</h3>
-							<p className="text-lg font-semibold font-kor mb-[24px]">
-								{currentSong.artist}
-							</p>
+					<InsetShadowContainer className="py-[19px] px-[21px]">
+						<div className="flex space-x-[20px]">
+							<div className=" flex-shrink-0 w-[218px] h-[122px] bg-black flex justify-center items-center overflow-hidden">
+								<img
+									className="h-full"
+									src={currentSong?.thumbnail || '/no-thumbnail.png'}
+									alt={currentSong?.songTitle || '재생 가능한 노래가 없습니다'}
+								/>
+							</div>
+							<div className="w-full">
+								<h3 className="text-xl font-semibold font-kor">
+									{currentSong?.songTitle}
+								</h3>
+								<p className="text-lg font-semibold font-kor mb-[24px]">
+									{currentSong?.artist}
+								</p>
 
-							<ProgressBar
-								duration={duration}
-								initialCurrentTime={currentTime}
-								onTimeUpdate={handleTimeUpdate}
-								onPlayClick={handlePlayClick}
-								isPlaying={isPlaying}
-								className="h-[4px] mb-[13px]"
-							/>
+								<ProgressBar
+									duration={duration}
+									initialCurrentTime={currentTime}
+									onTimeUpdate={handleTimeUpdate}
+									onPlayClick={handlePlayClick}
+									isPlaying={isPlaying}
+									className="h-[4px] mb-[13px]"
+								/>
 
-							<div className="flex items-center justify-between">
-								<div>{`${formatTime(currentTime)} / ${formatTime(duration)}`}</div>
-
-								<VolumeBar />
+								<div className="flex items-center justify-between">
+									<div>{`${formatTime(currentTime)} / ${formatTime(
+										duration,
+									)}`}</div>
+									<VolumeBar player={playerRef.current} />
+								</div>
 							</div>
 						</div>
-					</div>
-					<div className="flex justify-between">
-						<Button className="px-[27px]">
-							<i className="fa fa-step-backward"></i>
-						</Button>
+						<div className="flex justify-between">
+							<Button className="px-[27px]">
+								<i className="fa fa-step-backward"></i>
+							</Button>
 
-						{isPlaying ? (
-							<Button onClick={handlePauseClick} className="px-[27px]">
-								<i className="fa fa-pause"></i>
+							{isPlaying ? (
+								<Button onClick={handlePauseClick} className="px-[27px]">
+									<i className="fa fa-pause"></i>
+								</Button>
+							) : (
+								<Button onClick={handlePlayClick} className="px-[27px]">
+									<i className="fa fa-play"></i>
+								</Button>
+							)}
+							<Button className="px-[27px]">
+								<i className="fa fa-step-forward"></i>
 							</Button>
-						) : (
-							<Button onClick={handlePlayClick} className="px-[27px]">
-								<i className="fa fa-play"></i>
-							</Button>
-						)}
-						<Button className="px-[27px]">
-							<i className="fa fa-step-forward"></i>
-						</Button>
-					</div>
-					<YouTube
-						videoId={new URL(currentSong.url).searchParams.get('v') || ''}
-						opts={opts}
-						onEnd={() => {
-							setIsPlaying(false);
-							setTimeout(() => setCurrentTime(duration), 1000);
-						}}
-						onReady={handleReady}
-						// style={{ display: 'none' }}
-					/>
-				</InsetShadowContainer>
-			</div>
+						</div>
+					</InsetShadowContainer>
+				</div>
+			)}
+			<YouTube
+				videoId={new URL(currentSong.url).searchParams.get('v') || ''}
+				opts={opts}
+				onEnd={() => {
+					setIsPlaying(false);
+					setTimeout(() => setCurrentTime(duration), 1000);
+				}}
+				onReady={handleReady}
+				onStateChange={handleStateChange}
+				// style={{ display: 'none' }}
+			/>
 		</Modal>
 	);
 };
