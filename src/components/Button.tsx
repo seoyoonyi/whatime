@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface IButtonProps {
+export interface IButtonProps {
 	onClick?: () => void;
 	children?: React.ReactNode;
 	className?: string;
