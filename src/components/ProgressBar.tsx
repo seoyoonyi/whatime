@@ -69,6 +69,15 @@ const ProgressBar = ({
 	);
 
 	useEffect(() => {
+		if (progressBar) {
+			if (!isPlaying) {
+				currentTimeRef.current = Math.min(currentTimeRef.current + 1, duration);
+				onTimeUpdate(currentTimeRef.current);
+			}
+		}
+	}, [isPlaying, duration, onTimeUpdate]);
+
+	useEffect(() => {
 		currentTimeRef.current = initialCurrentTime;
 	}, [initialCurrentTime]);
 	return (

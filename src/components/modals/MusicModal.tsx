@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 import mockData from '../../data/mock.json';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import InsetShadowContainer from '../InsetShadowContainer';
 import VolumeBar from '../volumebar/VolumeBar';
-import Button from '../Button';
+import Button, { IButtonProps } from '../Button';
+import ButtonGroup from '../ButtonGroup';
+import { INavItemProps } from '../NavItem';
+import Navigation from '../Navigation';
 
 interface ISong {
 	id: number;
@@ -19,6 +21,7 @@ interface ISong {
 	url: string;
 	releaseDate: string;
 }
+
 export interface IPlayer {
 	setVolume(arg0: number): unknown;
 	getCurrentTime(): number;
@@ -26,6 +29,7 @@ export interface IPlayer {
 	playVideo: () => void;
 	pauseVideo: () => void;
 	seekTo: (seconds: number) => void;
+	mute: () => void;
 	unMute: () => void;
 	on: (event: string, callback: () => void) => void;
 }
@@ -39,31 +43,46 @@ const songs: ISong[] = mockData;
 
 const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const playerRef = useRef<IPlayer | null>(null);
-
 	const [currentSongIndex, setCurrentSongIndex] = useState<number>(0);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
+	const [isMuted, setIsMuted] = useState<boolean>(true);
 	const [currentTime, setCurrentTime] = useState<number>(0);
 	const [duration, setDuration] = useState<number>(0);
 	const [playerReady, setPlayerReady] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 
 	const currentSong = songs[currentSongIndex];
+	const opts: YouTubeProps['opts'] = {
+		playerVars: {
+			autoplay: 1,
+			mute: 1,
+		},
+	};
 
 	if (!currentSong) {
 		return <div>No song selected</div>;
 	}
 
-	const opts: YouTubeProps['opts'] = {
-		playerVars: {
-			autoplay: isPlaying ? 1 : 0,
-		},
+	const handleReady: YouTubeProps['onReady'] = (event) => {
+		playerRef.current = event.target;
+		setDuration(event.target.getDuration());
+		setPlayerReady(true);
+		setLoading(false);
 	};
 
+	const handleStateChange: YouTubeProps['onStateChange'] = (event) => {
+		if (event.data === 1) {
+			setLoading(false);
+		}
+	};
 	const handlePlayClick = () => {
 		if (playerRef.current) {
 			setIsPlaying(true);
-			playerRef.current.unMute();
 			playerRef.current.playVideo();
+			if (isMuted) {
+				playerRef.current.unMute();
+				setIsMuted(false);
+			}
 		}
 	};
 
@@ -74,17 +93,26 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		}
 	};
 
-	const handleReady = (event: { target: IPlayer }) => {
-		playerRef.current = event.target;
-		setDuration(event.target.getDuration());
-		setPlayerReady(true);
-		setLoading(false);
+	const handleBackwardClick = () => {
+		if (currentSongIndex === 0) {
+			/*  코드를 통해 이전 버튼을 클릭하면 마지막 노래로 이동하는 기능 구현 */
+			// setCurrentSongIndex(songs.length - 1);
+			alert('This is the first song.');
+		} else {
+			setCurrentSongIndex(currentSongIndex - 1);
+		}
+		setIsPlaying(true);
 	};
 
-	const handleStateChange = (event: { data: number }) => {
-		if (event.data === 1) {
-			setLoading(false);
+	const handleForwardClick = () => {
+		if (currentSongIndex === songs.length - 1) {
+			/*  코드를 통해 다음 버튼을 클릭하면 첫 노래로 이동하는 기능 구현 */
+			// setCurrentSongIndex(0);
+			alert('This is the last song.');
+		} else {
+			setCurrentSongIndex(currentSongIndex + 1);
 		}
+		setIsPlaying(true);
 	};
 
 	const handleTimeUpdate = (newTime: number) => {
@@ -102,10 +130,50 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 	};
 
+	const musicModalnavItems: INavItemProps[] = [
+		{ shortcut: 'c', label: 'hart' },
+		{ shortcut: 'p', label: 'laylist' },
+	];
+
+	const musicControlbuttons: IButtonProps[] = [
+		{
+			className: 'w-[75px]',
+			onClick: handleBackwardClick,
+			children: <i className="fa fa-step-backward"></i>,
+		},
+		{
+			className: 'w-[80px]',
+			onClick: isPlaying && !isMuted ? handlePauseClick : handlePlayClick,
+			children:
+				isPlaying && !isMuted ? (
+					<i className="fa fa-pause"></i>
+				) : (
+					<i className="fa fa-play"></i>
+				),
+		},
+		{
+			className: 'w-[75px]',
+			onClick: handleForwardClick,
+			children: <i className="fa fa-step-forward"></i>,
+		},
+	];
+
+	const userControlbuttons: IButtonProps[] = [
+		{
+			className: 'w-[75px]',
+			children: <i className="fa fa-user"></i>,
+		},
+		{
+			className: 'w-[75px]',
+			children: <i className="fa fa-gear"></i>,
+		},
+	];
+
 	useEffect(() => {
 		const timer = setInterval(() => {
 			if (playerRef.current && isPlaying) {
-				setCurrentTime(Math.round(playerRef.current.getCurrentTime()));
+				const newCurrentTime = Math.round(playerRef.current.getCurrentTime());
+				setCurrentTime(newCurrentTime);
 			}
 		}, 1000);
 
@@ -120,18 +188,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 				<div>Loading...</div>
 			) : (
 				<div>
-					<nav className="py-[5px] pl-[6px]">
-						<ul className="flex space-x-[10px] font-eng font-medium">
-							<li>
-								<u>c</u>
-								<span>hart</span>
-							</li>
-							<li>
-								<u>p</u>
-								<span>laylist</span>
-							</li>
-						</ul>
-					</nav>
+					<Navigation navItems={musicModalnavItems} />
 
 					<InsetShadowContainer className="py-[19px] px-[21px]">
 						<div className="flex space-x-[20px]">
@@ -167,37 +224,32 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 								</div>
 							</div>
 						</div>
-						<div className="flex justify-between">
-							<Button className="px-[27px]">
-								<i className="fa fa-step-backward"></i>
-							</Button>
-
-							{isPlaying ? (
-								<Button onClick={handlePauseClick} className="px-[27px]">
-									<i className="fa fa-pause"></i>
+						<div className="flex justify-between mt-[20px]">
+							<ButtonGroup buttons={userControlbuttons} />
+							<div className="flex justify-between">
+								<ButtonGroup buttons={musicControlbuttons} />
+								<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px]">
+									<i className="fa fa-heart"></i>
+									<span className="font-medium font-eng text-[13px]">100</span>
 								</Button>
-							) : (
-								<Button onClick={handlePlayClick} className="px-[27px]">
-									<i className="fa fa-play"></i>
-								</Button>
-							)}
-							<Button className="px-[27px]">
-								<i className="fa fa-step-forward"></i>
-							</Button>
+							</div>
 						</div>
 					</InsetShadowContainer>
+					<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
+						Welcome, seoyoonyi
+					</p>
 				</div>
 			)}
 			<YouTube
 				videoId={new URL(currentSong.url).searchParams.get('v') || ''}
 				opts={opts}
+				// style={{ display: 'none' }}
+				onReady={handleReady}
+				onStateChange={handleStateChange}
 				onEnd={() => {
 					setIsPlaying(false);
 					setTimeout(() => setCurrentTime(duration), 1000);
 				}}
-				onReady={handleReady}
-				onStateChange={handleStateChange}
-				// style={{ display: 'none' }}
 			/>
 		</Modal>
 	);
