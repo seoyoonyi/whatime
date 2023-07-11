@@ -7,6 +7,8 @@ interface IProgressBarProps {
 	className?: string;
 	onPlayClick: () => void;
 	isPlaying: boolean;
+	isMuted: boolean;
+	setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProgressBar = ({
@@ -16,9 +18,11 @@ const ProgressBar = ({
 	onPlayClick,
 	isPlaying,
 	className,
+	isMuted,
+	setIsMuted,
 }: IProgressBarProps) => {
-	const [progressBar, setProgressBar] = useState<HTMLDivElement | null>(null);
 	const currentTimeRef = useRef(initialCurrentTime);
+	const [progressBar, setProgressBar] = useState<HTMLDivElement | null>(null);
 	const [isDragging, setDragging] = useState<boolean>(false);
 
 	const refCallback = useCallback((node: HTMLDivElement | null) => {
@@ -46,7 +50,9 @@ const ProgressBar = ({
 				case 'mousedown':
 					setDragging(true);
 					calculateProgress(e);
-					if (!isPlaying) {
+
+					if (isMuted) {
+						setIsMuted(false);
 						onPlayClick();
 					}
 					break;
@@ -69,11 +75,10 @@ const ProgressBar = ({
 	);
 
 	useEffect(() => {
-		if (progressBar) {
-			if (!isPlaying) {
-				currentTimeRef.current = Math.min(currentTimeRef.current + 1, duration);
-				onTimeUpdate(currentTimeRef.current);
-			}
+		if (isPlaying && currentTimeRef.current >= duration) {
+			const initialTimeForNextTrack = 0;
+			currentTimeRef.current = initialTimeForNextTrack;
+			onTimeUpdate(initialTimeForNextTrack);
 		}
 	}, [isPlaying, duration, onTimeUpdate]);
 
@@ -92,7 +97,7 @@ const ProgressBar = ({
 		>
 			<div
 				ref={refCallback}
-				className="relative w-full h-full duration-100 scale-0 bg-black"
+				className="relative h-full duration-100 scale-0 bg-black"
 				style={{
 					transformOrigin: 'left',
 					transform: `scaleX(${currentTimeRef.current / duration})`,
