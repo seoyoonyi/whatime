@@ -4,12 +4,14 @@ export interface IButtonProps {
 	onClick?: () => void;
 	children?: React.ReactNode;
 	className?: string;
+	disabled?: boolean;
 }
 
-const Button = ({ onClick, children, className }: IButtonProps) => {
+const Button = ({ onClick, children, className, disabled }: IButtonProps) => {
 	return (
 		<button
 			onClick={onClick}
+			disabled={disabled}
 			className={`border bg-retroGray border-b-black border-r-black border-t-white border-l-white ${className}`}
 		>
 			{children}

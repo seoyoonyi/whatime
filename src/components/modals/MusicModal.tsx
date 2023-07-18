@@ -10,7 +10,6 @@ import ButtonGroup from '../ButtonGroup';
 import { INavItemProps } from '../NavItem';
 import Navigation from '../Navigation';
 import he from 'he';
-import { debounce } from 'lodash';
 import { formatTime, truncateTitle } from '../../utils/ utils';
 import { IPlayer, ISong } from '../types/types';
 
@@ -30,6 +29,9 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const [duration, setDuration] = useState<number>(0);
 	const [playerReady, setPlayerReady] = useState<boolean>(false);
 	const [playerLoading, setPlayerLoading] = useState<boolean>(true);
+	const [isPrevDisabled, setIsPrevDisabled] = useState<boolean>(false);
+	const [isNextDisabled, setIsNextDisabled] = useState<boolean>(false);
+	const [isSongLoaded, setIsSongLoaded] = useState<boolean>(false);
 
 	const [songTransitionLoading, setSongTransitionLoading] = useState(false);
 	const opts: YouTubeProps['opts'] = {
@@ -75,6 +77,8 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		if (event.target.getPlayerState() === YouTube.PlayerState.PLAYING) {
 			setDuration(event.target.getDuration());
 		}
+
+		setIsSongLoaded(true);
 	};
 
 	const handleStateChange: YouTubeProps['onStateChange'] = (event) => {
@@ -82,6 +86,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			setPlayerLoading(false);
 			setSongTransitionLoading(false);
 			setDuration(event.target.getDuration());
+			setIsSongLoaded(true);
 		}
 	};
 
@@ -90,7 +95,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		setIsPlaying(false);
 		setCurrentTime(0);
 		setTimeout(() => {
-			handleForwardClick();
+			handleNextSong();
 			setIsPlaying(true);
 			setSongTransitionLoading(false);
 		}, 200);
@@ -124,7 +129,9 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		}
 	};
 
-	const handleBackwardClick = debounce(() => {
+	const handlePrevSong = async () => {
+		if (!isSongLoaded || isPrevDisabled) return;
+		setIsSongLoaded(false);
 		setSongTransitionLoading(true);
 		if (currentSongIndex === 0) {
 			setCurrentSongIndex(songs.length - 1);
@@ -132,9 +139,11 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			setCurrentSongIndex(currentSongIndex - 1);
 		}
 		setIsPlaying(true);
-	}, 300);
+	};
 
-	const handleForwardClick = debounce(() => {
+	const handleNextSong = () => {
+		if (!isSongLoaded || isNextDisabled) return;
+		setIsSongLoaded(false);
 		setSongTransitionLoading(true);
 		if (currentSongIndex === songs.length - 1) {
 			setCurrentSongIndex(0);
@@ -142,7 +151,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			setCurrentSongIndex(currentSongIndex + 1);
 		}
 		setIsPlaying(true);
-	}, 300);
+	};
 
 	const handleTimeUpdate = (newTime: number) => {
 		if (playerRef.current) {
@@ -160,29 +169,40 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 
 	const musicControlbuttons: IButtonProps[] = [
 		{
-			className: 'w-[75px]',
-			onClick: handleBackwardClick,
+			className: `w-[75px] ${
+				isPrevDisabled
+					? 'cursor-not-allowed opacity-40'
+					: 'hover:opacity-40 hover:ease-in transition duration-150 ease-out cursor-pointer'
+			}`,
+
+			disabled: isPrevDisabled,
+			onClick: handlePrevSong,
 			children: <i className="fa fa-step-backward"></i>,
 		},
 		{
-			className: 'w-[80px]',
+			className: 'w-[80px] hover:opacity-40 cursor-pointer',
 			onClick: isMuted ? handlePlayClick : handlePauseClick,
 			children: isMuted ? <i className="fa fa-play"></i> : <i className="fa fa-pause"></i>,
 		},
 		{
-			className: 'w-[75px]',
-			onClick: handleForwardClick,
+			className: `w-[75px] ${
+				isNextDisabled
+					? 'cursor-not-allowed opacity-40'
+					: 'hover:opacity-40 hover:ease-in transition duration-150 ease-out cursor-pointer'
+			}`,
+			disabled: isNextDisabled,
+			onClick: handleNextSong,
 			children: <i className="fa fa-step-forward"></i>,
 		},
 	];
 
 	const userControlbuttons: IButtonProps[] = [
 		{
-			className: 'w-[75px]',
+			className: 'w-[75px] hover:opacity-40',
 			children: <i className="fa fa-user"></i>,
 		},
 		{
-			className: 'w-[75px]',
+			className: 'w-[75px] hover:opacity-40',
 			children: <i className="fa fa-gear"></i>,
 		},
 	];
@@ -193,6 +213,11 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			clearInterval(timer);
 		};
 	}, [updateCurrentTime]);
+
+	useEffect(() => {
+		setIsPrevDisabled(false);
+		setIsNextDisabled(false);
+	}, [currentSongIndex]);
 
 	return (
 		<Modal open={open} onClose={onClose} title="🎧 Music">
@@ -243,11 +268,9 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 								<ButtonGroup buttons={userControlbuttons} />
 								<div className="flex justify-between">
 									<ButtonGroup buttons={musicControlbuttons} />
-									<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px]">
+									<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px] hover:opacity-40">
 										<i className="fa fa-heart"></i>
-										<span className="font-medium font-eng text-[13px]">
-											100
-										</span>
+										<span className="font-medium font-eng text-[13px]">0</span>
 									</Button>
 								</div>
 							</div>
