@@ -4,24 +4,42 @@ import { IPlayer } from '../types/types';
 
 interface IVolumeBarProps {
 	player: IPlayer | null;
+	volume: number;
+	setVolume: React.Dispatch<React.SetStateAction<number>>;
+	isMuted: boolean;
+	setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const VolumeBar = ({ player }: IVolumeBarProps) => {
+const VolumeBar = ({ player, volume, setVolume, setIsMuted, isMuted }: IVolumeBarProps) => {
 	const volumeRef = useRef<HTMLInputElement>(null);
-	const [volume, setVolume] = useState(1);
 	const [playerReady, setPlayerReady] = useState(false);
 
 	const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const volume = e.target.valueAsNumber;
-		setVolume(volume);
+		setVolume(volume * 100);
 
 		if (player && 'setVolume' in player && playerReady) {
 			if (volume <= 0) {
 				player.setVolume(0);
-			} else if (volume >= 1) {
-				player.setVolume(100);
+				setIsMuted(true);
 			} else {
 				player.setVolume(volume * 100);
+				if (isMuted) {
+					setIsMuted(false);
+					player.unMute();
+				}
+			}
+		}
+	};
+
+	const toggleMute = () => {
+		if (player && playerReady) {
+			if (isMuted) {
+				player.unMute();
+				setIsMuted(false);
+			} else {
+				player.mute();
+				setIsMuted(true);
 			}
 		}
 	};
@@ -31,14 +49,16 @@ const VolumeBar = ({ player }: IVolumeBarProps) => {
 	}, [player]);
 
 	return (
-		<div className="flex items-center justify-between">
-			<span className="text-[22px]">🔈</span>
+		<div className="flex items-center justify-between cursor-pointer">
+			<span className="text-[22px] cursor-pointer" onClick={toggleMute}>
+				{isMuted ? '🔇' : '🔈'}
+			</span>
 			<input
 				type="range"
 				min="0"
 				max="1"
 				step="0.1"
-				value={volume}
+				value={isMuted ? 0 : volume / 100}
 				className={styles.slider}
 				onChange={handleVolumeChange}
 				ref={volumeRef}

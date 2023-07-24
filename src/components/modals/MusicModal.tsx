@@ -24,9 +24,11 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 	const playerRef = useRef<IPlayer | null>(null);
 	const [currentSongIndex, setCurrentSongIndex] = useState<number>(0);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
+	const [isPlayButton, setIsPlayButton] = useState<boolean>(true);
 	const [isMuted, setIsMuted] = useState<boolean>(true);
 	const [currentTime, setCurrentTime] = useState<number>(0);
 	const [duration, setDuration] = useState<number>(0);
+	const [volume, setVolume] = useState<number>(100);
 	const [playerReady, setPlayerReady] = useState<boolean>(false);
 	const [playerLoading, setPlayerLoading] = useState<boolean>(true);
 	const [isPrevDisabled, setIsPrevDisabled] = useState<boolean>(false);
@@ -63,6 +65,9 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 
 	const handleReady: YouTubeProps['onReady'] = (event) => {
 		playerRef.current = event.target;
+		if (playerRef.current) {
+			playerRef.current.setVolume(volume);
+		}
 		setPlayerReady(true);
 		setPlayerLoading(false);
 		setSongTransitionLoading(false);
@@ -115,6 +120,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			if (isMuted) {
 				playerRef.current.unMute();
 				setIsMuted(false);
+				setIsPlayButton(false);
 			}
 		}
 	};
@@ -126,6 +132,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 
 			playerRef.current.mute();
 			setIsMuted(true);
+			setIsPlayButton(true);
 		}
 	};
 
@@ -181,8 +188,12 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		},
 		{
 			className: 'w-[80px] hover:opacity-40 cursor-pointer',
-			onClick: isMuted ? handlePlayClick : handlePauseClick,
-			children: isMuted ? <i className="fa fa-play"></i> : <i className="fa fa-pause"></i>,
+			onClick: isPlayButton ? handlePlayClick : handlePauseClick,
+			children: isPlayButton ? (
+				<i className="fa fa-play"></i>
+			) : (
+				<i className="fa fa-pause"></i>
+			),
 		},
 		{
 			className: `w-[75px] ${
@@ -218,6 +229,10 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 		setIsPrevDisabled(false);
 		setIsNextDisabled(false);
 	}, [currentSongIndex]);
+
+	useEffect(() => {
+		console.log('isPlayButton', isPlayButton);
+	}, [isPlayButton, setIsPlayButton]);
 
 	return (
 		<Modal open={open} onClose={onClose} title="🎧 Music">
@@ -260,7 +275,13 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 										<div>{`${formatTime(currentTime)} / ${formatTime(
 											duration,
 										)}`}</div>
-										<VolumeBar player={playerRef.current} />
+										<VolumeBar
+											player={playerRef.current}
+											volume={volume}
+											setVolume={setVolume}
+											isMuted={isMuted}
+											setIsMuted={setIsMuted}
+										/>
 									</div>
 								</div>
 							</div>
