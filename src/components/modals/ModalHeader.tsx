@@ -15,7 +15,7 @@ const ModalHeader = ({ title, onClose }: IModalHeaderProps) => {
 					onClick={onClose}
 					className=" w-[21px] h-[21px] flex justify-center items-center"
 				>
-					<img src="/icon-x.svg" />
+					<img src="/icon-x.svg" alt="close" />
 				</Button>
 			</div>
 		</div>
