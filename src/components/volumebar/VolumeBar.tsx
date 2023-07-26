@@ -37,6 +37,10 @@ const VolumeBar = ({ player, volume, setVolume, setIsMuted, isMuted }: IVolumeBa
 			if (isMuted) {
 				player.unMute();
 				setIsMuted(false);
+				if (volume <= 0) {
+					setVolume(100);
+					player.setVolume(100);
+				}
 			} else {
 				player.mute();
 				setIsMuted(true);
