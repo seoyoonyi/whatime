@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 
 interface IProgressBarProps {
 	duration: number;
@@ -21,99 +21,95 @@ const ProgressBar = ({
 	isMuted,
 	setIsMuted,
 }: IProgressBarProps) => {
-	const currentTimeRef = useRef(initialCurrentTime);
-	const [progressBar, setProgressBar] = useState<HTMLDivElement | null>(null);
+	const [currentTime, setCurrentTime] = useState<number>(initialCurrentTime);
 	const [isDragging, setDragging] = useState<boolean>(false);
-
-	const refCallback = useCallback((node: HTMLDivElement | null) => {
-		if (node !== null) {
-			setProgressBar(node);
-		}
-	}, []);
 
 	const calculateProgress = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-			if (progressBar) {
-				const progressContainerWidth = progressBar.offsetWidth;
-				const clickedX = Math.max(e.clientX - progressBar.getBoundingClientRect().left, 0); // Add Math.max to ensure clickedX is never negative
-				const newTime = Math.max((clickedX / progressContainerWidth) * duration, 0); // Add Math.max to ensure newTime is never negative
-				currentTimeRef.current = newTime;
-				onTimeUpdate(newTime);
-			}
+			const progressBar = e.currentTarget;
+			const progressContainerWidth = progressBar.offsetWidth;
+			const clickedX = Math.max(e.clientX - progressBar.getBoundingClientRect().left, 0);
+			const newTime = Math.max((clickedX / progressContainerWidth) * duration, 0);
+			setCurrentTime(newTime);
+			onTimeUpdate(newTime);
 		},
-		[duration, onTimeUpdate, progressBar],
+		[duration, onTimeUpdate],
 	);
 
-	const handleMouseEvent = useCallback(
+	const handleMouseDownOnCircle = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-			switch (e.type) {
-				case 'mousedown':
-					setDragging(true);
-					calculateProgress(e);
+			e.stopPropagation();
+			setDragging(true);
 
-					if (isMuted) {
-						setIsMuted(false);
-						onPlayClick();
-					}
-					break;
-				case 'mouseup':
-				case 'mouseleave':
-					setDragging(false);
-					break;
-				case 'mousemove':
-					if (isDragging) {
-						requestAnimationFrame(() => {
-							calculateProgress(e);
-						});
-					}
-					break;
-				default:
-					break;
+			if (isMuted) {
+				setIsMuted(false);
+				onPlayClick();
 			}
 		},
-		[isDragging, calculateProgress, onPlayClick],
+		[isMuted, onPlayClick, setIsMuted],
+	);
+
+	const handleMouseDownOnBar = useCallback(
+		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+			calculateProgress(e);
+			if (isMuted) {
+				setIsMuted(false);
+				onPlayClick();
+			}
+		},
+		[calculateProgress, isMuted, onPlayClick, setIsMuted],
+	);
+
+	const handleMouseUpOrLeave = useCallback(() => {
+		setDragging(false);
+	}, []);
+
+	const handleMouseMove = useCallback(
+		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+			if (isDragging) {
+				calculateProgress(e);
+			}
+		},
+		[calculateProgress, isDragging],
 	);
 
 	useEffect(() => {
-		if (isPlaying && currentTimeRef.current >= duration) {
+		if (isPlaying && currentTime >= duration) {
 			const initialTimeForNextTrack = 0;
-			currentTimeRef.current = initialTimeForNextTrack;
+			setCurrentTime(initialTimeForNextTrack);
 			onTimeUpdate(initialTimeForNextTrack);
 		}
-	}, [isPlaying, duration, onTimeUpdate]);
+	}, [currentTime, duration, isPlaying, onTimeUpdate]);
 
 	useEffect(() => {
-		currentTimeRef.current = initialCurrentTime;
+		setCurrentTime(initialCurrentTime);
 	}, [initialCurrentTime]);
+
 	return (
 		<div
-			className={`relative w-full cursor-pointer border bg-retroGray border-t-black border-l-black border-b-white border-r-white ${className} ${
-				isDragging ? 'cursor-grabbing' : 'cursor-grab'
-			}`}
-			onMouseDown={handleMouseEvent}
-			onMouseUp={handleMouseEvent}
-			onMouseLeave={handleMouseEvent}
-			onMouseMove={handleMouseEvent}
+			className={`relative w-full cursor-pointer border bg-retroGray border-t-black border-l-black border-b-white border-r-white ${className}`}
+			onMouseDown={handleMouseDownOnBar}
+			onMouseUp={handleMouseUpOrLeave}
+			onMouseLeave={handleMouseUpOrLeave}
+			onMouseMove={handleMouseMove}
 		>
 			<div
-				ref={refCallback}
 				className="relative h-full duration-100 scale-0 bg-black"
 				style={{
 					transformOrigin: 'left',
-					transform: `scaleX(${currentTimeRef.current / duration})`,
+					transform: `scaleX(${currentTime / duration})`,
 				}}
 			/>
 
 			<div
-				className="absolute top-1/2 -left-1.5 -translate-y-1/2 h-[12px] w-[12px] bg-black rounded-full"
+				className={`absolute top-1/2 -left-1.5 -translate-y-1/2 h-[12px] w-[12px] bg-black rounded-full ${
+					isDragging ? 'cursor-grabbing' : 'cursor-grab'
+				}`}
 				style={{
-					left: `calc(${Math.min(
-						(currentTimeRef.current / duration) * 100,
-						100,
-					)}% - 6px)`,
+					left: `calc(${Math.min((currentTime / duration) * 100, 100)}% - 6px)`,
 				}}
-				onMouseDown={handleMouseEvent}
-				onMouseUp={handleMouseEvent}
+				onMouseDown={handleMouseDownOnCircle}
+				onMouseUp={handleMouseUpOrLeave}
 			/>
 		</div>
 	);

@@ -11,7 +11,8 @@ export interface ISong {
 }
 
 export interface IPlayer {
-	setVolume(arg0: number): unknown;
+	stopVideo(): () => void;
+	setVolume: (arg0: number) => void;
 	getCurrentTime(): number;
 	getDuration(): number;
 	playVideo: () => void;
