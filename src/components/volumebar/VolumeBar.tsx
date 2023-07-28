@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styles from './volumebar.module.css';
-import { IPlayer } from '../types/types';
+import { IPlayer } from '../../types/types';
 
 interface IVolumeBarProps {
 	player: IPlayer | null;

@@ -1,6 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import newJeans from '../../data/newjeans.json';
-import YouTube, { YouTubeProps } from 'react-youtube';
+import React from 'react';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -10,46 +8,59 @@ import { INavItemProps } from '../NavItem';
 import Navigation from '../Navigation';
 import he from 'he';
 import { formatTime, truncateTitle } from '../../utils/ utils';
-import { IPlayer, ISong } from '../types/types';
+import { IPlayer, ISong } from '../../types/types';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
 	onClose: () => void;
+	isPlaying: boolean;
+	currentSongIndex: number;
+	playerRef: React.MutableRefObject<IPlayer | null>;
+	songs: ISong[];
+	songTransitionLoading: boolean;
+	isPrevDisabled: boolean;
+	isNextDisabled: boolean;
+	duration: number;
+	currentTime: number;
+	handleTimeUpdate: (newTime: number) => void;
+	handlePlayClick: () => void;
+	isMuted: boolean;
+	setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
+	volume: number;
+	setVolume: React.Dispatch<React.SetStateAction<number>>;
+	handlePrevSong: () => void;
+	isPlayButton: boolean;
+	handlePauseClick: () => void;
+	handleNextSong: () => void;
+	playerLoading: boolean;
 }
 
-const songs: ISong[] = newJeans;
-
-const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
-	// Player related states
-	const playerRef = useRef<IPlayer | null>(null);
-	const [isPlaying, setIsPlaying] = useState<boolean>(false);
-	const [isMuted, setIsMuted] = useState<boolean>(true);
-	const [volume, setVolume] = useState<number>(100);
-	const [playerReady, setPlayerReady] = useState<boolean>(false);
-	const [playerLoading, setPlayerLoading] = useState<boolean>(true);
-	const [isSongLoaded, setIsSongLoaded] = useState<boolean>(false);
-	// Song related states
-	const [currentSongIndex, setCurrentSongIndex] = useState<number>(0);
-	const [currentTime, setCurrentTime] = useState<number>(0);
-	const [duration, setDuration] = useState<number>(0);
-	const [songTransitionLoading, setSongTransitionLoading] = useState(false);
-	const [isPrevDisabled, setIsPrevDisabled] = useState<boolean>(false);
-	const [isNextDisabled, setIsNextDisabled] = useState<boolean>(false);
-	// UI related states
-	const [isPlayButton, setIsPlayButton] = useState<boolean>(true);
-
-	const opts: YouTubeProps['opts'] = {
-		playerVars: {
-			autoplay: 1,
-			mute: 1,
-			loop: 0,
-		},
-	};
-
+const MusicModal = ({
+	open,
+	onClose,
+	isPlaying,
+	currentSongIndex,
+	songs,
+	playerRef,
+	songTransitionLoading,
+	isPrevDisabled,
+	isNextDisabled,
+	duration,
+	currentTime,
+	handleTimeUpdate,
+	handlePlayClick,
+	isMuted,
+	setIsMuted,
+	volume,
+	setVolume,
+	handlePrevSong,
+	isPlayButton,
+	handlePauseClick,
+	handleNextSong,
+	playerLoading,
+}: IMusicPlayerModalProps) => {
 	const currentSong = songs[currentSongIndex];
-
 	const currentSongTitle = truncateTitle(he.decode(currentSong.title));
-
 	const loadingMessage = (
 		<h3>
 			Loading...
@@ -57,111 +68,8 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			Please wait...
 		</h3>
 	);
-
 	const title = songTransitionLoading ? loadingMessage : <h3>{currentSongTitle}</h3>;
-
 	const thumbnailImage = songTransitionLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
-
-	const handleReady: YouTubeProps['onReady'] = (event) => {
-		playerRef.current = event.target;
-		if (playerRef.current) {
-			playerRef.current.setVolume(volume);
-		}
-		setPlayerReady(true);
-		setPlayerLoading(false);
-		setSongTransitionLoading(false);
-		setCurrentTime(0);
-
-		if (isMuted) {
-			event.target.mute();
-		} else {
-			event.target.unMute();
-		}
-
-		if (event.target.getPlayerState() === YouTube.PlayerState.PLAYING) {
-			setDuration(event.target.getDuration());
-		}
-
-		setIsSongLoaded(true);
-	};
-
-	const handleStateChange: YouTubeProps['onStateChange'] = (event) => {
-		switch (event.data) {
-			case 0:
-				setPlayerLoading(true);
-				handleNextSong();
-				break;
-
-			case 1:
-				setPlayerLoading(false);
-				setDuration(event.target.getDuration());
-				setIsSongLoaded(true);
-				break;
-
-			default:
-				break;
-		}
-	};
-
-	const handlePlayClick = () => {
-		if (playerRef.current) {
-			setIsPlaying(true);
-			playerRef.current.playVideo();
-			if (isMuted) {
-				playerRef.current.unMute();
-				setIsMuted(false);
-			}
-			setIsPlayButton(false);
-		}
-	};
-	const handlePauseClick = () => {
-		if (playerRef.current) {
-			setIsPlaying(false);
-			playerRef.current.pauseVideo();
-			setIsPlayButton(true);
-		}
-	};
-
-	const handleNextSong = () => {
-		if (!isSongLoaded || isNextDisabled) return;
-		setIsSongLoaded(false);
-		setSongTransitionLoading(true);
-		if (currentSongIndex === songs.length - 1) {
-			setCurrentSongIndex(0);
-			setIsNextDisabled(true);
-		} else if (currentSongIndex < songs.length - 1) {
-			setCurrentSongIndex(currentSongIndex + 1);
-			setIsNextDisabled(true);
-		}
-		setIsPlaying(true);
-		setIsNextDisabled(false);
-	};
-
-	const handlePrevSong = async () => {
-		if (!isSongLoaded || isPrevDisabled) return;
-		setIsSongLoaded(false);
-		setSongTransitionLoading(true);
-		if (currentSongIndex === 0) {
-			setCurrentSongIndex(songs.length - 1);
-			setIsPrevDisabled(true);
-		} else {
-			setCurrentSongIndex(currentSongIndex - 1);
-			setIsPrevDisabled(true);
-		}
-		setIsPlaying(true);
-		setIsPrevDisabled(false);
-	};
-
-	const handleTimeUpdate = (newTime: number) => {
-		if (playerRef.current) {
-			setIsPlaying(false);
-			playerRef.current.seekTo(newTime);
-			setCurrentTime(newTime);
-			setIsPlaying(true);
-		} else {
-			console.error('Player reference is not available');
-		}
-	};
 
 	const musicModalnavItems: INavItemProps[] = [
 		{ shortcut: 'c', label: 'hart' },
@@ -211,26 +119,6 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			children: <i className="fa fa-gear"></i>,
 		},
 	];
-
-	useEffect(() => {
-		setIsPrevDisabled(false);
-		setIsNextDisabled(false);
-
-		const timer = setInterval(() => {
-			if (playerRef.current) {
-				const newCurrentTime = Math.round(playerRef.current.getCurrentTime());
-				setCurrentTime(newCurrentTime);
-			}
-		}, 1000);
-
-		return () => {
-			if (playerRef.current) {
-				playerRef.current.stopVideo();
-				playerRef.current = null;
-			}
-			clearInterval(timer);
-		};
-	}, []);
 
 	if (!currentSong) {
 		return <div>No song selected</div>;
@@ -304,14 +192,6 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 					Hello, World
 				</p>
 			</div>
-
-			<YouTube
-				videoId={new URL(currentSong.audioUrl).searchParams.get('v') || ''}
-				opts={opts}
-				// style={{ display: 'none' }}
-				onReady={handleReady}
-				onStateChange={handleStateChange}
-			/>
 		</Modal>
 	);
 };
