@@ -1,0 +1,7 @@
+.outsetShadowStyle {
+	@apply border bg-retroGray border-b-black border-r-black border-t-white border-l-white;
+}
+
+.insetShadowStyle {
+	@apply border bg-retroGray border-t-black border-l-black border-b-white border-r-white;
+}

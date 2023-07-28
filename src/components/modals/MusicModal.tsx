@@ -3,7 +3,6 @@ import newJeans from '../../data/newjeans.json';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
-import InsetShadowContainer from '../InsetShadowContainer';
 import VolumeBar from '../volumebar/VolumeBar';
 import Button, { IButtonProps } from '../Button';
 import ButtonGroup from '../ButtonGroup';
@@ -242,7 +241,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 			<div>
 				<Navigation navItems={musicModalnavItems} />
 
-				<InsetShadowContainer className="py-[19px] px-[21px]">
+				<div className="py-[19px] px-[21px] insetShadowStyle">
 					{playerLoading ? (
 						<div className="w-full flex  items-center justify-center text-black h-[176px]">
 							<span className="w-[30px]">
@@ -300,7 +299,7 @@ const MusicModal = ({ open, onClose }: IMusicPlayerModalProps) => {
 							</div>
 						</>
 					)}
-				</InsetShadowContainer>
+				</div>
 				<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
 					Hello, World
 				</p>
