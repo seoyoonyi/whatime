@@ -3,6 +3,7 @@ import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import newJeans from '../data/newjeans.json';
 import { ISong, IPlayer } from '../types/types';
+import Button from '../components/Button';
 
 const songs: ISong[] = newJeans;
 
@@ -35,6 +36,7 @@ const MainPage = () => {
 		playerVars: {
 			autoplay: 1,
 			mute: 1,
+			controls: 0,
 		},
 	};
 
@@ -65,6 +67,7 @@ const MainPage = () => {
 		switch (event.data) {
 			case 0:
 				setPlayerLoading(true);
+				setIsSongLoaded(false);
 				handleNextSong();
 				break;
 
@@ -137,8 +140,8 @@ const MainPage = () => {
 		}
 	};
 
-	const handleMusicModalOpen = () => {
-		setIsMusicModalOpen(true);
+	const toggleMusicModal = () => {
+		setIsMusicModalOpen(!isMusicModalOpen);
 	};
 
 	const handleMusicModalClose = () => {
@@ -166,41 +169,54 @@ const MainPage = () => {
 	}, []);
 
 	return (
-		<div>
-			<h1>Main Page</h1>
-			<button onClick={handleMusicModalOpen}>Music</button>
+		<div className="relative flex flex-col w-full h-screen bg-black">
+			<main className="relative flex items-center justify-center w-full h-full">
+				<MusicModal
+					open={isMusicModalOpen}
+					onClose={handleMusicModalClose}
+					isPlaying={isPlaying}
+					currentSongIndex={currentSongIndex}
+					songs={songs}
+					playerRef={playerRef}
+					songTransitionLoading={songTransitionLoading}
+					isPrevDisabled={isPrevDisabled}
+					isNextDisabled={isNextDisabled}
+					duration={duration}
+					currentTime={currentTime}
+					handleTimeUpdate={handleTimeUpdate}
+					handlePlayClick={handlePlayClick}
+					isMuted={isMuted}
+					setIsMuted={setIsMuted}
+					volume={volume}
+					setVolume={setVolume}
+					handlePrevSong={handlePrevSong}
+					isPlayButton={isPlayButton}
+					handlePauseClick={handlePauseClick}
+					handleNextSong={handleNextSong}
+					playerLoading={playerLoading}
+				/>
+				<YouTube
+					iframeClassName="w-full h-full flex-grow"
+					className="w-full h-full pointer-events-none"
+					videoId={new URL(currentSong.audioUrl).searchParams.get('v') || ''}
+					opts={opts}
+					onReady={handleReady}
+					onStateChange={handleStateChange}
+				/>
+			</main>
 
-			<MusicModal
-				open={isMusicModalOpen}
-				onClose={handleMusicModalClose}
-				isPlaying={isPlaying}
-				currentSongIndex={currentSongIndex}
-				songs={songs}
-				playerRef={playerRef}
-				songTransitionLoading={songTransitionLoading}
-				isPrevDisabled={isPrevDisabled}
-				isNextDisabled={isNextDisabled}
-				duration={duration}
-				currentTime={currentTime}
-				handleTimeUpdate={handleTimeUpdate}
-				handlePlayClick={handlePlayClick}
-				isMuted={isMuted}
-				setIsMuted={setIsMuted}
-				volume={volume}
-				setVolume={setVolume}
-				handlePrevSong={handlePrevSong}
-				isPlayButton={isPlayButton}
-				handlePauseClick={handlePauseClick}
-				handleNextSong={handleNextSong}
-				playerLoading={playerLoading}
-			/>
-
-			<YouTube
-				videoId={new URL(currentSong.audioUrl).searchParams.get('v') || ''}
-				opts={opts}
-				onReady={handleReady}
-				onStateChange={handleStateChange}
-			/>
+			<footer className="flex items-center w-full px-5 h-9 bg-retroGray">
+				<Button
+					onClick={toggleMusicModal}
+					className={`text-[14px] w-[160px]  flex justify-start pt-1 px-1 m-1 font-eng  ${
+						isMusicModalOpen
+							? 'bg-retroLightGray insetBorderStyle font-bold'
+							: 'bg-retroGray outsetShadowStyle'
+					} `}
+				>
+					🎧 Music
+				</Button>
+			</footer>
 		</div>
 	);
 };
