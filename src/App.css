@@ -5,3 +5,7 @@
 .insetShadowStyle {
 	@apply border bg-retroGray border-t-black border-l-black border-b-white border-r-white;
 }
+
+.insetBorderStyle {
+	@apply border  border-t-black border-l-black border-b-white border-r-white;
+}
