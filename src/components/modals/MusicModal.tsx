@@ -9,6 +9,7 @@ import Navigation from '../Navigation';
 import he from 'he';
 import { formatTime, truncateTitle } from '../../utils/ utils';
 import { IPlayer, ISong } from '../../types/types';
+import useDrag from '../../hooks/useDrag';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -59,6 +60,8 @@ const MusicModal = ({
 	handleNextSong,
 	playerLoading,
 }: IMusicPlayerModalProps) => {
+	const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
+		useDrag();
 	const currentSong = songs[currentSongIndex];
 	const currentSongTitle = truncateTitle(he.decode(currentSong.title));
 	const loadingMessage = (
@@ -120,12 +123,18 @@ const MusicModal = ({
 		},
 	];
 
-	if (!currentSong) {
-		return <div>No song selected</div>;
-	}
-
 	return (
-		<Modal open={open} onClose={onClose} title="🎧 Music">
+		<Modal
+			className="absolute z-[1]"
+			open={open}
+			onClose={onClose}
+			title="🎧 Music"
+			style={{ transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)` }}
+			onMouseMove={handleMouseMove}
+			onMouseUp={handleMouseUp}
+			onMouseDown={handleMouseDown}
+			onMouseLeave={handleMouseLeave}
+		>
 			<div>
 				<Navigation navItems={musicModalnavItems} />
 
