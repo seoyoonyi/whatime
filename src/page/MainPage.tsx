@@ -169,7 +169,7 @@ const MainPage = () => {
 	}, []);
 
 	return (
-		<div className="relative flex flex-col w-full h-screen bg-black">
+		<div className="flex flex-col w-full h-screen bg-black ">
 			<main className="relative flex items-center justify-center w-full h-full">
 				<MusicModal
 					open={isMusicModalOpen}

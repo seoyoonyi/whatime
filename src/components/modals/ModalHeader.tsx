@@ -13,7 +13,7 @@ const ModalHeader = ({ title, onClose, onMouseDown, onMouseLeave }: IModalHeader
 		<div
 			onMouseDown={onMouseDown}
 			onMouseLeave={onMouseLeave}
-			className="flex justify-between bg-retroBlue cursor-pointer  py-[3px] px-[6px] text-white"
+			className="flex justify-between bg-retroBlue py-[3px] px-[6px] text-white"
 		>
 			<h2 className="font-bold font-eng">{title}</h2>
 			<div className="">

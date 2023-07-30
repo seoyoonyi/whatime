@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -9,7 +9,6 @@ import Navigation from '../Navigation';
 import he from 'he';
 import { formatTime, truncateTitle } from '../../utils/ utils';
 import { IPlayer, ISong } from '../../types/types';
-import useDrag from '../../hooks/useDrag';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -60,8 +59,7 @@ const MusicModal = ({
 	handleNextSong,
 	playerLoading,
 }: IMusicPlayerModalProps) => {
-	const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
-		useDrag();
+	const musicModalRef = useRef(null);
 	const currentSong = songs[currentSongIndex];
 	const currentSongTitle = truncateTitle(he.decode(currentSong.title));
 	const loadingMessage = (
@@ -129,11 +127,7 @@ const MusicModal = ({
 			open={open}
 			onClose={onClose}
 			title="🎧 Music"
-			style={{ transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)` }}
-			onMouseMove={handleMouseMove}
-			onMouseUp={handleMouseUp}
-			onMouseDown={handleMouseDown}
-			onMouseLeave={handleMouseLeave}
+			ref={musicModalRef}
 		>
 			<div>
 				<Navigation navItems={musicModalnavItems} />
