@@ -1,20 +1,20 @@
-import { useRef, useState, useMemo, useCallback, MouseEvent, RefObject } from 'react';
+import { useState, useMemo, useCallback, MouseEvent, RefObject } from 'react';
 
 const useDrag = (modalRef: RefObject<HTMLDivElement>) => {
-	const dragging = useRef(false);
-	const pos = useRef({ x: 0, y: 0 });
+	const [dragging, setDragging] = useState(false);
+	const [pos, setPos] = useState({ x: 0, y: 0 });
 	const [modalPos, setModalPos] = useState({ x: 0, y: 0 });
 
 	const handleMouseDown = useCallback((event: MouseEvent<HTMLDivElement>) => {
-		dragging.current = true;
-		pos.current = { x: event.clientX, y: event.clientY };
+		setDragging(true);
+		setPos({ x: event.clientX, y: event.clientY });
 	}, []);
 
 	const handleMouseMove = useCallback(
 		(event: MouseEvent<HTMLDivElement>) => {
-			if (dragging.current && modalRef.current) {
-				const newPosX = event.clientX - pos.current.x;
-				const newPosY = event.clientY - pos.current.y;
+			if (dragging && modalRef.current) {
+				const newPosX = event.clientX - pos.x;
+				const newPosY = event.clientY - pos.y;
 				const rect = modalRef.current.getBoundingClientRect();
 
 				let adjustedX = newPosX;
@@ -34,18 +34,18 @@ const useDrag = (modalRef: RefObject<HTMLDivElement>) => {
 					return { x: prev.x + adjustedX, y: prev.y + adjustedY };
 				});
 
-				pos.current = { x: event.clientX, y: event.clientY };
+				setPos({ x: event.clientX, y: event.clientY });
 			}
 		},
-		[modalRef],
+		[dragging, modalRef, pos.x, pos.y],
 	);
 
 	const handleMouseUp = useCallback(() => {
-		dragging.current = false;
+		setDragging(false);
 	}, []);
 
 	const handleMouseLeave = useCallback(() => {
-		dragging.current = false;
+		setDragging(false);
 	}, []);
 
 	return useMemo(

@@ -32,14 +32,17 @@ const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
 		return (
 			<div
 				ref={ref}
-				onMouseMove={handleMouseMove}
-				onMouseUp={handleMouseUp}
 				className={`outsetShadowStyle p-[3px] laptop:w-[610px] ${className}`}
-				style={{ transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)` }}
+				style={{
+					transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
+					userSelect: 'none',
+				}}
 			>
 				<ModalHeader
 					title={title}
 					onClose={onClose}
+					onMouseMove={handleMouseMove}
+					onMouseUp={handleMouseUp}
 					onMouseDown={handleMouseDown}
 					onMouseLeave={handleMouseLeave}
 				/>

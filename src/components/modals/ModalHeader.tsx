@@ -5,14 +5,25 @@ interface IModalHeaderProps {
 	title: string;
 	onClose: () => void;
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
+	onMouseMove?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseLeave?: () => void;
+	onMouseUp?: () => void;
 }
 
-const ModalHeader = ({ title, onClose, onMouseDown, onMouseLeave }: IModalHeaderProps) => {
+const ModalHeader = ({
+	title,
+	onClose,
+	onMouseDown,
+	onMouseLeave,
+	onMouseMove,
+	onMouseUp,
+}: IModalHeaderProps) => {
 	return (
 		<div
 			onMouseDown={onMouseDown}
 			onMouseLeave={onMouseLeave}
+			onMouseMove={onMouseMove}
+			onMouseUp={onMouseUp}
 			className="flex justify-between bg-retroBlue py-[3px] px-[6px] text-white"
 		>
 			<h2 className="font-bold font-eng">{title}</h2>
