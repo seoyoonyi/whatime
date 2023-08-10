@@ -1,10 +1,12 @@
-import React, { MouseEvent, forwardRef, useLayoutEffect } from 'react';
+import React, { MouseEvent, MouseEventHandler, forwardRef, useLayoutEffect } from 'react';
 import ModalHeader from './ModalHeader';
 import useDrag from '../../hooks/useDrag';
 
 interface IModalComponentProps {
-	open: boolean;
-	onClose: () => void;
+	open?: boolean;
+	onModalClick: MouseEventHandler<HTMLDivElement>;
+	onMinimize: MouseEventHandler<HTMLDivElement>;
+	onClose: MouseEventHandler<HTMLDivElement>;
 	children: React.ReactNode;
 	title: string;
 	className?: string;
@@ -16,7 +18,10 @@ interface IModalComponentProps {
 }
 
 const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
-	({ open, onClose, children, title, className }, forwardedRef) => {
+	(
+		{ open, onModalClick, onMinimize, onClose, children, title, className, style },
+		forwardedRef,
+	) => {
 		const ref = forwardedRef as React.RefObject<HTMLDivElement>;
 		const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
 			useDrag(ref);
@@ -33,13 +38,16 @@ const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
 			<div
 				ref={ref}
 				className={`outsetShadowStyle p-[3px] laptop:w-[610px] ${className}`}
+				onClick={onModalClick}
 				style={{
 					transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
 					userSelect: 'none',
+					...style,
 				}}
 			>
 				<ModalHeader
 					title={title}
+					onMinimize={onMinimize}
 					onClose={onClose}
 					onMouseMove={handleMouseMove}
 					onMouseUp={handleMouseUp}

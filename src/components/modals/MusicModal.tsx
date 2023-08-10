@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { MouseEventHandler, useRef } from 'react';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -12,7 +12,11 @@ import { IPlayer, ISong } from '../../types/types';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
-	onClose: () => void;
+	style: React.CSSProperties;
+	onClose: MouseEventHandler<HTMLDivElement>;
+	onModalClick: MouseEventHandler<HTMLDivElement>;
+	onMinimize: MouseEventHandler<HTMLDivElement>;
+	handleChartModalOpen: MouseEventHandler<HTMLLIElement>;
 	isPlaying: boolean;
 	currentSongIndex: number;
 	playerRef: React.MutableRefObject<IPlayer | null>;
@@ -38,6 +42,8 @@ interface IMusicPlayerModalProps {
 const MusicModal = ({
 	open,
 	onClose,
+	onMinimize,
+	onModalClick,
 	isPlaying,
 	currentSongIndex,
 	songs,
@@ -58,8 +64,11 @@ const MusicModal = ({
 	handlePauseClick,
 	handleNextSong,
 	playerLoading,
+	handleChartModalOpen,
+	style,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
+
 	const currentSong = songs[currentSongIndex];
 	const currentSongTitle = truncateTitle(he.decode(currentSong.title));
 	const loadingMessage = (
@@ -73,7 +82,7 @@ const MusicModal = ({
 	const thumbnailImage = songTransitionLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
 
 	const musicModalnavItems: INavItemProps[] = [
-		{ shortcut: 'c', label: 'hart' },
+		{ shortcut: 'c', label: 'hart', onClick: handleChartModalOpen },
 		{ shortcut: 'p', label: 'laylist' },
 	];
 
@@ -122,15 +131,18 @@ const MusicModal = ({
 	];
 
 	return (
-		<Modal
-			className="absolute z-[1]"
-			open={open}
-			onClose={onClose}
-			title="🎧 Music"
-			ref={musicModalRef}
-		>
-			<div>
-				<Navigation navItems={musicModalnavItems} />
+		<>
+			<Modal
+				className="absolute"
+				open={open}
+				onClose={onClose}
+				onMinimize={onMinimize}
+				onModalClick={onModalClick}
+				title="🎧 Music"
+				ref={musicModalRef}
+				style={style}
+			>
+				<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
 
 				<div className="py-[19px] px-[21px] insetShadowStyle">
 					{playerLoading ? (
@@ -194,8 +206,8 @@ const MusicModal = ({
 				<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
 					Hello, World
 				</p>
-			</div>
-		</Modal>
+			</Modal>
+		</>
 	);
 };
 

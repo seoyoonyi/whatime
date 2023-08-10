@@ -9,3 +9,7 @@
 .insetBorderStyle {
 	@apply border  border-t-black border-l-black border-b-white border-r-white;
 }
+
+.bar {
+	@apply after:absolute after:top-1/2 after:-translate-y-1/2 after:right-0 after:w-[1px]  after:h-7 after:bg-retroGray after:border  after:border-b-gray after:border-r-gray after:border-t-white after:border-l-white;
+}

@@ -1,9 +1,10 @@
-import React, { MouseEvent } from 'react';
+import React, { MouseEvent, MouseEventHandler } from 'react';
 import Button from '../Button';
 
 interface IModalHeaderProps {
 	title: string;
-	onClose: () => void;
+	onMinimize: MouseEventHandler<HTMLDivElement>;
+	onClose: MouseEventHandler<HTMLDivElement>;
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseMove?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseLeave?: () => void;
@@ -12,6 +13,7 @@ interface IModalHeaderProps {
 
 const ModalHeader = ({
 	title,
+	onMinimize,
 	onClose,
 	onMouseDown,
 	onMouseLeave,
@@ -27,9 +29,15 @@ const ModalHeader = ({
 			className="flex justify-between bg-retroBlue py-[3px] px-[6px] text-white"
 		>
 			<h2 className="font-bold font-eng">{title}</h2>
-			<div className="">
+			<div className="flex space-x-1">
 				<Button
-					onClick={onClose}
+					onClick={() => onMinimize}
+					className=" w-[21px] h-[21px] flex justify-center items-center text-black"
+				>
+					<i className="mb-1 fa fa-window-minimize"></i>
+				</Button>
+				<Button
+					onClick={() => onClose}
 					className=" w-[21px] h-[21px] flex justify-center items-center"
 				>
 					<img src="/icon-x.svg" alt="close" />
