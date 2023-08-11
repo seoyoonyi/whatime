@@ -3,8 +3,8 @@ import Button from '../Button';
 
 interface IModalHeaderProps {
 	title: string;
-	onMinimize: MouseEventHandler<HTMLDivElement>;
-	onClose: MouseEventHandler<HTMLDivElement>;
+	onMinimize: MouseEventHandler<HTMLButtonElement>;
+	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseMove?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseLeave?: () => void;
@@ -31,13 +31,13 @@ const ModalHeader = ({
 			<h2 className="font-bold font-eng">{title}</h2>
 			<div className="flex space-x-1">
 				<Button
-					onClick={() => onMinimize}
+					onClick={onMinimize}
 					className=" w-[21px] h-[21px] flex justify-center items-center text-black"
 				>
 					<i className="mb-1 fa fa-window-minimize"></i>
 				</Button>
 				<Button
-					onClick={() => onClose}
+					onClick={(event) => onClose(event)}
 					className=" w-[21px] h-[21px] flex justify-center items-center"
 				>
 					<img src="/icon-x.svg" alt="close" />

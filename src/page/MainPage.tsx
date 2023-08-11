@@ -5,11 +5,16 @@ import newJeans from '../data/newjeans.json';
 import { ISong, IPlayer } from '../types/types';
 import Button from '../components/Button';
 import ChartModal from '../components/modals/ChartModal';
+import useModal from '../hooks/useModal';
 
 export type ModalType = 'music' | 'chart';
 const songs: ISong[] = newJeans;
 
 const MainPage = () => {
+	// Modal related state
+	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 10 });
+	const chartModal = useModal();
+
 	// Player related states
 	const playerRef = useRef<IPlayer | null>(null);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -29,12 +34,6 @@ const MainPage = () => {
 
 	// UI related states
 	const [isPlayButton, setIsPlayButton] = useState<boolean>(true);
-
-	// Modal related state
-	const [modals, setModals] = useState({
-		music: { isOpen: true, isMinimized: false, zIndex: 10 },
-		chart: { isOpen: false, isMinimized: false, zIndex: 5 },
-	});
 
 	const currentSong = songs[currentSongIndex];
 	const opts: YouTubeProps['opts'] = {
@@ -145,42 +144,10 @@ const MainPage = () => {
 		}
 	};
 
-	const openModal = (type: ModalType) => {
-		setModals((prev) => ({
-			...prev,
-			[type]: {
-				...prev[type],
-				isOpen: true,
-				zIndex: 10,
-			},
-			[type === 'music' ? 'chart' : 'music']: {
-				...prev[type === 'music' ? 'chart' : 'music'],
-				zIndex: 5,
-			},
-		}));
-	};
-
-	const closeModal = (type: ModalType) => {
-		setModals((prev) => ({
-			...prev,
-			[type]: { ...prev[type], isOpen: false },
-		}));
-	};
-
-	const toggleModalMinimize = (type: ModalType) => {
-		setModals((prev) => ({
-			...prev,
-			[type]: { ...prev[type], isMinimized: !prev[type].isMinimized },
-		}));
-	};
-
-	const getModalStyle = (type: ModalType) => {
-		const modalData = modals[type];
-		return {
-			zIndex: modalData.zIndex,
-			display: modalData.isMinimized ? 'none' : undefined,
-		};
-	};
+	useEffect(() => {
+		console.log('showModalshowModalshowModal', musicModal.modalState.isOpen);
+		console.log('showModalshowModalshowModal', chartModal.modalState.isOpen);
+	}, [chartModal, musicModal]);
 
 	useEffect(() => {
 		setIsPrevDisabled(false);
@@ -205,43 +172,51 @@ const MainPage = () => {
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
 			<main className="relative flex items-center justify-center w-full h-full">
-				<MusicModal
-					open={modals.music.isOpen}
-					onModalClick={() => openModal('music')}
-					onClose={() => closeModal('music')}
-					onMinimize={() => toggleModalMinimize('music')}
-					handleChartModalOpen={() => openModal('chart')}
-					isPlaying={isPlaying}
-					currentSongIndex={currentSongIndex}
-					songs={songs}
-					playerRef={playerRef}
-					songTransitionLoading={songTransitionLoading}
-					isPrevDisabled={isPrevDisabled}
-					isNextDisabled={isNextDisabled}
-					duration={duration}
-					currentTime={currentTime}
-					handleTimeUpdate={handleTimeUpdate}
-					handlePlayClick={handlePlayClick}
-					isMuted={isMuted}
-					setIsMuted={setIsMuted}
-					volume={volume}
-					setVolume={setVolume}
-					handlePrevSong={handlePrevSong}
-					isPlayButton={isPlayButton}
-					handlePauseClick={handlePauseClick}
-					handleNextSong={handleNextSong}
-					playerLoading={playerLoading}
-					style={getModalStyle('music')}
-				/>
-
-				<ChartModal
-					open={modals.chart.isOpen}
-					style={getModalStyle('chart')}
-					onModalClick={() => openModal('chart')}
-					onClose={() => closeModal('chart')}
-					onMinimize={() => toggleModalMinimize('chart')}
-				/>
-
+				{musicModal.modalState.isOpen && (
+					<MusicModal
+						open={musicModal.modalState.isOpen}
+						onModalClick={musicModal.open}
+						onClose={musicModal.close}
+						onMinimize={musicModal.toggleMinimize}
+						handleChartModalOpen={chartModal.open}
+						style={{
+							zIndex: musicModal.modalState.zIndex,
+							display: musicModal.modalState.isMinimized ? 'none' : undefined,
+						}}
+						isPlaying={isPlaying}
+						currentSongIndex={currentSongIndex}
+						songs={songs}
+						playerRef={playerRef}
+						songTransitionLoading={songTransitionLoading}
+						isPrevDisabled={isPrevDisabled}
+						isNextDisabled={isNextDisabled}
+						duration={duration}
+						currentTime={currentTime}
+						handleTimeUpdate={handleTimeUpdate}
+						handlePlayClick={handlePlayClick}
+						isMuted={isMuted}
+						setIsMuted={setIsMuted}
+						volume={volume}
+						setVolume={setVolume}
+						handlePrevSong={handlePrevSong}
+						isPlayButton={isPlayButton}
+						handlePauseClick={handlePauseClick}
+						handleNextSong={handleNextSong}
+						playerLoading={playerLoading}
+					/>
+				)}
+				{chartModal.modalState.isOpen && (
+					<ChartModal
+						open={chartModal.modalState.isOpen}
+						onModalClick={chartModal.open}
+						onClose={chartModal.close}
+						onMinimize={chartModal.toggleMinimize}
+						style={{
+							zIndex: chartModal.modalState.zIndex,
+							display: chartModal.modalState.isMinimized ? 'none' : undefined,
+						}}
+					/>
+				)}
 				<YouTube
 					iframeClassName="w-full h-full flex-grow"
 					className="w-full h-full pointer-events-none"
@@ -255,18 +230,18 @@ const MainPage = () => {
 			<footer className="flex items-center w-full px-7 h-9 bg-retroGray">
 				<div className="relative flex items-center h-full">
 					<Button
-						onClick={() => openModal('music')}
+						onClick={musicModal.open}
 						className={`text-[14px] flex items-center justify-center  font-eng mr-2 border-none w-7 h-7 bar`}
 					>
 						<i className="text-[20px] fa fa-headphones-simple"></i>
 					</Button>
 				</div>
 				<div className="flex">
-					{modals.music.isOpen && (
+					{musicModal.modalState.isOpen && (
 						<Button
-							onClick={() => toggleModalMinimize('music')}
+							onClick={musicModal.toggleMinimize}
 							className={`text-[14px] w-[160px]  flex justify-start pt-1 px-1 m-1 font-eng  ${
-								modals.music.isMinimized
+								musicModal.modalState.isMinimized
 									? 'bg-retroGray outsetShadowStyle'
 									: 'bg-retroLightGray insetBorderStyle font-bold'
 							} `}
@@ -274,11 +249,11 @@ const MainPage = () => {
 							🎧 Music
 						</Button>
 					)}
-					{modals.chart.isOpen && (
+					{chartModal.modalState.isOpen && (
 						<Button
-							onClick={() => toggleModalMinimize('chart')}
+							onClick={chartModal.toggleMinimize}
 							className={`text-[14px] w-[160px] flex justify-start pt-1 px-1 m-1 font-eng ${
-								modals.chart.isMinimized
+								chartModal.modalState.isMinimized
 									? 'bg-retroGray outsetShadowStyle'
 									: 'bg-retroLightGray insetBorderStyle font-bold'
 							} `}

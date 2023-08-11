@@ -13,9 +13,9 @@ import { IPlayer, ISong } from '../../types/types';
 interface IMusicPlayerModalProps {
 	open: boolean;
 	style: React.CSSProperties;
-	onClose: MouseEventHandler<HTMLDivElement>;
+	onClose: MouseEventHandler<HTMLButtonElement>;
+	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
-	onMinimize: MouseEventHandler<HTMLDivElement>;
 	handleChartModalOpen: MouseEventHandler<HTMLLIElement>;
 	isPlaying: boolean;
 	currentSongIndex: number;

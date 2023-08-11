@@ -4,8 +4,8 @@ import Modal from './Modal';
 interface IChartModal {
 	open: boolean;
 	style: React.CSSProperties;
-	onClose: MouseEventHandler<HTMLDivElement>;
-	onMinimize: MouseEventHandler<HTMLDivElement>;
+	onClose: MouseEventHandler<HTMLButtonElement>;
+	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
 }
 

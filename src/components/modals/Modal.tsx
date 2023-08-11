@@ -3,10 +3,10 @@ import ModalHeader from './ModalHeader';
 import useDrag from '../../hooks/useDrag';
 
 interface IModalComponentProps {
-	open?: boolean;
+	open: boolean;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
-	onMinimize: MouseEventHandler<HTMLDivElement>;
-	onClose: MouseEventHandler<HTMLDivElement>;
+	onMinimize: MouseEventHandler<HTMLButtonElement>;
+	onClose: MouseEventHandler<HTMLButtonElement>;
 	children: React.ReactNode;
 	title: string;
 	className?: string;
