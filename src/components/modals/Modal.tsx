@@ -1,6 +1,7 @@
 import React, { MouseEvent, MouseEventHandler, forwardRef, useLayoutEffect } from 'react';
 import ModalHeader from './ModalHeader';
 import useDrag from '../../hooks/useDrag';
+import useModal from '../../hooks/useModal';
 
 interface IModalComponentProps {
 	open: boolean;
@@ -23,6 +24,8 @@ const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
 		forwardedRef,
 	) => {
 		const ref = forwardedRef as React.RefObject<HTMLDivElement>;
+		const { modalState } = useModal();
+
 		const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
 			useDrag(ref);
 
@@ -42,6 +45,7 @@ const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
 				style={{
 					transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
 					userSelect: 'none',
+					zIndex: modalState.zIndex,
 					...style,
 				}}
 			>

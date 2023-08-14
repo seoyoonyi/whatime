@@ -1,4 +1,5 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useContext, useEffect, useState } from 'react';
+import ModalContext from '../contexts/ModalContext';
 
 type ModalState = {
 	isOpen: boolean;
@@ -13,14 +14,17 @@ const defaultState: ModalState = {
 };
 
 const useModal = (initialState = defaultState) => {
+	const { currentHighestZIndex, incrementZIndex } = useContext(ModalContext);
+
 	const [modalState, setModalState] = useState<ModalState>(initialState);
 
 	const open = () => {
 		setModalState((prev) => ({
 			...prev,
 			isOpen: true,
-			zIndex: 10,
+			zIndex: currentHighestZIndex + 1,
 		}));
+		incrementZIndex();
 	};
 
 	const close = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {

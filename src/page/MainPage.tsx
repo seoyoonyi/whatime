@@ -12,7 +12,7 @@ const songs: ISong[] = newJeans;
 
 const MainPage = () => {
 	// Modal related state
-	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 10 });
+	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 });
 	const chartModal = useModal();
 
 	// Player related states
@@ -143,11 +143,6 @@ const MainPage = () => {
 			setIsPlaying(true);
 		}
 	};
-
-	useEffect(() => {
-		console.log('showModalshowModalshowModal', musicModal.modalState.isOpen);
-		console.log('showModalshowModalshowModal', chartModal.modalState.isOpen);
-	}, [chartModal, musicModal]);
 
 	useEffect(() => {
 		setIsPrevDisabled(false);
