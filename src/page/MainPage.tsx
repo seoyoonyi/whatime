@@ -6,15 +6,14 @@ import { ISong, IPlayer } from '../types/types';
 import Button from '../components/Button';
 import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
+import ModalButton from '../components/ModalButton';
 
 export type ModalType = 'music' | 'chart';
 const songs: ISong[] = newJeans;
 
 const MainPage = () => {
-	// Modal related state
-	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 });
-	const chartModal = useModal();
-
+	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
+	const chartModal = useModal(undefined, 'chart');
 	// Player related states
 	const playerRef = useRef<IPlayer | null>(null);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -232,30 +231,22 @@ const MainPage = () => {
 					</Button>
 				</div>
 				<div className="flex">
-					{musicModal.modalState.isOpen && (
-						<Button
-							onClick={musicModal.toggleMinimize}
-							className={`text-[14px] w-[160px]  flex justify-start pt-1 px-1 m-1 font-eng  ${
-								musicModal.modalState.isMinimized
-									? 'bg-retroGray outsetShadowStyle'
-									: 'bg-retroLightGray insetBorderStyle font-bold'
-							} `}
-						>
-							🎧 Music
-						</Button>
-					)}
-					{chartModal.modalState.isOpen && (
-						<Button
-							onClick={chartModal.toggleMinimize}
-							className={`text-[14px] w-[160px] flex justify-start pt-1 px-1 m-1 font-eng ${
-								chartModal.modalState.isMinimized
-									? 'bg-retroGray outsetShadowStyle'
-									: 'bg-retroLightGray insetBorderStyle font-bold'
-							} `}
-						>
-							📈 Chart
-						</Button>
-					)}
+					<ModalButton
+						modalType="music"
+						open={musicModal.modalState.isOpen}
+						isMinimized={musicModal.modalState.isMinimized}
+						toggleMinimize={musicModal.toggleMinimize}
+						icon="🎧"
+						label="Music"
+					/>
+					<ModalButton
+						modalType="chart"
+						open={chartModal.modalState.isOpen}
+						isMinimized={chartModal.modalState.isMinimized}
+						toggleMinimize={chartModal.toggleMinimize}
+						icon="📈"
+						label="Chart"
+					/>
 				</div>
 			</footer>
 		</div>

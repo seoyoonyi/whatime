@@ -1,5 +1,6 @@
-import { MouseEvent, useContext, useEffect, useState } from 'react';
+import { MouseEvent, useContext, useState } from 'react';
 import ModalContext from '../contexts/ModalContext';
+import { ModalType } from '../page/MainPage';
 
 type ModalState = {
 	isOpen: boolean;
@@ -13,18 +14,35 @@ const defaultState: ModalState = {
 	zIndex: 5,
 };
 
-const useModal = (initialState = defaultState) => {
-	const { currentHighestZIndex, incrementZIndex } = useContext(ModalContext);
+const useModal = (initialState = defaultState, modalType?: ModalType) => {
+	const {
+		currentHighestZIndex,
+		incrementZIndex,
+		currentHighestModal,
+		setCurrentHighestModal,
+		modalsState,
+	} = useContext(ModalContext);
 
 	const [modalState, setModalState] = useState<ModalState>(initialState);
+
+	const bringToFront = () => {
+		setModalState((prev) => ({
+			...prev,
+			zIndex: currentHighestZIndex + 1,
+		}));
+		incrementZIndex();
+
+		if (modalType && currentHighestModal !== modalType) {
+			setCurrentHighestModal(modalType);
+		}
+	};
 
 	const open = () => {
 		setModalState((prev) => ({
 			...prev,
 			isOpen: true,
-			zIndex: currentHighestZIndex + 1,
 		}));
-		incrementZIndex();
+		bringToFront();
 	};
 
 	const close = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -42,11 +60,18 @@ const useModal = (initialState = defaultState) => {
 		}));
 	};
 
+	const checkAllModalsMinimized = () => {
+		const allMinimized = !Object.values(modalsState).some((modal) => !modal);
+		return allMinimized;
+	};
+
 	return {
 		modalState,
 		open,
 		close,
 		toggleMinimize,
+		bringToFront,
+		isAllMinimized: checkAllModalsMinimized(),
 	};
 };
 
