@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ModalType } from '../page/MainPage';
 import Button from './Button';
 import ModalContext from '../contexts/ModalContext';
@@ -8,7 +8,6 @@ interface IModalButtonProps {
 	open: boolean;
 	isMinimized: boolean;
 	toggleMinimize: () => void;
-	// currentHighestModal: ModalType | null;
 	icon: string;
 	label: string;
 }
@@ -18,14 +17,15 @@ const ModalButton = ({
 	open,
 	isMinimized,
 	toggleMinimize,
-	// currentHighestModal,
 	icon,
 	label,
 }: IModalButtonProps) => {
-	const { currentHighestModal, secondHighestModal } = useContext(ModalContext);
+	const { currentHighestModal, modalZIndexes } = useContext(ModalContext);
 
 	const isActive = currentHighestModal === modalType;
-	const isSecondActive = secondHighestModal === modalType;
+	const isSecondActive =
+		modalZIndexes[modalType] ===
+		(currentHighestModal ? modalZIndexes[currentHighestModal] - 1 : -1);
 
 	if (!open) return null;
 	return (
@@ -35,7 +35,7 @@ const ModalButton = ({
 				isActive && !isMinimized
 					? 'bg-retroLightGray insetBorderStyle font-bold'
 					: isSecondActive && !isMinimized
-					? 'bg-retroLightGray insetBorderStyle font-bold'
+					? 'bg-retroGray outsetShadowStyle'
 					: 'bg-retroGray outsetShadowStyle'
 			} `}
 		>

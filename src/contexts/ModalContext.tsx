@@ -10,20 +10,29 @@ interface IModalContextType<T> {
 	incrementZIndex: () => void;
 	currentHighestModal: null | ModalType;
 	setCurrentHighestModal: React.Dispatch<React.SetStateAction<null | ModalType>>;
+	setCurrentHighestZIndex: React.Dispatch<React.SetStateAction<number>>;
 	modalsState: T;
 	setModalsState: React.Dispatch<React.SetStateAction<T>>;
 	modalZIndexes: ModalZIndexType;
 	setModalZIndexes: React.Dispatch<React.SetStateAction<ModalZIndexType>>;
-	secondHighestModal: ModalType | null; // 이 줄을 추가합니다.
+	secondHighestModal: ModalType | null;
 }
 
-type ModalKeys = 'music' | 'chart';
+export type ModalKeys = 'music' | 'chart';
 type ModalStateType = Record<ModalKeys, boolean>;
-type ModalZIndexType = Record<ModalKeys, number>;
+export type ModalZIndexType = Record<ModalKeys, number>;
 
-const initialModalZIndexes: ModalZIndexType = {
-	music: 5,
-	chart: 4, // 예를 들어
+const createInitialModalZIndexes = (
+	modalKeys: ModalKeys[],
+	startZIndex: number,
+): ModalZIndexType => {
+	const zIndexes: Partial<ModalZIndexType> = {};
+
+	modalKeys.forEach((key, index) => {
+		zIndexes[key] = startZIndex - index;
+	});
+
+	return zIndexes as ModalZIndexType;
 };
 
 const createInitialModalsState = (modalKeys: ModalKeys[]): ModalStateType => {
@@ -36,13 +45,18 @@ const createInitialModalsState = (modalKeys: ModalKeys[]): ModalStateType => {
 	return state as ModalStateType;
 };
 
-const initialModalsState = createInitialModalsState(['music', 'chart']);
+export const ModalKeysArray: ModalKeys[] = ['music', 'chart'];
 
-const ModalContext = createContext<IModalContextType<ModalStateType>>({
+const initialModalZIndexes = createInitialModalZIndexes(ModalKeysArray, 5);
+const initialModalsState = createInitialModalsState(ModalKeysArray);
+
+const defaultContext: IModalContextType<ModalStateType> = {
 	currentHighestZIndex: 5,
 	currentHighestModal: 'music',
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	setCurrentHighestModal: () => {},
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	setCurrentHighestZIndex: () => {},
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	incrementZIndex: () => {},
 	modalsState: initialModalsState,
@@ -51,9 +65,10 @@ const ModalContext = createContext<IModalContextType<ModalStateType>>({
 	modalZIndexes: initialModalZIndexes,
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	setModalZIndexes: () => {},
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	secondHighestModal: null,
-});
+};
+
+const ModalContext = createContext<IModalContextType<ModalStateType>>(defaultContext);
 
 export const ModalProvider = ({ children }: IModalComponentProps) => {
 	const [modalsState, setModalsState] = useState(initialModalsState);
@@ -65,16 +80,22 @@ export const ModalProvider = ({ children }: IModalComponentProps) => {
 		setCurrentHighestZIndex((prev) => prev + 1);
 	};
 
-	const getSecondHighestModal = (modalZIndexes: ModalZIndexType): ModalType | null => {
+	const getSecondHighestModal = (
+		modalZIndexes: ModalZIndexType,
+		highestModal: ModalType | null,
+	): ModalType | null => {
 		const sortedModals = Object.entries(modalZIndexes).sort(
 			([, zIndexA], [, zIndexB]) => zIndexB - zIndexA,
 		);
 
-		if (sortedModals[1]) {
-			return sortedModals[1][0] as ModalType;
+		const secondHighest = sortedModals.find(([key]) => key !== highestModal);
+
+		if (secondHighest) {
+			return secondHighest[0] as ModalType;
 		}
 		return null;
 	};
+
 	return (
 		<ModalContext.Provider
 			value={{
@@ -82,11 +103,12 @@ export const ModalProvider = ({ children }: IModalComponentProps) => {
 				incrementZIndex,
 				currentHighestModal,
 				setCurrentHighestModal,
+				setCurrentHighestZIndex,
 				modalsState,
 				setModalsState,
 				modalZIndexes,
 				setModalZIndexes,
-				secondHighestModal: getSecondHighestModal(modalZIndexes),
+				secondHighestModal: getSecondHighestModal(modalZIndexes, currentHighestModal),
 			}}
 		>
 			{children}
