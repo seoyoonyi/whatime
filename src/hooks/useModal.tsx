@@ -27,21 +27,15 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 	const [modalState, setModalState] = useState<ModalState>(initialState);
 
 	const bringToFront = () => {
-		const newZIndex = currentHighestZIndex + 1;
-		setModalState((prev) => ({ ...prev, zIndex: newZIndex }));
-
 		if (modalType) {
-			setModalZIndexes((prev) => {
-				const updatedZIndexes: ModalZIndexType = { ...prev };
-
-				for (const key of Object.keys(prev) as ModalKeys[]) {
-					updatedZIndexes[key] = key === modalType ? newZIndex : updatedZIndexes[key] - 1;
-				}
-
-				return updatedZIndexes;
-			});
+			const newZIndex = currentHighestZIndex + 1;
+			setModalState((prev) => ({ ...prev, zIndex: newZIndex }));
 			incrementZIndex();
-			if (currentHighestModal !== modalType) setCurrentHighestModal(modalType);
+			setCurrentHighestModal(modalType);
+			setModalZIndexes((prevZIndexes) => ({
+				...prevZIndexes,
+				[modalType]: newZIndex,
+			}));
 		}
 	};
 
@@ -58,17 +52,15 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		setModalState((prev) => ({
 			...prev,
 			isOpen: false,
+			isMinimized: false,
 		}));
-
-		const sortedModals = Object.entries(modalsState).sort(
-			([, zIndexA], [, zIndexB]) =>
-				(zIndexB as unknown as number) - (zIndexA as unknown as number),
-		);
-
-		const nextHighestModal = sortedModals.find(([key]) => key !== modalType);
-
-		if (nextHighestModal) {
-			setCurrentHighestModal(nextHighestModal[0] as ModalType);
+		if (modalType === currentHighestModal) {
+			const sortedModals = Object.entries(modalsState).sort(
+				([, zIndexA], [, zIndexB]) =>
+					(zIndexB as unknown as number) - (zIndexA as unknown as number),
+			);
+			const nextHighestModal = sortedModals[0][0] as ModalType;
+			setCurrentHighestModal(nextHighestModal);
 		}
 	};
 
@@ -77,10 +69,16 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 			...prev,
 			isMinimized: !prev.isMinimized,
 		}));
-		if (!modalState.isMinimized) {
-			bringToFront();
+		if (!modalState.isMinimized && modalType === currentHighestModal) {
+			const sortedModals = Object.entries(modalsState).sort(
+				([, zIndexA], [, zIndexB]) =>
+					(zIndexB as unknown as number) - (zIndexA as unknown as number),
+			);
+			const nextHighestModal = sortedModals[0][0] as ModalType;
+			setCurrentHighestModal(nextHighestModal);
 		}
 	};
+
 	const checkAllModalsMinimized = () => {
 		const allMinimized = !Object.values(modalsState).some((modal) => !modal);
 		return allMinimized;

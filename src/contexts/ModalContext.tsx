@@ -19,7 +19,7 @@ interface IModalContextType<T> {
 }
 
 export type ModalKeys = 'music' | 'chart';
-type ModalStateType = Record<ModalKeys, boolean>;
+type ModalStateType = Record<ModalKeys, { isOpen: boolean; zIndex: number }>;
 export type ModalZIndexType = Record<ModalKeys, number>;
 
 const createInitialModalZIndexes = (
@@ -39,7 +39,7 @@ const createInitialModalsState = (modalKeys: ModalKeys[]): ModalStateType => {
 	const state: Partial<ModalStateType> = {};
 
 	for (const key of modalKeys) {
-		state[key] = false;
+		state[key] = { isOpen: false, zIndex: 0 };
 	}
 
 	return state as ModalStateType;
