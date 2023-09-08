@@ -40,7 +40,7 @@ const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
 		return (
 			<div
 				ref={ref}
-				className={`outsetShadowStyle p-[3px] laptop:w-[610px] ${className}`}
+				className={`outsetShadowStyle p-[3px] ${className}`}
 				onClick={onModalClick}
 				style={{
 					transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,

@@ -5,5 +5,5 @@ export const formatTime = (seconds: number): string => {
 	return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 
-export const truncateTitle = (title: string, maxLength = 55) =>
+export const truncateTitle = (title: string, maxLength = 25) =>
 	title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useRef } from 'react';
+import React, { MouseEventHandler, useEffect, useRef } from 'react';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -70,16 +70,22 @@ const MusicModal = ({
 	const musicModalRef = useRef(null);
 
 	const currentSong = songs[currentSongIndex];
-	const currentSongTitle = truncateTitle(he.decode(currentSong.title));
-	const loadingMessage = (
-		<h3>
-			Loading...
-			<br />
-			Please wait...
-		</h3>
-	);
-	const title = songTransitionLoading ? loadingMessage : <h3>{currentSongTitle}</h3>;
+	const currentSongTitle = songTransitionLoading
+		? 'Loading...'
+		: truncateTitle(he.decode(currentSong.musicTitle));
+
+	const currentSongArtist = songTransitionLoading ? 'Please wait...' : currentSong.artist;
 	const thumbnailImage = songTransitionLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
+
+	useEffect(() => {
+		if (playerRef.current && songs[currentSongIndex]) {
+			playerRef.current.src = songs[currentSongIndex].url;
+			if (typeof playerRef.current.play === 'function') {
+				playerRef.current.play();
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [currentSongIndex]);
 
 	const musicModalnavItems: INavItemProps[] = [
 		{ shortcut: 'c', label: 'hart', onClick: handleChartModalOpen },
@@ -133,7 +139,7 @@ const MusicModal = ({
 	return (
 		<>
 			<Modal
-				className="absolute"
+				className="absolute laptop:w-[610px]"
 				open={open}
 				onClose={onClose}
 				onMinimize={onMinimize}
@@ -163,8 +169,11 @@ const MusicModal = ({
 									/>
 								</div>
 								<div className="w-full">
-									<div className="text-xl font-semibold font-kor mb-[24px]">
-										{title}
+									<div className="text-xl font-extrabold font-kor">
+										{currentSongTitle}
+									</div>
+									<div className="font-kor font-semibold mb-[24px]">
+										{currentSongArtist}
 									</div>
 									<ProgressBar
 										duration={duration}
@@ -196,7 +205,6 @@ const MusicModal = ({
 									<ButtonGroup buttons={musicControlbuttons} />
 									<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px] hover:opacity-40">
 										<i className="fa fa-heart"></i>
-										<span className="font-medium font-eng text-[13px]">0</span>
 									</Button>
 								</div>
 							</div>

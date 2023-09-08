@@ -1,16 +1,19 @@
 export interface ISong {
-	title: string;
+	id: number;
+	ranking: string;
+	url: string;
+	musicTitle: string;
+	artist: string;
 	thumbnail: string;
-	videoId: string;
-	audioUrl: string;
 	duration: string;
+	viewCount: string;
 	releaseDate: string;
-	viewCount: number;
-	likes: string;
-	comments: string;
+	rankDate: string;
 }
 
 export interface IPlayer {
+	play(): unknown;
+	src: string;
 	stopVideo(): () => void;
 	setVolume: (arg0: number) => void;
 	getCurrentTime(): number;

@@ -1,25 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import newJeans from '../data/newjeans.json';
+import mock from '../data/mock.json';
 import { ISong, IPlayer } from '../types/types';
 import Button from '../components/Button';
 import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/ModalButton';
+import axios from 'axios';
 
 export type ModalType = 'music' | 'chart';
-const songs: ISong[] = newJeans;
+const apiUrl = process.env.API_URL as string;
 
 const MainPage = () => {
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
 	const chartModal = useModal(undefined, 'chart');
+
+	const [songs, setSongs] = useState<ISong[]>(mock.data);
+
 	// Player related states
 	const playerRef = useRef<IPlayer | null>(null);
 	const [isPlaying, setIsPlaying] = useState<boolean>(false);
 	const [isMuted, setIsMuted] = useState<boolean>(true);
 	const [volume, setVolume] = useState<number>(100);
-	const [playerReady, setPlayerReady] = useState<boolean>(false);
+	const [, setPlayerReady] = useState<boolean>(false);
 	const [playerLoading, setPlayerLoading] = useState<boolean>(true);
 	const [isSongLoaded, setIsSongLoaded] = useState<boolean>(false);
 
@@ -85,6 +89,10 @@ const MainPage = () => {
 		}
 	};
 
+	const handleSongClick = (index: number) => {
+		setCurrentSongIndex(index);
+	};
+
 	const handlePlayClick = () => {
 		if (playerRef.current) {
 			setIsPlaying(true);
@@ -142,6 +150,27 @@ const MainPage = () => {
 			setIsPlaying(true);
 		}
 	};
+
+	useEffect(() => {
+		const fetchSongs = async () => {
+			try {
+				const response = await axios.get(apiUrl);
+				if (response.data && Array.isArray(response.data.data)) {
+					setSongs(response.data.data);
+				} else {
+					// eslint-disable-next-line no-console
+					console.error('Invalid response format.');
+					setSongs(mock.data);
+				}
+			} catch (error) {
+				// eslint-disable-next-line no-console
+				console.error('Failed to fetch songs from API, using mock data.', error);
+				setSongs(mock.data);
+			}
+		};
+
+		fetchSongs();
+	}, []);
 
 	useEffect(() => {
 		setIsPrevDisabled(false);
@@ -202,9 +231,11 @@ const MainPage = () => {
 				{chartModal.modalState.isOpen && (
 					<ChartModal
 						open={chartModal.modalState.isOpen}
+						songs={songs}
 						onModalClick={chartModal.open}
 						onClose={chartModal.close}
 						onMinimize={chartModal.toggleMinimize}
+						onSongClick={handleSongClick}
 						style={{
 							zIndex: chartModal.modalState.zIndex,
 							display: chartModal.modalState.isMinimized ? 'none' : undefined,
@@ -214,7 +245,7 @@ const MainPage = () => {
 				<YouTube
 					iframeClassName="w-full h-full flex-grow"
 					className="w-full h-full pointer-events-none"
-					videoId={new URL(currentSong.audioUrl).searchParams.get('v') || ''}
+					videoId={new URL(currentSong.url).searchParams.get('v') || ''}
 					opts={opts}
 					onReady={handleReady}
 					onStateChange={handleStateChange}
