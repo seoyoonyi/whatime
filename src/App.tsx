@@ -1,5 +1,5 @@
 import React from 'react';
-import '@fortawesome/fontawesome-free/css/all.css';
+import '@react95/icons/icons.css';
 
 import './App.css';
 import MainPage from './page/MainPage';
