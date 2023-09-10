@@ -1,7 +1,8 @@
-import React, { MouseEvent, MouseEventHandler, forwardRef, useLayoutEffect } from 'react';
-import ModalHeader from './ModalHeader';
-import useDrag from '../../hooks/useDrag';
+import React, { MouseEvent, MouseEventHandler, RefObject, useLayoutEffect } from 'react';
 import useModal from '../../hooks/useModal';
+import useDrag from '../../hooks/useDrag';
+import Frame from '../Frame';
+import ModalHeader from './ModalHeader';
 
 interface IModalComponentProps {
 	open: boolean;
@@ -11,59 +12,67 @@ interface IModalComponentProps {
 	children: React.ReactNode;
 	title: string;
 	className?: string;
+	icon?: React.ReactElement;
 	style?: React.CSSProperties;
 	onMouseMove?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseUp?: () => void;
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseLeave?: () => void;
+	modalRef: RefObject<HTMLDivElement>;
 }
 
-const Modal = forwardRef<HTMLDivElement, IModalComponentProps>(
-	(
-		{ open, onModalClick, onMinimize, onClose, children, title, className, style },
-		forwardedRef,
-	) => {
-		const ref = forwardedRef as React.RefObject<HTMLDivElement>;
-		const { modalState } = useModal();
+const Modal = ({
+	open,
+	icon,
+	onModalClick,
+	onMinimize,
+	onClose,
+	children,
+	title,
+	className,
+	style,
+	modalRef,
+}: IModalComponentProps) => {
+	const { modalState } = useModal();
 
-		const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
-			useDrag(ref);
+	const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
+		useDrag(modalRef);
 
-		useLayoutEffect(() => {
-			if (ref && 'current' in ref && ref.current) {
-				ref.current.style.transform = `translate(${modalPos.x}px, ${modalPos.y}px)`;
-			}
-		}, [modalPos, ref]);
+	useLayoutEffect(() => {
+		if (modalRef && 'current' in modalRef && modalRef.current) {
+			modalRef.current.style.transform = `translate(${modalPos.x}px, ${modalPos.y}px)`;
+		}
+	}, [modalPos, modalRef]);
 
-		if (!open) return null;
+	if (!open) return null;
 
-		return (
-			<div
-				ref={ref}
-				className={`outsetShadowStyle p-[3px] ${className}`}
-				onClick={onModalClick}
-				style={{
-					transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
-					userSelect: 'none',
-					zIndex: modalState.zIndex,
-					...style,
-				}}
-			>
-				<ModalHeader
-					title={title}
-					onMinimize={onMinimize}
-					onClose={onClose}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseDown={handleMouseDown}
-					onMouseLeave={handleMouseLeave}
-				/>
-				{children}
-			</div>
-		);
-	},
-);
-
-Modal.displayName = 'Modal';
+	return (
+		<Frame
+			ref={modalRef}
+			boxShadow="out"
+			bg="retroGray"
+			className={`p-[3px] ${className}`}
+			onModalClick={onModalClick}
+			style={{
+				transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
+				userSelect: 'none',
+				zIndex: modalState.zIndex,
+				...style,
+			}}
+		>
+			<ModalHeader
+				icon={icon}
+				title={title}
+				onMinimize={onMinimize}
+				onClose={onClose}
+				onMouseMove={handleMouseMove}
+				onMouseUp={handleMouseUp}
+				onMouseDown={handleMouseDown}
+				onMouseLeave={handleMouseLeave}
+			/>
+			{children}
+		</Frame>
+	);
+};
 
 export default Modal;

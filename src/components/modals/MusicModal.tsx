@@ -9,6 +9,18 @@ import Navigation from '../Navigation';
 import he from 'he';
 import { formatTime, truncateTitle } from '../../utils/ utils';
 import { IPlayer, ISong } from '../../types/types';
+import { CdMusic } from '@react95/icons';
+import Frame from '../Frame';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+	faGear,
+	faPause,
+	faPlay,
+	faPlus,
+	faStepBackward,
+	faStepForward,
+	faUser,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -95,62 +107,59 @@ const MusicModal = ({
 	const musicControlbuttons: IButtonProps[] = [
 		{
 			className: `w-[75px] ${
-				isPrevDisabled
-					? 'cursor-not-allowed opacity-40'
-					: 'hover:opacity-40 hover:ease-in transition duration-150 ease-out cursor-pointer'
+				isPrevDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
 			}`,
 
 			disabled: isPrevDisabled,
 			onClick: handlePrevSong,
-			children: <i className="fa fa-step-backward"></i>,
+			children: <FontAwesomeIcon icon={faStepBackward} />,
 		},
 		{
-			className: 'w-[80px] hover:opacity-40 cursor-pointer',
+			className: 'w-[80px] cursor-pointer',
 			onClick: isPlayButton ? handlePlayClick : handlePauseClick,
 			children: isPlayButton ? (
-				<i className="fa fa-play"></i>
+				<FontAwesomeIcon icon={faPlay} />
 			) : (
-				<i className="fa fa-pause"></i>
+				<FontAwesomeIcon icon={faPause} />
 			),
 		},
 		{
 			className: `w-[75px] ${
-				isNextDisabled
-					? 'cursor-not-allowed opacity-40'
-					: 'hover:opacity-40 hover:ease-in transition duration-150 ease-out cursor-pointer'
+				isNextDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
 			}`,
 			disabled: isNextDisabled,
 			onClick: handleNextSong,
-			children: <i className="fa fa-step-forward"></i>,
+			children: <FontAwesomeIcon icon={faStepForward} />,
 		},
 	];
 
 	const userControlbuttons: IButtonProps[] = [
 		{
-			className: 'w-[75px] hover:opacity-40',
-			children: <i className="fa fa-user"></i>,
+			className: 'w-[75px]',
+			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
-			className: 'w-[75px] hover:opacity-40',
-			children: <i className="fa fa-gear"></i>,
+			className: 'w-[75px]',
+			children: <FontAwesomeIcon icon={faGear} />,
 		},
 	];
 
 	return (
 		<>
 			<Modal
-				className="absolute laptop:w-[610px]"
+				className="absolute"
 				open={open}
 				onClose={onClose}
 				onMinimize={onMinimize}
 				onModalClick={onModalClick}
-				title="🎧 Music"
-				ref={musicModalRef}
+				icon={<CdMusic className="w-auto" />}
+				title="Music"
+				modalRef={musicModalRef}
 				style={style}
 			>
 				<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
 
-				<div className="py-[19px] px-[21px] insetShadowStyle">
+				<Frame className="py-[19px] px-[21px] w-[620px]" boxShadow="in" bg="retroGray">
 					{playerLoading ? (
 						<div className="w-full flex  items-center justify-center text-black h-[176px]">
 							<span className="w-[30px]">
@@ -161,11 +170,20 @@ const MusicModal = ({
 					) : (
 						<>
 							<div className="flex space-x-[20px]">
-								<div className=" flex-shrink-0 w-[218px] h-[122px] bg-black flex justify-center items-center overflow-hidden">
-									<img
-										className="w-full"
-										src={thumbnailImage}
-										alt={songTransitionLoading ? 'loading' : currentSongTitle}
+								<div>
+									<div className=" flex-shrink-0 w-[218px] h-[122px] bg-black flex justify-center items-center overflow-hidden">
+										<img
+											className="w-full"
+											src={thumbnailImage}
+											alt={
+												songTransitionLoading ? 'loading' : currentSongTitle
+											}
+										/>
+									</div>
+
+									<ButtonGroup
+										buttons={userControlbuttons}
+										className="mt-[20px]"
 									/>
 								</div>
 								<div className="w-full">
@@ -183,7 +201,7 @@ const MusicModal = ({
 										isPlaying={isPlaying}
 										isMuted={isMuted}
 										setIsMuted={setIsMuted}
-										className="h-[4px] mb-[13px]"
+										className="h-[4px] mb-[17px]"
 									/>
 									<div className="flex items-center justify-between">
 										<div>{`${formatTime(currentTime)} / ${formatTime(
@@ -197,20 +215,17 @@ const MusicModal = ({
 											setIsMuted={setIsMuted}
 										/>
 									</div>
-								</div>
-							</div>
-							<div className="flex justify-between mt-[20px]">
-								<ButtonGroup buttons={userControlbuttons} />
-								<div className="flex justify-between">
-									<ButtonGroup buttons={musicControlbuttons} />
-									<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px] hover:opacity-40">
-										<i className="fa fa-heart"></i>
-									</Button>
+									<div className="flex justify-between mt-[20px]">
+										<ButtonGroup buttons={musicControlbuttons} />
+										<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px]">
+											<FontAwesomeIcon icon={faPlus} />
+										</Button>
+									</div>
 								</div>
 							</div>
 						</>
 					)}
-				</div>
+				</Frame>
 				<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
 					Hello, World
 				</p>

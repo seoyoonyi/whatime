@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styles from './volumebar.module.css';
 import { IPlayer } from '../../types/types';
+import { Mute, Unmute } from '@react95/icons';
 
 interface IVolumeBarProps {
 	player: IPlayer | null;
@@ -55,7 +56,7 @@ const VolumeBar = ({ player, volume, setVolume, setIsMuted, isMuted }: IVolumeBa
 	return (
 		<div className="flex items-center justify-between cursor-pointer">
 			<span className="text-[22px] cursor-pointer" onClick={toggleMute}>
-				{isMuted ? '🔇' : '🔈'}
+				{isMuted ? <Mute className="w-6 mr-2" /> : <Unmute className="w-6 mr-2" />}
 			</span>
 			<input
 				type="range"

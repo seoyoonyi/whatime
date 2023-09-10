@@ -1,8 +1,11 @@
 import React, { MouseEvent, MouseEventHandler } from 'react';
 import Button from '../Button';
+import { faClose, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IModalHeaderProps {
 	title: string;
+	icon?: React.ReactElement;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
@@ -13,6 +16,7 @@ interface IModalHeaderProps {
 
 const ModalHeader = ({
 	title,
+	icon,
 	onMinimize,
 	onClose,
 	onMouseDown,
@@ -28,19 +32,23 @@ const ModalHeader = ({
 			onMouseUp={onMouseUp}
 			className="flex justify-between bg-retroBlue py-[3px] px-[6px] text-white"
 		>
-			<h2 className="font-bold font-eng">{title}</h2>
-			<div className="flex space-x-1">
+			<div className="flex">
+				<div className="w-5 mr-1">{icon}</div>
+				<h2 className="font-bold font-eng">{title}</h2>
+			</div>
+
+			<div className="flex">
 				<Button
 					onClick={onMinimize}
-					className=" w-[21px] h-[21px] flex justify-center items-center text-black"
+					className=" w-[21px] h-[21px] flex items-center justify-center text-black "
 				>
-					<i className="mb-1 fa fa-window-minimize"></i>
+					<FontAwesomeIcon className="mb-[2px]" icon={faWindowMinimize} />
 				</Button>
 				<Button
 					onClick={(event) => onClose(event)}
-					className=" w-[21px] h-[21px] flex justify-center items-center"
+					className="w-[21px] h-[21px] flex items-center justify-center  text-black"
 				>
-					<img src="/icon-x.svg" alt="close" />
+					<FontAwesomeIcon icon={faClose} />
 				</Button>
 			</div>
 		</div>

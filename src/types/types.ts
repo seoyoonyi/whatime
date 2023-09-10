@@ -12,6 +12,9 @@ export interface ISong {
 }
 
 export interface IPlayer {
+	disableCaptions(): unknown;
+	loadVideoById(videoId: string): unknown;
+	unloadModule(arg0: string): unknown;
 	play(): unknown;
 	src: string;
 	stopVideo(): () => void;

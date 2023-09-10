@@ -12,7 +12,9 @@ const Button = ({ onClick, children, className, disabled }: IButtonProps) => {
 		<button
 			onClick={onClick}
 			disabled={disabled}
-			className={`border bg-retroGray border-b-black border-r-black border-t-white border-l-white ${className}`}
+			className={`border-2 bg-retroGray border-b-black border-r-black border-t-white border-l-white 
+			  active:border-t-black active:border-l-black active:border-b-white active:border-r-white
+			  ${className}`}
 		>
 			{children}
 		</button>

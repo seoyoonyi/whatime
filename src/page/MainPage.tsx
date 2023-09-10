@@ -8,9 +8,10 @@ import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/ModalButton';
 import axios from 'axios';
+import { CdMusic } from '@react95/icons';
 
 export type ModalType = 'music' | 'chart';
-const apiUrl = process.env.API_URL as string;
+const apiUrl = process.env.REACT_APP_API_URL as string;
 
 const MainPage = () => {
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
@@ -64,10 +65,13 @@ const MainPage = () => {
 		}
 
 		if (event.target.getPlayerState() === YouTube.PlayerState.PLAYING) {
-			setDuration(event.target.getDuration());
+			setIsPlayButton(false);
+		} else {
+			setIsPlayButton(true);
 		}
 
 		setIsSongLoaded(true);
+		setSongTransitionLoading(false);
 	};
 
 	const handleStateChange: YouTubeProps['onStateChange'] = (event) => {
@@ -82,6 +86,7 @@ const MainPage = () => {
 				setPlayerLoading(false);
 				setDuration(event.target.getDuration());
 				setIsSongLoaded(true);
+				setSongTransitionLoading(false);
 				break;
 
 			default:
@@ -104,6 +109,7 @@ const MainPage = () => {
 			setIsPlayButton(false);
 		}
 	};
+
 	const handlePauseClick = () => {
 		if (playerRef.current) {
 			setIsPlaying(false);
@@ -114,32 +120,48 @@ const MainPage = () => {
 
 	const handleNextSong = () => {
 		if (!isSongLoaded || isNextDisabled) return;
+
 		setIsSongLoaded(false);
 		setSongTransitionLoading(true);
-		if (currentSongIndex === songs.length - 1) {
-			setCurrentSongIndex(0);
-			setIsNextDisabled(true);
-		} else if (currentSongIndex < songs.length - 1) {
-			setCurrentSongIndex(currentSongIndex + 1);
-			setIsNextDisabled(true);
+
+		let newIndex = currentSongIndex + 1;
+
+		if (newIndex >= songs.length) {
+			newIndex = 0;
 		}
+
+		setCurrentSongIndex(newIndex);
 		setIsPlaying(true);
-		setIsNextDisabled(false);
+
+		if (playerRef.current) {
+			const videoId = new URL(songs[newIndex].url).searchParams.get('v') || '';
+			playerRef.current.loadVideoById(videoId);
+		}
+
+		setIsPlayButton(false);
 	};
 
 	const handlePrevSong = async () => {
 		if (!isSongLoaded || isPrevDisabled) return;
+
 		setIsSongLoaded(false);
 		setSongTransitionLoading(true);
-		if (currentSongIndex === 0) {
-			setCurrentSongIndex(songs.length - 1);
-			setIsPrevDisabled(true);
-		} else {
-			setCurrentSongIndex(currentSongIndex - 1);
-			setIsPrevDisabled(true);
+
+		let newIndex = currentSongIndex - 1;
+
+		if (newIndex < 0) {
+			newIndex = songs.length - 1;
 		}
+
+		setCurrentSongIndex(newIndex);
 		setIsPlaying(true);
-		setIsPrevDisabled(false);
+
+		if (playerRef.current) {
+			const videoId = new URL(songs[newIndex].url).searchParams.get('v') || '';
+			playerRef.current.loadVideoById(videoId);
+		}
+
+		setIsPlayButton(false);
 	};
 
 	const handleTimeUpdate = (newTime: number) => {
@@ -258,7 +280,9 @@ const MainPage = () => {
 						onClick={musicModal.open}
 						className={`text-[14px] flex items-center justify-center  font-eng mr-2 border-none w-7 h-7 bar`}
 					>
-						<i className="text-[20px] fa fa-headphones-simple"></i>
+						<div className="w-6">
+							<CdMusic className="w-auto" />
+						</div>
 					</Button>
 				</div>
 				<div className="flex">

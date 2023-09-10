@@ -1,3 +1,57 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 스크롤바 전체 컨테이너 스타일 */
+::-webkit-scrollbar {
+	width: 16px;
+}
+
+/* 스크롤바 핸들 (움직이는 부분) */
+::-webkit-scrollbar-thumb {
+	height: 60px;
+	background: #cdcfcd;
+	border-left: 2px solid #e2e3e3;
+	border-right: 2px solid #63666a;
+	border-top: 2px solid #e2e3e3;
+	border-bottom: 2px solid #63666a;
+}
+
+/* 스크롤바 트랙 (핸들이 움직이는 경로) */
+::-webkit-scrollbar-track {
+	background: #e2e3e3;
+}
+
+/* 스크롤바의 위쪽 및 아래쪽 버튼 */
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment {
+	background-color: #e2e3e3;
+	display: block;
+	height: 20px;
+	border: 1px solid #b2b4b7;
+}
+
+/* 스크롤바 버튼의 상하 화살표 스타일 */
+::-webkit-scrollbar-button:vertical:decrement {
+	background: #cdcfcd;
+	border-left: 2px solid #e2e3e3;
+	border-right: 2px solid #63666a;
+	border-top: 2px solid #e2e3e3;
+	border-bottom: 2px solid #63666a;
+	box-shadow: inset 0px 1px 0px #63666a, inset 0px -1px 0px #e2e3e3;
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%2363666a" d="M1 7l5-5 5 5z"></path></svg>');
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+	background: #cdcfcd;
+	border-left: 2px solid #e2e3e3;
+	border-right: 2px solid #63666a;
+	border-top: 2px solid #e2e3e3;
+	border-bottom: 2px solid #63666a;
+	box-shadow: inset 0px 1px 0px #e2e3e3, inset 0px -1px 0px #63666a;
+	background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8"><path fill="%2363666a" d="M1 1l5 5 5-5z"></path></svg>');
+	background-repeat: no-repeat;
+	background-position: center;
+}
