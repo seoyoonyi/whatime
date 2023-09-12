@@ -41,9 +41,9 @@ const ChartModal = ({
 			modalRef={chartModalRef}
 			style={style}
 		>
-			<div className="py-[5px] pl-[6px] flex justify-between">
-				<h2 className="text-xl font-bold font-eng">TOP100</h2>
-				<p className="flex items-center mt-2 text-sm">
+			<div className="py-2 pl-4 md:py-[5px] md:pl-[6px] flex justify-between">
+				<h2 className="text-lg font-bold md:text-xl font-eng">TOP100</h2>
+				<p className="flex items-center mt-1 text-xs md:mt-2 md:text-sm">
 					<FontAwesomeIcon className="mr-2" icon={faClock} />
 					매일 12시 30분에 업데이트됩니다.
 				</p>
@@ -52,14 +52,14 @@ const ChartModal = ({
 				{songs.map((song: ISong, index: number) => (
 					<div
 						key={song.id}
-						className="flex items-center justify-between p-4 border-b border-dashed border-retroGray"
+						className="flex items-center justify-between p-2 border-b border-dashed md:p-4 border-retroGray"
 					>
 						<div className="flex items-center mr-2">
-							<div className="flex items-center font-eng justify-center w-10 h-10 text-xl font-bold text-center leading-[2.5rem] mr-3">
+							<div className="flex items-center font-eng justify-center w-8 h-8 md:w-10 md:h-10 text-lg md:text-xl font-bold text-center leading-[2rem] md:leading-[2.5rem] mr-2 md:mr-3">
 								{song.ranking}
 							</div>
 							<div className="flex space-x-2">
-								<div className="flex items-center justify-center w-20 overflow-hidden h-11 bg-retroGray">
+								<div className="flex items-center justify-center w-16 h-8 overflow-hidden md:w-20 md:h-11 bg-retroGray">
 									<img
 										src={song.thumbnail}
 										alt={song.musicTitle}
@@ -68,16 +68,18 @@ const ChartModal = ({
 								</div>
 
 								<div>
-									<h4 className="font-bold">{truncateTitle(song.musicTitle)}</h4>
-									<p className="text-sm">{song.artist}</p>
+									<h4 className="text-sm md:font-bold">
+										{truncateTitle(song.musicTitle)}
+									</h4>
+									<p className="text-xs">{song.artist}</p>
 								</div>
 							</div>
 						</div>
 						<div>
-							<Button className="px-3" onClick={() => onSongClick(index)}>
+							<Button className="px-2 md:px-3" onClick={() => onSongClick(index)}>
 								<FontAwesomeIcon icon={faPlay} />
 							</Button>
-							<Button className="px-3">
+							<Button className="px-2 md:px-3">
 								<FontAwesomeIcon icon={faPlus} />
 							</Button>
 						</div>

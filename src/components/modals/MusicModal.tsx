@@ -135,11 +135,11 @@ const MusicModal = ({
 
 	const userControlbuttons: IButtonProps[] = [
 		{
-			className: 'w-[75px]',
+			className: 'md:w-[75px] w-1/2',
 			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
-			className: 'w-[75px]',
+			className: 'md:w-[75px] w-1/2',
 			children: <FontAwesomeIcon icon={faGear} />,
 		},
 	];
@@ -159,9 +159,13 @@ const MusicModal = ({
 			>
 				<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
 
-				<Frame className="py-[19px] px-[21px] w-[620px]" boxShadow="in" bg="retroGray">
+				<Frame
+					className="py-4 px-4 md:py-[19px] md:px-[21px] w-full md:w-[620px]"
+					boxShadow="in"
+					bg="retroGray"
+				>
 					{playerLoading ? (
-						<div className="w-full flex  items-center justify-center text-black h-[176px]">
+						<div className="w-full flex  items-center justify-center text-black h-[176px] md:h-auto">
 							<span className="w-[30px]">
 								<img className="w-full" src="/hourglass.gif" alt="Loading..." />
 							</span>
@@ -169,9 +173,9 @@ const MusicModal = ({
 						</div>
 					) : (
 						<>
-							<div className="flex space-x-[20px]">
-								<div>
-									<div className=" flex-shrink-0 w-[218px] h-[122px] bg-black flex justify-center items-center overflow-hidden">
+							<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
+								<div className="flex flex-col space-y-4 md:space-y-0">
+									<div className="flex-shrink-0 w-[315px] h-[177px] md:h-[122px] md:w-[218px] bg-black flex justify-center items-center overflow-hidden">
 										<img
 											className="w-full"
 											src={thumbnailImage}
@@ -180,11 +184,6 @@ const MusicModal = ({
 											}
 										/>
 									</div>
-
-									<ButtonGroup
-										buttons={userControlbuttons}
-										className="mt-[20px]"
-									/>
 								</div>
 								<div className="w-full">
 									<div className="text-xl font-extrabold font-kor">
@@ -215,13 +214,19 @@ const MusicModal = ({
 											setIsMuted={setIsMuted}
 										/>
 									</div>
-									<div className="flex justify-between mt-[20px]">
-										<ButtonGroup buttons={musicControlbuttons} />
-										<Button className="w-[80px] space-x-[1px] flex justify-center items-center ml-[15px]">
-											<FontAwesomeIcon icon={faPlus} />
-										</Button>
-									</div>
 								</div>
+							</div>
+							<div className="md:flex md:justify-between">
+								<div className="flex justify-between mt-[20px]  md:order-2">
+									<ButtonGroup buttons={musicControlbuttons} />
+									<Button className="w-[80px] md:ml-[30px] flex justify-center items-center ml-[5px]">
+										<FontAwesomeIcon icon={faPlus} />
+									</Button>
+								</div>
+								<ButtonGroup
+									buttons={userControlbuttons}
+									className="mt-[5px] md:mt-[20px] md:order-1"
+								/>
 							</div>
 						</>
 					)}
