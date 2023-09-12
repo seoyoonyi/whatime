@@ -174,7 +174,7 @@ const MusicModal = ({
 					) : (
 						<>
 							<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
-								<div className="flex flex-col space-y-4 md:space-y-0">
+								<div className="hidden md:flex-col md:flex md:space-y-0">
 									<div className="flex-shrink-0 w-[315px] h-[177px] md:h-[122px] md:w-[218px] bg-black flex justify-center items-center overflow-hidden">
 										<img
 											className="w-full"
