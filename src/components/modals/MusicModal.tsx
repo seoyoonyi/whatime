@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useRef } from 'react';
+import React, { MouseEventHandler, useContext, useEffect, useRef } from 'react';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -21,34 +21,18 @@ import {
 	faStepForward,
 	faUser,
 } from '@fortawesome/free-solid-svg-icons';
+import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
 	style: React.CSSProperties;
+	onModalClick: MouseEventHandler<HTMLDivElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
-	onModalClick: MouseEventHandler<HTMLDivElement>;
 	handleChartModalOpen: MouseEventHandler<HTMLLIElement>;
-	isPlaying: boolean;
 	currentSongIndex: number;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
-	songTransitionLoading: boolean;
-	isPrevDisabled: boolean;
-	isNextDisabled: boolean;
-	duration: number;
-	currentTime: number;
-	handleTimeUpdate: (newTime: number) => void;
-	handlePlayClick: () => void;
-	isMuted: boolean;
-	setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
-	volume: number;
-	setVolume: React.Dispatch<React.SetStateAction<number>>;
-	handlePrevSong: () => void;
-	isPlayButton: boolean;
-	handlePauseClick: () => void;
-	handleNextSong: () => void;
-	playerLoading: boolean;
 }
 
 const MusicModal = ({
@@ -56,30 +40,25 @@ const MusicModal = ({
 	onClose,
 	onMinimize,
 	onModalClick,
-	isPlaying,
 	currentSongIndex,
 	songs,
 	playerRef,
-	songTransitionLoading,
-	isPrevDisabled,
-	isNextDisabled,
-	duration,
-	currentTime,
-	handleTimeUpdate,
-	handlePlayClick,
-	isMuted,
-	setIsMuted,
-	volume,
-	setVolume,
-	handlePrevSong,
-	isPlayButton,
-	handlePauseClick,
-	handleNextSong,
-	playerLoading,
 	handleChartModalOpen,
 	style,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
+	const { state, handlePlayClick, handlePrevSong, handlePauseClick, handleNextSong } =
+		useContext<IMusicContext>(MusicContext);
+
+	const {
+		songTransitionLoading,
+		isPrevDisabled,
+		isNextDisabled,
+		duration,
+		currentTime,
+		isPlayButton,
+		playerLoading,
+	} = state;
 
 	const currentSong = songs[currentSongIndex];
 	const currentSongTitle = songTransitionLoading
@@ -192,27 +171,12 @@ const MusicModal = ({
 									<div className="font-kor font-semibold mb-[24px]">
 										{currentSongArtist}
 									</div>
-									<ProgressBar
-										duration={duration}
-										initialCurrentTime={currentTime}
-										onTimeUpdate={handleTimeUpdate}
-										onPlayClick={handlePlayClick}
-										isPlaying={isPlaying}
-										isMuted={isMuted}
-										setIsMuted={setIsMuted}
-										className="h-[4px] mb-[17px]"
-									/>
+									<ProgressBar className="h-[4px] mb-[17px]" />
 									<div className="flex items-center justify-between">
 										<div>{`${formatTime(currentTime)} / ${formatTime(
 											duration,
 										)}`}</div>
-										<VolumeBar
-											player={playerRef.current}
-											volume={volume}
-											setVolume={setVolume}
-											isMuted={isMuted}
-											setIsMuted={setIsMuted}
-										/>
+										<VolumeBar />
 									</div>
 								</div>
 							</div>

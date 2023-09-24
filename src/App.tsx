@@ -4,12 +4,15 @@ import '@react95/icons/icons.css';
 import './App.css';
 import MainPage from './page/MainPage';
 import { ModalProvider } from './contexts/ModalContext';
+import { MusicProvider } from './contexts/MusicContext';
 
 function App() {
 	return (
-		<ModalProvider>
-			<MainPage></MainPage>
-		</ModalProvider>
+		<MusicProvider>
+			<ModalProvider>
+				<MainPage></MainPage>
+			</ModalProvider>
+		</MusicProvider>
 	);
 }
 

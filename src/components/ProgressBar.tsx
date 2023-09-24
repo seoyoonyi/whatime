@@ -1,28 +1,17 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useContext } from 'react';
+import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 
 interface IProgressBarProps {
-	duration: number;
-	initialCurrentTime: number;
-	onTimeUpdate: (newTime: number) => void;
 	className?: string;
-	onPlayClick: () => void;
-	isPlaying: boolean;
-	isMuted: boolean;
-	setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProgressBar = ({
-	duration,
-	initialCurrentTime = duration / 2,
-	onTimeUpdate,
-	onPlayClick,
-	isPlaying,
-	className,
-	isMuted,
-	setIsMuted,
-}: IProgressBarProps) => {
-	const [currentTime, setCurrentTime] = useState<number>(initialCurrentTime);
+const ProgressBar = ({ className }: IProgressBarProps) => {
 	const [isDragging, setDragging] = useState<boolean>(false);
+	const { state, dispatch, handleTimeUpdate, handlePlayClick } =
+		useContext<IMusicContext>(MusicContext);
+
+	const { isPlaying, isMuted, duration, currentTime: initialCurrentTime = duration / 2 } = state;
+	const [currentTime, setCurrentTime] = useState<number>(initialCurrentTime);
 
 	const calculateProgress = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -31,9 +20,9 @@ const ProgressBar = ({
 			const clickedX = Math.max(e.clientX - progressBar.getBoundingClientRect().left, 0);
 			const newTime = Math.max((clickedX / progressContainerWidth) * duration, 0);
 			setCurrentTime(newTime);
-			onTimeUpdate(newTime);
+			handleTimeUpdate(newTime);
 		},
-		[duration, onTimeUpdate],
+		[duration, handleTimeUpdate],
 	);
 
 	const handleMouseDownOnCircle = useCallback(
@@ -42,22 +31,22 @@ const ProgressBar = ({
 			setDragging(true);
 
 			if (isMuted) {
-				setIsMuted(false);
-				onPlayClick();
+				dispatch({ type: 'SET_MUTE', payload: false });
+				handlePlayClick();
 			}
 		},
-		[isMuted, onPlayClick, setIsMuted],
+		[isMuted, handlePlayClick, dispatch],
 	);
 
 	const handleMouseDownOnBar = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 			calculateProgress(e);
 			if (isMuted) {
-				setIsMuted(false);
-				onPlayClick();
+				dispatch({ type: 'SET_MUTE', payload: false });
+				handlePlayClick();
 			}
 		},
-		[calculateProgress, isMuted, onPlayClick, setIsMuted],
+		[calculateProgress, isMuted, handlePlayClick, dispatch],
 	);
 
 	const handleMouseUpOrLeave = useCallback(() => {
@@ -77,9 +66,9 @@ const ProgressBar = ({
 		if (isPlaying && currentTime >= duration) {
 			const initialTimeForNextTrack = 0;
 			setCurrentTime(initialTimeForNextTrack);
-			onTimeUpdate(initialTimeForNextTrack);
+			handleTimeUpdate(initialTimeForNextTrack);
 		}
-	}, [currentTime, duration, isPlaying, onTimeUpdate]);
+	}, [currentTime, duration, isPlaying, handleTimeUpdate]);
 
 	useEffect(() => {
 		setCurrentTime(initialCurrentTime);

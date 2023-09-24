@@ -1,32 +1,28 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
 import styles from './volumebar.module.css';
-import { IPlayer } from '../../types/types';
 import { Mute, Unmute } from '@react95/icons';
+import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
 
-interface IVolumeBarProps {
-	player: IPlayer | null;
-	volume: number;
-	setVolume: React.Dispatch<React.SetStateAction<number>>;
-	isMuted: boolean;
-	setIsMuted: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const VolumeBar = ({ player, volume, setVolume, setIsMuted, isMuted }: IVolumeBarProps) => {
+const VolumeBar = () => {
 	const volumeRef = useRef<HTMLInputElement>(null);
 	const [playerReady, setPlayerReady] = useState(false);
+	const { state, dispatch, playerRef } = useContext<IMusicContext>(MusicContext);
+
+	const { volume, isMuted } = state;
+	const player = playerRef.current;
 
 	const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const volume = e.target.valueAsNumber;
-		setVolume(volume * 100);
+		dispatch({ type: 'SET_VOLUME', payload: volume * 100 });
 
 		if (player && 'setVolume' in player && playerReady) {
 			if (volume <= 0) {
 				player.setVolume(0);
-				setIsMuted(true);
+				dispatch({ type: 'SET_MUTE', payload: true });
 			} else {
 				player.setVolume(volume * 100);
 				if (isMuted) {
-					setIsMuted(false);
+					dispatch({ type: 'SET_MUTE', payload: false });
 					player.unMute();
 				}
 			}
@@ -37,15 +33,27 @@ const VolumeBar = ({ player, volume, setVolume, setIsMuted, isMuted }: IVolumeBa
 		if (player && playerReady) {
 			if (isMuted) {
 				player.unMute();
-				setIsMuted(false);
+				dispatch({ type: 'SET_MUTE', payload: false });
+				dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
 				if (volume <= 0) {
-					setVolume(100);
+					dispatch({ type: 'SET_VOLUME', payload: 100 });
 					player.setVolume(100);
 				}
 			} else {
 				player.mute();
-				setIsMuted(true);
+				dispatch({ type: 'SET_MUTE', payload: true });
 			}
+		}
+	};
+
+	const renderSoundIcon = () => {
+		switch (String(isMuted)) {
+			case 'true':
+				return <Mute className="w-6 mr-2" />;
+			case 'false':
+				return <Unmute className="w-6 mr-2" />;
+			default:
+				return null;
 		}
 	};
 
@@ -56,7 +64,7 @@ const VolumeBar = ({ player, volume, setVolume, setIsMuted, isMuted }: IVolumeBa
 	return (
 		<div className="flex items-center justify-between cursor-pointer">
 			<span className="text-[22px] cursor-pointer" onClick={toggleMute}>
-				{isMuted ? <Mute className="w-6 mr-2" /> : <Unmute className="w-6 mr-2" />}
+				{renderSoundIcon()}
 			</span>
 			<input
 				type="range"

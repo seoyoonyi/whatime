@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useRef } from 'react';
+import React, { MouseEventHandler, useContext, useRef } from 'react';
 import Modal from './Modal';
 import { ISong } from '../../types/types';
 import { truncateTitle } from '../../utils/ utils';
@@ -8,6 +8,7 @@ import Frame from '../Frame';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
+import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
 
 interface IChartModal {
 	open: boolean;
@@ -16,19 +17,11 @@ interface IChartModal {
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
-	onSongClick: (index: number) => void;
 }
 
-const ChartModal = ({
-	open,
-	style,
-	onClose,
-	onMinimize,
-	onModalClick,
-	onSongClick,
-	songs,
-}: IChartModal) => {
+const ChartModal = ({ open, style, onClose, onMinimize, onModalClick, songs }: IChartModal) => {
 	const chartModalRef = useRef(null);
+	const { handleSongClick } = useContext<IMusicContext>(MusicContext);
 	return (
 		<Modal
 			className="absolute"
@@ -76,7 +69,7 @@ const ChartModal = ({
 							</div>
 						</div>
 						<div>
-							<Button className="px-2 md:px-3" onClick={() => onSongClick(index)}>
+							<Button className="px-2 md:px-3" onClick={() => handleSongClick(index)}>
 								<FontAwesomeIcon icon={faPlay} />
 							</Button>
 							<Button className="px-2 md:px-3">
