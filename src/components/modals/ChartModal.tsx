@@ -30,7 +30,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick, songs }: I
 			onMinimize={onMinimize}
 			onModalClick={onModalClick}
 			icon={<Drvspace7 className="w-auto" />}
-			title="Music"
+			title="Chart"
 			modalRef={chartModalRef}
 			style={style}
 		>

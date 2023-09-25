@@ -7,7 +7,6 @@ import useModal from '../hooks/useModal';
 import ModalButton from '../components/ModalButton';
 import axios from 'axios';
 import { CdMusic, Drvspace7 } from '@react95/icons';
-
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 
 export type ModalType = 'music' | 'chart';

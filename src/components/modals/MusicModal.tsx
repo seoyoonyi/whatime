@@ -124,82 +124,78 @@ const MusicModal = ({
 	];
 
 	return (
-		<>
-			<Modal
-				className="absolute"
-				open={open}
-				onClose={onClose}
-				onMinimize={onMinimize}
-				onModalClick={onModalClick}
-				icon={<CdMusic className="w-auto" />}
-				title="Music"
-				modalRef={musicModalRef}
-				style={style}
-			>
-				<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
+		<Modal
+			className="absolute"
+			open={open}
+			onClose={onClose}
+			onMinimize={onMinimize}
+			onModalClick={onModalClick}
+			icon={<CdMusic className="w-auto" />}
+			title="Music"
+			modalRef={musicModalRef}
+			style={style}
+		>
+			<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
 
-				<Frame
-					className="py-4 px-4 md:py-[19px] md:px-[21px] w-full md:w-[620px]"
-					boxShadow="in"
-					bg="retroGray"
-				>
-					{playerLoading ? (
-						<div className="w-full flex  items-center justify-center text-black h-[176px] md:h-auto">
-							<span className="w-[30px]">
-								<img className="w-full" src="/hourglass.gif" alt="Loading..." />
-							</span>
-							<p>Loading...</p>
+			<Frame
+				className="py-4 px-4 md:py-[19px] md:px-[21px] w-full md:w-[620px]"
+				boxShadow="in"
+				bg="retroGray"
+			>
+				{playerLoading ? (
+					<div className="w-full flex  items-center justify-center text-black h-[176px] md:h-auto">
+						<span className="w-[30px]">
+							<img className="w-full" src="/hourglass.gif" alt="Loading..." />
+						</span>
+						<p>Loading...</p>
+					</div>
+				) : (
+					<>
+						<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
+							<div className="hidden md:flex-col md:flex md:space-y-0">
+								<div className="flex-shrink-0 w-[315px] h-[177px] md:h-[122px] md:w-[218px] bg-black flex justify-center items-center overflow-hidden">
+									<img
+										className="w-full"
+										src={thumbnailImage}
+										alt={songTransitionLoading ? 'loading' : currentSongTitle}
+									/>
+								</div>
+							</div>
+							<div className="w-full">
+								<div className="text-xl font-extrabold font-kor">
+									{currentSongTitle}
+								</div>
+								<div className="font-kor font-semibold mb-[24px]">
+									{currentSongArtist}
+								</div>
+								<ProgressBar className="h-[4px] mb-[17px]" />
+								<div className="flex items-center justify-between">
+									<div>{`${formatTime(currentTime)} / ${formatTime(
+										duration,
+									)}`}</div>
+									<VolumeBar />
+								</div>
+							</div>
 						</div>
-					) : (
-						<>
-							<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
-								<div className="hidden md:flex-col md:flex md:space-y-0">
-									<div className="flex-shrink-0 w-[315px] h-[177px] md:h-[122px] md:w-[218px] bg-black flex justify-center items-center overflow-hidden">
-										<img
-											className="w-full"
-											src={thumbnailImage}
-											alt={
-												songTransitionLoading ? 'loading' : currentSongTitle
-											}
-										/>
-									</div>
-								</div>
-								<div className="w-full">
-									<div className="text-xl font-extrabold font-kor">
-										{currentSongTitle}
-									</div>
-									<div className="font-kor font-semibold mb-[24px]">
-										{currentSongArtist}
-									</div>
-									<ProgressBar className="h-[4px] mb-[17px]" />
-									<div className="flex items-center justify-between">
-										<div>{`${formatTime(currentTime)} / ${formatTime(
-											duration,
-										)}`}</div>
-										<VolumeBar />
-									</div>
-								</div>
+						<div className="md:flex md:justify-between">
+							<div className="flex justify-between mt-[20px]  md:order-2">
+								<ButtonGroup buttons={musicControlbuttons} />
+								<Button className="w-[80px] md:ml-[30px] flex justify-center items-center ml-[5px]">
+									<FontAwesomeIcon icon={faPlus} />
+								</Button>
 							</div>
-							<div className="md:flex md:justify-between">
-								<div className="flex justify-between mt-[20px]  md:order-2">
-									<ButtonGroup buttons={musicControlbuttons} />
-									<Button className="w-[80px] md:ml-[30px] flex justify-center items-center ml-[5px]">
-										<FontAwesomeIcon icon={faPlus} />
-									</Button>
-								</div>
-								<ButtonGroup
-									buttons={userControlbuttons}
-									className="mt-[5px] md:mt-[20px] md:order-1"
-								/>
-							</div>
-						</>
-					)}
-				</Frame>
-				<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
-					Hello, World
-				</p>
-			</Modal>
-		</>
+							<ButtonGroup
+								buttons={userControlbuttons}
+								className="mt-[5px] md:mt-[20px] md:order-1"
+							/>
+						</div>
+					</>
+				)}
+			</Frame>
+			<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
+				Hello, World
+			</p>
+		</Modal>
 	);
 };
 
