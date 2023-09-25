@@ -7,10 +7,9 @@ interface IProgressBarProps {
 
 const ProgressBar = ({ className }: IProgressBarProps) => {
 	const [isDragging, setDragging] = useState<boolean>(false);
-	const { state, dispatch, handleTimeUpdate, handlePlayClick } =
-		useContext<IMusicContext>(MusicContext);
+	const { state, handleTimeUpdate } = useContext<IMusicContext>(MusicContext);
 
-	const { isPlaying, isMuted, duration, currentTime: initialCurrentTime = duration / 2 } = state;
+	const { isPlaying, duration, currentTime: initialCurrentTime = duration / 2 } = state;
 	const [currentTime, setCurrentTime] = useState<number>(initialCurrentTime);
 
 	const calculateProgress = useCallback(
@@ -29,24 +28,15 @@ const ProgressBar = ({ className }: IProgressBarProps) => {
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 			e.stopPropagation();
 			setDragging(true);
-
-			if (isMuted) {
-				dispatch({ type: 'SET_MUTE', payload: false });
-				handlePlayClick();
-			}
 		},
-		[isMuted, handlePlayClick, dispatch],
+		[],
 	);
 
 	const handleMouseDownOnBar = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 			calculateProgress(e);
-			if (isMuted) {
-				dispatch({ type: 'SET_MUTE', payload: false });
-				handlePlayClick();
-			}
 		},
-		[calculateProgress, isMuted, handlePlayClick, dispatch],
+		[calculateProgress],
 	);
 
 	const handleMouseUpOrLeave = useCallback(() => {

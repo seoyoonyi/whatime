@@ -8,7 +8,7 @@ const VolumeBar = () => {
 	const [playerReady, setPlayerReady] = useState(false);
 	const { state, dispatch, playerRef } = useContext<IMusicContext>(MusicContext);
 
-	const { volume, isMuted } = state;
+	const { volume, isMuted, isPlaying, isFirstPlay } = state;
 	const player = playerRef.current;
 
 	const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,12 @@ const VolumeBar = () => {
 			if (isMuted) {
 				player.unMute();
 				dispatch({ type: 'SET_MUTE', payload: false });
-				dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
+
+				if (isFirstPlay && isPlaying) {
+					dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
+					dispatch({ type: 'SET_FIRST_PLAY', payload: false });
+				}
+
 				if (volume <= 0) {
 					dispatch({ type: 'SET_VOLUME', payload: 100 });
 					player.setVolume(100);

@@ -81,7 +81,8 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 		dispatch({ type: 'SET_PLAYER_LOADING', payload: false });
 		dispatch({ type: 'SET_SONG_TRANSITION_LOADING', payload: false });
 		dispatch({ type: 'SET_CURRENT_TIME', payload: 0 });
-
+		dispatch({ type: 'SET_DURATION', payload: event.target.getDuration() });
+		dispatch({ type: 'SET_PLAY', payload: true });
 		if (isMuted) {
 			event.target.mute();
 		} else {
@@ -97,6 +98,7 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 			case 0:
 				dispatch({ type: 'SET_PLAYER_LOADING', payload: true });
 				dispatch({ type: 'SET_SONG_LOADED', payload: false });
+				dispatch({ type: 'SET_FIRST_PLAY', payload: false });
 				handleNextSong();
 				break;
 
@@ -105,19 +107,24 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 				dispatch({ type: 'SET_DURATION', payload: event.target.getDuration() });
 				dispatch({ type: 'SET_SONG_LOADED', payload: true });
 				dispatch({ type: 'SET_SONG_TRANSITION_LOADING', payload: false });
+
+				break;
+
+			case 2:
+				dispatch({ type: 'SET_PLAY', payload: false });
 				break;
 
 			default:
 				break;
 		}
 	};
+
 	const handleSongClick = (index: number) => {
 		dispatch({ type: 'SET_CURRENT_SONG_INDEX', payload: index });
 	};
 
 	const handlePlayClick = () => {
 		if (playerRef.current) {
-			dispatch({ type: 'SET_PLAY', payload: true });
 			playerRef.current.playVideo();
 			if (isFirstPlay && isMuted) {
 				playerRef.current.unMute();
@@ -156,11 +163,7 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 			playerRef.current.loadVideoById(videoId);
 		}
 
-		if (!isFirstPlay && !isPlaying && isMuted) {
-			dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
-		}
-
-		if (!isFirstPlay && !isMuted) {
+		if (!isFirstPlay && (!isMuted || (!isPlaying && isMuted))) {
 			dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
 		}
 	};
@@ -185,11 +188,7 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 			playerRef.current.loadVideoById(videoId);
 		}
 
-		if (!isFirstPlay && !isPlaying && isMuted) {
-			dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
-		}
-
-		if (!isFirstPlay && !isMuted) {
+		if (!isFirstPlay && (!isMuted || (!isPlaying && isMuted))) {
 			dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
 		}
 	};
