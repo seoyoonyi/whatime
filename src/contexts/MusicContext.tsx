@@ -121,6 +121,11 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 
 	const handleSongClick = (index: number) => {
 		dispatch({ type: 'SET_CURRENT_SONG_INDEX', payload: index });
+		if (playerRef.current) {
+			const videoId = new URL(songs[index].url).searchParams.get('v') || '';
+			playerRef.current.loadVideoById(videoId);
+			handlePlayClick();
+		}
 	};
 
 	const handlePlayClick = () => {
