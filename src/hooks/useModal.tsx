@@ -1,5 +1,5 @@
 import { MouseEvent, useContext, useState } from 'react';
-import ModalContext, { ModalKeys, ModalZIndexType } from '../contexts/ModalContext';
+import ModalContext from '../contexts/ModalContext';
 import { ModalType } from '../page/MainPage';
 
 type ModalState = {
@@ -65,18 +65,18 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 	};
 
 	const toggleMinimize = () => {
-		setModalState((prev) => ({
-			...prev,
-			isMinimized: !prev.isMinimized,
-		}));
-		if (!modalState.isMinimized && modalType === currentHighestModal) {
-			const sortedModals = Object.entries(modalsState).sort(
-				([, zIndexA], [, zIndexB]) =>
-					(zIndexB as unknown as number) - (zIndexA as unknown as number),
-			);
-			const nextHighestModal = sortedModals[0][0] as ModalType;
-			setCurrentHighestModal(nextHighestModal);
-		}
+		setModalState((prev) => {
+			const nextMinimizedState = !prev.isMinimized;
+
+			if (!nextMinimizedState) {
+				bringToFront();
+			}
+
+			return {
+				...prev,
+				isMinimized: nextMinimizedState,
+			};
+		});
 	};
 
 	const checkAllModalsMinimized = () => {

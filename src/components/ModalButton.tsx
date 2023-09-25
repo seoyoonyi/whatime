@@ -20,26 +20,41 @@ const ModalButton = ({
 	icon,
 	label,
 }: IModalButtonProps) => {
-	const { currentHighestModal, modalsState, setCurrentHighestModal } = useContext(ModalContext);
+	const {
+		currentHighestModal,
+		setCurrentHighestModal,
+		modalZIndexes,
+		setModalZIndexes,
+		incrementZIndex,
+		currentHighestZIndex,
+	} = useContext(ModalContext);
 
-	const isActive = currentHighestModal === modalType;
+	const isActive = currentHighestModal === modalType && !isMinimized;
 
 	const buttonStyle = isActive
 		? 'bg-retroLightGray insetBorderStyle font-bold'
 		: 'bg-retroGray outsetShadowStyle';
 
 	useEffect(() => {
-		if (isActive && isMinimized) {
-			const sortedModals = Object.entries(modalsState).sort(
-				([, zIndexA], [, zIndexB]) =>
-					(zIndexB as unknown as number) - (zIndexA as unknown as number),
-			);
-			const nextHighestModal = sortedModals[1];
-			if (nextHighestModal) {
-				setCurrentHighestModal(nextHighestModal[0] as ModalType);
+		if (open && !isMinimized) {
+			incrementZIndex();
+			setModalZIndexes((prevState) => ({
+				...prevState,
+				[modalType]: currentHighestZIndex + 1,
+			}));
+			setCurrentHighestModal(modalType);
+		} else if (!open || isMinimized) {
+			const sortedModals = Object.entries(modalZIndexes)
+				.sort(([, zIndexA], [, zIndexB]) => zIndexB - zIndexA)
+				.map(([key]) => key);
+
+			const secondHighestModal = sortedModals[1];
+			if (secondHighestModal) {
+				setCurrentHighestModal(secondHighestModal as ModalType);
 			}
 		}
-	}, [isActive, isMinimized, modalsState, setCurrentHighestModal, currentHighestModal]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open, isMinimized]);
 
 	if (!open) return null;
 	return (
@@ -53,4 +68,4 @@ const ModalButton = ({
 	);
 };
 
-export default ModalButton;
+export default React.memo(ModalButton);

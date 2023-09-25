@@ -1,7 +1,7 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { ModalType } from '../page/MainPage';
 
-interface IModalComponentProps {
+interface IModalContextProps {
 	children: React.ReactNode;
 }
 
@@ -70,7 +70,7 @@ const defaultContext: IModalContextType<ModalStateType> = {
 
 const ModalContext = createContext<IModalContextType<ModalStateType>>(defaultContext);
 
-export const ModalProvider = ({ children }: IModalComponentProps) => {
+export const ModalProvider = ({ children }: IModalContextProps) => {
 	const [modalsState, setModalsState] = useState(initialModalsState);
 	const [currentHighestZIndex, setCurrentHighestZIndex] = useState(5);
 	const [currentHighestModal, setCurrentHighestModal] = useState<null | ModalType>('music');
@@ -95,6 +95,14 @@ export const ModalProvider = ({ children }: IModalComponentProps) => {
 		}
 		return null;
 	};
+
+	useEffect(() => {
+		const sortedModals = Object.entries(modalsState).sort(
+			([, modalA], [, modalB]) => modalB.zIndex - modalA.zIndex,
+		);
+		const highestModal = sortedModals[0][0] as ModalType;
+		setCurrentHighestModal(highestModal);
+	}, [modalsState]);
 
 	return (
 		<ModalContext.Provider
