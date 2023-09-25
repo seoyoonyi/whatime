@@ -6,7 +6,7 @@ import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/ModalButton';
 import axios from 'axios';
-import { CdMusic } from '@react95/icons';
+import { CdMusic, Drvspace7 } from '@react95/icons';
 
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 
@@ -128,7 +128,7 @@ const MainPage = () => {
 						open={musicModal.modalState.isOpen}
 						isMinimized={musicModal.modalState.isMinimized}
 						toggleMinimize={musicModal.toggleMinimize}
-						icon="🎧"
+						icon={<CdMusic className="w-auto" />}
 						label="Music"
 					/>
 					<ModalButton
@@ -136,7 +136,7 @@ const MainPage = () => {
 						open={chartModal.modalState.isOpen}
 						isMinimized={chartModal.modalState.isMinimized}
 						toggleMinimize={chartModal.toggleMinimize}
-						icon="📈"
+						icon={<Drvspace7 className="w-auto" />}
 						label="Chart"
 					/>
 				</div>

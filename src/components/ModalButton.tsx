@@ -8,7 +8,7 @@ interface IModalButtonProps {
 	open: boolean;
 	isMinimized: boolean;
 	toggleMinimize: () => void;
-	icon: string;
+	icon: React.ReactElement;
 	label: string;
 }
 
@@ -47,7 +47,8 @@ const ModalButton = ({
 			onClick={toggleMinimize}
 			className={`text-[14px] w-[160px] flex justify-start pt-1 px-1 m-1 font-eng ${buttonStyle}`}
 		>
-			{icon} {label}
+			<div className="w-5 mr-1">{icon}</div>
+			{label}
 		</Button>
 	);
 };
