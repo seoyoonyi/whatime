@@ -1,20 +1,23 @@
 import React, { useEffect, useContext } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
-import Button from '../components/Button';
+import Button from '../components/buttons/Button';
 import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
-import ModalButton from '../components/ModalButton';
+import ModalButton from '../components/buttons/ModalButton';
 import axios from 'axios';
-import { CdMusic, Drvspace7 } from '@react95/icons';
+import { CdMusic, Keys, Drvspace7 } from '@react95/icons';
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
+import SignInModal from '../components/modals/SignInModal';
 
-export type ModalType = 'music' | 'chart';
+export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 const apiUrl = process.env.REACT_APP_API_URL as string;
 
 const MainPage = () => {
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
 	const chartModal = useModal(undefined, 'chart');
+	const signInModal = useModal(undefined, 'signIn');
+
 	const { state, dispatch, playerRef, handleReady, handleStateChange } =
 		useContext<IMusicContext>(MusicContext);
 
@@ -82,6 +85,7 @@ const MainPage = () => {
 						onClose={musicModal.close}
 						onMinimize={musicModal.toggleMinimize}
 						handleChartModalOpen={chartModal.open}
+						handleSignInModalOpen={signInModal.open}
 						currentSongIndex={currentSongIndex}
 						songs={songs}
 						playerRef={playerRef}
@@ -98,6 +102,18 @@ const MainPage = () => {
 							zIndex: chartModal.modalState.zIndex,
 							display: chartModal.modalState.isMinimized ? 'none' : undefined,
 						}}
+					/>
+				)}
+				{signInModal.modalState.isOpen && (
+					<SignInModal
+						open={signInModal.modalState.isOpen}
+						style={{
+							zIndex: signInModal.modalState.zIndex,
+							display: signInModal.modalState.isMinimized ? 'none' : undefined,
+						}}
+						onModalClick={signInModal.open}
+						onClose={signInModal.close}
+						onMinimize={signInModal.toggleMinimize}
 					/>
 				)}
 				<YouTube
@@ -137,6 +153,14 @@ const MainPage = () => {
 						toggleMinimize={chartModal.toggleMinimize}
 						icon={<Drvspace7 className="w-auto" />}
 						label="Chart"
+					/>
+					<ModalButton
+						modalType="signIn"
+						open={signInModal.modalState.isOpen}
+						isMinimized={signInModal.modalState.isMinimized}
+						toggleMinimize={signInModal.toggleMinimize}
+						icon={<Keys className="w-auto" />}
+						label="SignIn"
 					/>
 				</div>
 			</footer>

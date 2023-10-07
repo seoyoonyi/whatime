@@ -1,5 +1,5 @@
 import React, { MouseEvent, MouseEventHandler } from 'react';
-import Button from '../Button';
+import Button from '../buttons/Button';
 import { faClose, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -45,7 +45,7 @@ const ModalHeader = ({
 					<FontAwesomeIcon className="mb-[2px]" icon={faWindowMinimize} />
 				</Button>
 				<Button
-					onClick={(event) => onClose(event)}
+					onClick={onClose}
 					className="w-[21px] h-[21px] flex items-center justify-center  text-black"
 				>
 					<FontAwesomeIcon icon={faClose} />

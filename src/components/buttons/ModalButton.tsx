@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
-import { ModalType } from '../page/MainPage';
+import { ModalType } from '../../page/MainPage';
 import Button from './Button';
-import ModalContext from '../contexts/ModalContext';
+import ModalContext from '../../contexts/ModalContext';
 
 interface IModalButtonProps {
 	modalType: ModalType;

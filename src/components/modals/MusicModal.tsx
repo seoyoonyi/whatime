@@ -2,8 +2,8 @@ import React, { MouseEventHandler, useContext, useEffect, useRef } from 'react';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
-import Button, { IButtonProps } from '../Button';
-import ButtonGroup from '../ButtonGroup';
+import Button, { IButtonProps } from '../buttons/Button';
+import ButtonGroup from '../buttons/ButtonGroup';
 import { INavItemProps } from '../NavItem';
 import Navigation from '../Navigation';
 import he from 'he';
@@ -30,6 +30,7 @@ interface IMusicPlayerModalProps {
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	handleChartModalOpen: MouseEventHandler<HTMLLIElement>;
+	handleSignInModalOpen: MouseEventHandler<HTMLLIElement>;
 	currentSongIndex: number;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
@@ -44,6 +45,7 @@ const MusicModal = ({
 	songs,
 	playerRef,
 	handleChartModalOpen,
+	handleSignInModalOpen,
 	style,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
@@ -111,10 +113,10 @@ const MusicModal = ({
 			children: <FontAwesomeIcon icon={faStepForward} />,
 		},
 	];
-
 	const userControlbuttons: IButtonProps[] = [
 		{
 			className: 'md:w-[75px] w-1/2',
+			onClick: handleSignInModalOpen,
 			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
