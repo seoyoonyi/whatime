@@ -9,6 +9,7 @@ import axios from 'axios';
 import { CdMusic, Keys, Drvspace7 } from '@react95/icons';
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 import SignInModal from '../components/modals/SignInModal';
+import SignUpModal from '../components/modals/SignUpModal';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 const apiUrl = process.env.REACT_APP_API_URL as string;
@@ -17,6 +18,7 @@ const MainPage = () => {
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
 	const chartModal = useModal(undefined, 'chart');
 	const signInModal = useModal(undefined, 'signIn');
+	const signUpModal = useModal(undefined, 'signUp');
 
 	const { state, dispatch, playerRef, handleReady, handleStateChange } =
 		useContext<IMusicContext>(MusicContext);
@@ -112,8 +114,22 @@ const MainPage = () => {
 							display: signInModal.modalState.isMinimized ? 'none' : undefined,
 						}}
 						onModalClick={signInModal.open}
+						handleSignUpModalOpen={signUpModal.open}
 						onClose={signInModal.close}
 						onMinimize={signInModal.toggleMinimize}
+					/>
+				)}
+
+				{signUpModal.modalState.isOpen && (
+					<SignUpModal
+						open={signUpModal.modalState.isOpen}
+						style={{
+							zIndex: signUpModal.modalState.zIndex,
+							display: signUpModal.modalState.isMinimized ? 'none' : undefined,
+						}}
+						onModalClick={signUpModal.open}
+						onClose={signUpModal.close}
+						onMinimize={signUpModal.toggleMinimize}
 					/>
 				)}
 				<YouTube
