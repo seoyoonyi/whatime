@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, useContext, useRef } from 'react';
 import Modal from './Modal';
 import { ISong } from '../../types/types';
-import { truncateTitle } from '../../utils/ utils';
+import { truncateTitle } from '../../utils/utils';
 import Button from '../buttons/Button';
 import { Drvspace7 } from '@react95/icons';
 import Frame from '../Frame';

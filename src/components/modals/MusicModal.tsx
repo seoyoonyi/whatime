@@ -7,7 +7,7 @@ import ButtonGroup from '../buttons/ButtonGroup';
 import { INavItemProps } from '../NavItem';
 import Navigation from '../Navigation';
 import he from 'he';
-import { formatTime, truncateTitle } from '../../utils/ utils';
+import { formatTime, truncateTitle } from '../../utils/utils';
 import { IPlayer, ISong } from '../../types/types';
 import { CdMusic } from '@react95/icons';
 import Frame from '../Frame';
