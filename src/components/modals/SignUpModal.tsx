@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useRef, useState } from 'react';
+import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react';
 import Modal from './Modal';
 import { Keys } from '@react95/icons';
 import AuthInput from '../inputs/AuthInput';
@@ -21,6 +21,12 @@ interface IFormData {
 	confirmPassword: string;
 }
 
+// TODO:: 더미 데이터 (실제로는 IndexedDB에서 가져온 데이터나 API 응답을 사용해야 함)
+const fakeDB = {
+	emails: ['test@email.com', 'example@email.com'],
+	nicknames: ['testNickname', 'exampleNickname'],
+};
+
 const SignUpModal: React.FC<ISignUpModalProps> = ({
 	open,
 	style,
@@ -41,6 +47,17 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 	const [confirmPassword, setConfirmPassword] = useState<string>('');
 	const [passwordMismatch, setPasswordMismatch] = useState<boolean>(false);
 	const [passwordSafety, setPasswordSafety] = useState<string>('');
+	const [emailError, setEmailError] = useState<string | null>(null);
+	const [nicknameError, setNicknameError] = useState<string | null>(null);
+
+	// TODO:: 더미 데이터 (실제로는 IndexedDB에서 가져온 데이터나 API 응답을 사용해야 함)
+	const checkEmailInDB = (email: string) => {
+		return fakeDB.emails.includes(email);
+	};
+
+	const checkNicknameInDB = (nickname: string) => {
+		return fakeDB.nicknames.includes(nickname);
+	};
 
 	const checkPasswordMatch = () => {
 		setPasswordMismatch(password !== confirmPassword);
@@ -61,14 +78,31 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 		}
 	};
 
+	const onSubmit = useCallback((data: IFormData) => {
+		console.log(data);
+	}, []);
+
 	useEffect(() => {
 		checkPasswordSafety();
 		checkPasswordMatch();
 	}, [password, confirmPassword]);
 
-	const onSubmit = (data: IFormData) => {
-		console.log(data);
-	};
+	// TODO:: 더미 데이터 (실제로는 IndexedDB에서 가져온 데이터나 API 응답을 사용해야 함)
+	useEffect(() => {
+		if (checkEmailInDB(email)) {
+			setEmailError('This email is already in use.');
+		} else {
+			setEmailError(null);
+		}
+	}, [email]);
+
+	useEffect(() => {
+		if (checkNicknameInDB(nickname)) {
+			setNicknameError('This nickname is already in use.');
+		} else {
+			setNicknameError(null);
+		}
+	}, [nickname]);
 
 	return (
 		<Modal
@@ -91,15 +125,18 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 						<AuthInput
 							placeholder="email"
 							word="email"
+							type="email"
 							autoFocus={true}
 							inputProps={register('email', signupValidationRules.email)}
 							customOnChange={(e) => setEmail(e.target.value)}
 						/>
 						{errors.email && <p>{errors.email.message}</p>}
+						{emailError && <p>{emailError}</p>}
 
 						<AuthInput
 							placeholder="password"
 							word="password"
+							type="password"
 							inputProps={register('password', signupValidationRules.password)}
 							customOnChange={(e) => setPassword(e.target.value)}
 						/>
@@ -109,6 +146,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 						<AuthInput
 							placeholder="confirm password"
 							word="confirm password"
+							type="password"
 							inputProps={register('confirmPassword')}
 							customOnChange={(e) => setConfirmPassword(e.target.value)}
 						/>
@@ -121,6 +159,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 							customOnChange={(e) => setNickname(e.target.value)}
 						/>
 						{errors.nickname && <p>{errors.nickname.message}</p>}
+						{nicknameError && <p>{nicknameError}</p>}
 					</div>
 					<Button
 						disabled={

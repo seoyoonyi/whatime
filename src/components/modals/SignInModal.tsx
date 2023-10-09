@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useRef, useState } from 'react';
+import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
 import Modal from './Modal';
 import { Keys } from '@react95/icons';
 import AuthInput from '../inputs/AuthInput';
@@ -38,9 +38,21 @@ const SignInModal = ({
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const onSubmit = (data: IFormData) => {
+	const onSubmit = useCallback((data: IFormData) => {
+		// TODO:: 더미 데이터 (실제로는 IndexedDB에서 가져온 데이터나 API 응답을 사용해야 함)
+		const dummyUsers = [{ email: 'test@example.com', password: 'Test1234!' }];
+
+		const isValidUser = dummyUsers.some(
+			(user) => user.email === data.email && user.password === data.password,
+		);
+
+		if (!isValidUser) {
+			alert('아이디/비밀번호를 확인해주세요.');
+			return;
+		}
+
 		console.log(data);
-	};
+	}, []);
 
 	return (
 		<Modal
@@ -63,6 +75,7 @@ const SignInModal = ({
 						<AuthInput
 							placeholder="email"
 							word="email"
+							type="email"
 							autoFocus={true}
 							inputProps={register('email', signinValidationRules.email)}
 							customOnChange={(e) => setEmail(e.target.value)}
@@ -72,6 +85,7 @@ const SignInModal = ({
 						<AuthInput
 							placeholder="password"
 							word="password"
+							type="password"
 							inputProps={register('password', signinValidationRules.password)}
 							customOnChange={(e) => setPassword(e.target.value)}
 						/>

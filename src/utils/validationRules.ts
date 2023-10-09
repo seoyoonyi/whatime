@@ -36,11 +36,9 @@ export const signupValidationRules: { [key: string]: IValidationRule } = {
 			value: 15,
 			message: 'Password should be less than 15 characters',
 		},
-		// Specific pattern checks will be done in the component logic
 	},
 	confirmPassword: {
 		required: 'Confirm Password is required',
-		// Matching logic will be done in the component logic
 	},
 	nickname: {
 		required: 'Nickname is required',
@@ -53,7 +51,7 @@ export const signupValidationRules: { [key: string]: IValidationRule } = {
 			message: 'Nickname should be less than 15 characters',
 		},
 		pattern: {
-			value: /^[A-Za-z가-힣\s]{1,15}$/,
+			value: /^\S[A-Za-z가-힣\s]{1,15}\S$/,
 			message:
 				'Nickname should contain only English and Korean characters without leading or trailing spaces',
 		},
