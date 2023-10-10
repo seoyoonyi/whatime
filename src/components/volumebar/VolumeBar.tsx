@@ -51,17 +51,6 @@ const VolumeBar = () => {
 		}
 	};
 
-	const renderSoundIcon = () => {
-		switch (String(isMuted)) {
-			case 'true':
-				return <Mute className="w-6 mr-2" />;
-			case 'false':
-				return <Unmute className="w-6 mr-2" />;
-			default:
-				return null;
-		}
-	};
-
 	useEffect(() => {
 		if (player) setPlayerReady(true);
 	}, [player]);
@@ -69,7 +58,7 @@ const VolumeBar = () => {
 	return (
 		<div className="flex items-center justify-between cursor-pointer">
 			<span className="text-[22px] cursor-pointer" onClick={toggleMute}>
-				{renderSoundIcon()}
+				{isMuted ? <Mute className="w-6 mr-2" /> : <Unmute className="w-6 mr-2" />}
 			</span>
 			<input
 				type="range"
