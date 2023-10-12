@@ -5,14 +5,19 @@ import './App.css';
 import MainPage from './page/MainPage';
 import { ModalProvider } from './contexts/ModalContext';
 import { MusicProvider } from './contexts/MusicContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 function App() {
 	return (
-		<MusicProvider>
-			<ModalProvider>
-				<MainPage></MainPage>
-			</ModalProvider>
-		</MusicProvider>
+		<QueryClientProvider client={queryClient}>
+			<MusicProvider>
+				<ModalProvider>
+					<MainPage></MainPage>
+				</ModalProvider>
+			</MusicProvider>
+		</QueryClientProvider>
 	);
 }
 
