@@ -62,16 +62,16 @@ const SignInModal = ({
 			onMinimize={onMinimize}
 			onModalClick={onModalClick}
 			icon={<Keys className="w-auto" />}
-			title="SignIn"
+			title="Sign In"
 			modalRef={signInModalRef}
 			style={style}
 		>
-			<div>
-				<h2>
-					<Keys />
+			<div className="px-[35px] py-[30px]">
+				<h2 className="flex justify-center pb-[25px]">
+					<Keys className="w-[77px]" />
 				</h2>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<div>
+					<div className="pb-[35px]">
 						<AuthInput
 							placeholder="email"
 							word="email"
@@ -79,6 +79,7 @@ const SignInModal = ({
 							autoFocus={true}
 							inputProps={register('email', signinValidationRules.email)}
 							customOnChange={(e) => setEmail(e.target.value)}
+							className="w-[250px] mb-[28px]"
 						/>
 						{errors.email && <p>{errors.email.message}</p>}
 
@@ -88,14 +89,24 @@ const SignInModal = ({
 							type="password"
 							inputProps={register('password', signinValidationRules.password)}
 							customOnChange={(e) => setPassword(e.target.value)}
+							className="w-[250px]"
 						/>
 						{errors.password && <p>{errors.password.message}</p>}
 					</div>
-					<Button disabled={!email || !password}>Login</Button>
+					<div className="flex justify-center mb-[10px]">
+						<Button disabled={!email || !password} className="px-[18px] py-[3px]">
+							Sign In
+						</Button>
+					</div>
 				</form>
-				<Button onClick={handleSignUpModalOpen} className="mt-10">
-					Sign Up
-				</Button>
+				<div className="flex justify-center mb-[10px]">
+					<Button
+						onClick={handleSignUpModalOpen}
+						className="text-sm underline border-0 opacity-50"
+					>
+						Sign Up
+					</Button>
+				</div>
 			</div>
 		</Modal>
 	);

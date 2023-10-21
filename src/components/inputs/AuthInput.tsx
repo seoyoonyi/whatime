@@ -15,6 +15,7 @@ interface IAuthInputComponentProps {
 	inputProps?: IRegisterProps;
 	customOnChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	autoFocus?: boolean;
+	className?: string;
 }
 
 const AuthInput = ({
@@ -24,6 +25,7 @@ const AuthInput = ({
 	inputProps,
 	customOnChange,
 	autoFocus,
+	className,
 }: IAuthInputComponentProps) => {
 	return (
 		<div>
@@ -36,6 +38,7 @@ const AuthInput = ({
 				inputProps={inputProps}
 				onChange={customOnChange}
 				autoFocus={autoFocus}
+				className={className}
 			/>
 		</div>
 	);
