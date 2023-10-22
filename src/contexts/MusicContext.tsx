@@ -1,7 +1,7 @@
-import React, { createContext, useReducer, useRef } from 'react';
+import React, { createContext, useCallback, useReducer, useRef } from 'react';
 import { IMusicState, MusicActions, musicReducer } from '../reducers/musicReducer';
 import mock from '../data/mock.json';
-import { IPlayer } from '../types/types';
+import { IPlayer, ISong } from '../types/types';
 import { YouTubeProps } from 'react-youtube';
 
 interface IMusicContextProps {
@@ -119,16 +119,7 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 		}
 	};
 
-	const handleSongClick = (index: number) => {
-		dispatch({ type: 'SET_CURRENT_SONG_INDEX', payload: index });
-		if (playerRef.current) {
-			const videoId = new URL(songs[index].url).searchParams.get('v') || '';
-			playerRef.current.loadVideoById(videoId);
-			handlePlayClick();
-		}
-	};
-
-	const handlePlayClick = () => {
+	const handlePlayClick = useCallback(() => {
 		if (playerRef.current) {
 			playerRef.current.playVideo();
 			if (isFirstPlay && isMuted) {
@@ -138,7 +129,7 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 			dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
 			dispatch({ type: 'SET_FIRST_PLAY', payload: false });
 		}
-	};
+	}, [isFirstPlay, isMuted]);
 
 	const handlePauseClick = () => {
 		if (playerRef.current) {
@@ -197,6 +188,18 @@ export const MusicProvider = ({ children }: IMusicContextProps) => {
 			dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
 		}
 	};
+
+	const handleSongClick = useCallback(
+		(index: number) => {
+			dispatch({ type: 'SET_CURRENT_SONG_INDEX', payload: index });
+			if (playerRef.current) {
+				const videoId = new URL(songs[index].url).searchParams.get('v') || '';
+				playerRef.current.loadVideoById(videoId);
+				handlePlayClick();
+			}
+		},
+		[handlePlayClick, songs],
+	);
 
 	const handleTimeUpdate = (newTime: number) => {
 		if (playerRef.current) {
