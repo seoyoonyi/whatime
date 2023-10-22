@@ -12,10 +12,10 @@ import SignInModal from '../components/modals/SignInModal';
 import SignUpModal from '../components/modals/SignUpModal';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../api/api';
-import mockData from '../data/mock.json';
+
+import { ISong } from '../types/types';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
-const apiUrl = process.env.REACT_APP_API_URL as string;
 
 const MainPage = () => {
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
@@ -25,9 +25,10 @@ const MainPage = () => {
 
 	const {
 		data: fetchedSongs,
+		isError,
 		error,
-		isLoading,
-	} = useQuery(['songs'], fetchSongs, {
+		refetch,
+	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
 	});
 
@@ -70,6 +71,18 @@ const MainPage = () => {
 			clearInterval(timer);
 		};
 	}, [dispatch, playerRef]);
+
+	useEffect(() => {
+		const now = new Date();
+		const nextUpdate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 30, 0, 0);
+		if (now.getTime() > nextUpdate.getTime()) {
+			nextUpdate.setDate(nextUpdate.getDate() + 1);
+		}
+		const timeoutId = setTimeout(() => {
+			refetch();
+		}, nextUpdate.getTime() - now.getTime());
+		return () => clearTimeout(timeoutId);
+	}, [refetch]);
 
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
