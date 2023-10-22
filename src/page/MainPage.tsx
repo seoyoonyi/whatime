@@ -5,28 +5,21 @@ import Button from '../components/buttons/Button';
 import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/buttons/ModalButton';
+import axios from 'axios';
 import { CdMusic, Keys, Drvspace7 } from '@react95/icons';
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 import SignInModal from '../components/modals/SignInModal';
 import SignUpModal from '../components/modals/SignUpModal';
-import { useQuery } from '@tanstack/react-query';
-import { fetchSongs } from '../api/\bapi';
+import mockData from '../data/mock.json';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
+const apiUrl = process.env.REACT_APP_API_URL as string;
 
 const MainPage = () => {
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
 	const chartModal = useModal(undefined, 'chart');
 	const signInModal = useModal(undefined, 'signIn');
 	const signUpModal = useModal(undefined, 'signUp');
-	const {
-		data: fetchedSongs,
-		error,
-		isLoading,
-	} = useQuery(['songs'], fetchSongs, {
-		staleTime: 1000 * 60 * 5,
-		cacheTime: 1000 * 60 * 30,
-	});
 
 	const { state, dispatch, playerRef, handleReady, handleStateChange } =
 		useContext<IMusicContext>(MusicContext);
@@ -43,10 +36,29 @@ const MainPage = () => {
 	};
 
 	useEffect(() => {
-		if (fetchedSongs) {
-			dispatch({ type: 'SET_SONGS', payload: fetchedSongs });
-		}
-	}, [fetchedSongs, dispatch]);
+		const fetchSongs = async () => {
+			try {
+				//	개발모드일때 목데이터로 설정
+				if (process.env.NODE_ENV === 'development') {
+					dispatch({ type: 'SET_SONGS', payload: mockData.data });
+				} else {
+					const response = await axios.get(apiUrl);
+					if (response.data && Array.isArray(response.data.data)) {
+						dispatch({ type: 'SET_SONGS', payload: response.data.data });
+					} else {
+						console.error('Invalid response format.');
+						dispatch({ type: 'SET_SONGS', payload: songs });
+					}
+				}
+			} catch (error) {
+				console.error('Failed to fetch songs from API, using mock data.', error);
+				dispatch({ type: 'SET_SONGS', payload: songs });
+			}
+		};
+
+		fetchSongs();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [dispatch]);
 
 	useEffect(() => {
 		dispatch({ type: 'SET_PREV_DISABLED', payload: false });
