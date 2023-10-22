@@ -74,10 +74,19 @@ const MainPage = () => {
 
 	useEffect(() => {
 		const now = new Date();
-		const nextUpdate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 30, 0, 0);
-		if (now.getTime() > nextUpdate.getTime()) {
-			nextUpdate.setDate(nextUpdate.getDate() + 1);
-		}
+		const utcHours = now.getUTCHours();
+		const kstHours = (utcHours + 9) % 24;
+		const nextUpdate = new Date(
+			Date.UTC(
+				now.getUTCFullYear(),
+				now.getUTCMonth(),
+				now.getUTCDate() + (kstHours >= 0 && kstHours < 12 ? 0 : 1),
+				3,
+				30,
+				0,
+				0,
+			),
+		);
 		const timeoutId = setTimeout(() => {
 			refetch();
 		}, nextUpdate.getTime() - now.getTime());
