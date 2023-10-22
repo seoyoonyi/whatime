@@ -83,4 +83,4 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick, songs }: I
 	);
 };
 
-export default ChartModal;
+export default React.memo(ChartModal);
