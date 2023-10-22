@@ -9,19 +9,33 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
 import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
+import { useQuery } from '@tanstack/react-query';
+import { fetchSongs } from '../../api/api';
 
 interface IChartModal {
 	open: boolean;
-	songs: ISong[];
+
 	style: React.CSSProperties;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
 }
 
-const ChartModal = ({ open, style, onClose, onMinimize, onModalClick, songs }: IChartModal) => {
+const ChartModal = ({ open, style, onClose, onMinimize, onModalClick }: IChartModal) => {
 	const chartModalRef = useRef(null);
 	const { handleSongClick } = useContext<IMusicContext>(MusicContext);
+	const {
+		data: songs,
+		isError,
+		error,
+	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+		staleTime: Infinity,
+	});
+
+	if (isError) {
+		console.error('Failed to fetch songs using React Query', error);
+	}
+
 	return (
 		<Modal
 			className="absolute"
@@ -42,7 +56,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick, songs }: I
 				</p>
 			</div>
 			<Frame className="overflow-y-auto max-h-96" boxShadow="in" bg="white">
-				{songs.map((song: ISong, index: number) => (
+				{songs?.map((song: ISong, index: number) => (
 					<div
 						key={song.id}
 						className="flex items-center justify-between p-2 border-b border-dashed md:p-4 border-retroGray"
