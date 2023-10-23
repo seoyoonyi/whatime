@@ -71,27 +71,39 @@ const SignInModal = ({
 					<Keys className="w-[77px]" />
 				</h2>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="pb-[35px]">
-						<AuthInput
-							placeholder="email"
-							word="email"
-							type="email"
-							autoFocus={true}
-							inputProps={register('email', signinValidationRules.email)}
-							customOnChange={(e) => setEmail(e.target.value)}
-							className="w-[250px] mb-[28px]"
-						/>
-						{errors.email && <p>{errors.email.message}</p>}
+					<div className="pb-[35px] w-[250px]">
+						<div className="mb-[28px] w-full">
+							<AuthInput
+								placeholder="email"
+								word="email"
+								type="email"
+								autoFocus={true}
+								inputProps={register('email', signinValidationRules.email)}
+								customOnChange={(e) => setEmail(e.target.value)}
+								className="w-full mb-1"
+								error={!!errors.email}
+							/>
 
-						<AuthInput
-							placeholder="password"
-							word="password"
-							type="password"
-							inputProps={register('password', signinValidationRules.password)}
-							customOnChange={(e) => setPassword(e.target.value)}
-							className="w-[250px]"
-						/>
-						{errors.password && <p>{errors.password.message}</p>}
+							{errors.email && (
+								<p className="text-xs text-red">{errors.email.message}</p>
+							)}
+						</div>
+
+						<div className="w-full">
+							<AuthInput
+								placeholder="password"
+								word="password"
+								type="password"
+								inputProps={register('password', signinValidationRules.password)}
+								customOnChange={(e) => setPassword(e.target.value)}
+								className="w-full mb-1"
+								error={!!errors.password}
+							/>
+
+							{errors.password && (
+								<p className="text-xs text-red">{errors.password.message}</p>
+							)}
+						</div>
 					</div>
 					<div className="flex justify-center mb-[10px]">
 						<Button disabled={!email || !password} className="px-[18px] py-[3px]">
@@ -102,7 +114,7 @@ const SignInModal = ({
 				<div className="flex justify-center mb-[10px]">
 					<Button
 						onClick={handleSignUpModalOpen}
-						className="text-sm underline border-0 opacity-50"
+						className="text-sm underline border-none opacity-50"
 					>
 						Sign Up
 					</Button>

@@ -8,6 +8,7 @@ interface IInputComponentProps {
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	autoFocus?: boolean;
 	className?: string;
+	error?: boolean;
 }
 
 const Input = ({
@@ -17,6 +18,7 @@ const Input = ({
 	onChange,
 	autoFocus,
 	className,
+	error = false,
 }: IInputComponentProps) => {
 	return (
 		<input
@@ -25,7 +27,9 @@ const Input = ({
 			{...inputProps}
 			onChange={onChange}
 			autoFocus={autoFocus}
-			className={`px-4 py-2 focus:outline-none focus:ring focus:ring-inset focus:ring-retroBlue-500 border  border-t-black border-l-black border-b-white border-r-white ${className}`}
+			className={`px-4 py-2 focus:outline-none focus:ring focus:ring-inset focus:ring-retroBlue-500 border ${
+				error ? 'border-red' : 'border-t-black border-l-black border-b-white border-r-white'
+			} ${className}`}
 		/>
 	);
 };
