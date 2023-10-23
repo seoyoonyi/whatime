@@ -32,8 +32,8 @@ const ModalButton = ({
 	const isActive = currentHighestModal === modalType && !isMinimized;
 
 	const buttonStyle = isActive
-		? 'bg-retroLightGray insetBorderStyle font-bold'
-		: 'bg-retroGray outsetShadowStyle';
+		? 'bg-retroLightGray border border-t-black border-l-black border-b-white border-r-white font-bold'
+		: 'bg-retroGray border bg-retroGray border-b-black border-r-black border-t-white border-l-white';
 
 	useEffect(() => {
 		if (open && !isMinimized) {

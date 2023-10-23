@@ -165,7 +165,7 @@ const MainPage = () => {
 				<div className="relative flex items-center h-full">
 					<Button
 						onClick={musicModal.open}
-						className={`text-[14px] flex items-center justify-center  font-eng mr-2 border-none w-7 h-7 bar`}
+						className={`text-[14px] flex items-center justify-center  font-eng mr-2 border-none w-7 h-7 after:absolute after:top-1/2 after:-translate-y-1/2 after:right-0 after:w-[1px]  after:h-7 after:bg-retroGray after:border  after:border-b-gray after:border-r-gray after:border-t-white after:border-l-white;`}
 					>
 						<div className="w-6">
 							<CdMusic className="w-auto" />
