@@ -30,10 +30,9 @@ const ModalButton = ({
 	} = useContext(ModalContext);
 
 	const isActive = currentHighestModal === modalType && !isMinimized;
-
 	const buttonStyle = isActive
-		? 'bg-retroLightGray border border-t-black border-l-black border-b-white border-r-white font-bold'
-		: 'bg-retroGray border bg-retroGray border-b-black border-r-black border-t-white border-l-white';
+		? 'bg-retroLightGray border-2 border-t-black border-l-black border-b-white border-r-white font-bold'
+		: 'bg-retroGray border-2 border-b-black border-r-black border-t-white border-l-white';
 
 	useEffect(() => {
 		if (open && !isMinimized) {
@@ -58,13 +57,13 @@ const ModalButton = ({
 
 	if (!open) return null;
 	return (
-		<Button
+		<button
 			onClick={toggleMinimize}
-			className={`text-[14px] w-[160px] flex justify-start pt-1 px-1 m-1 font-eng ${buttonStyle}`}
+			className={`${buttonStyle} text-[14px] w-[160px] flex justify-start pt-1 px-1 m-1 font-eng `}
 		>
 			<div className="w-5 mr-1">{icon}</div>
 			{label}
-		</Button>
+		</button>
 	);
 };
 
