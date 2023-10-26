@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IUnderlinedInitialComponentsProps {
-	word: string;
+	word?: string;
 }
 
 const UnderlinedInitial = ({ word }: IUnderlinedInitialComponentsProps) => {

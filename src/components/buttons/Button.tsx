@@ -14,7 +14,7 @@ const Button = ({ onClick, children, className, disabled }: IButtonProps) => {
 			disabled={disabled}
 			className={`border-2 ${className} ${
 				disabled
-					? 'cursor-not-allowed opacity-50'
+					? 'cursor-not-allowed opacity-50 border-r-white border-b-white border-l-black border-t-black'
 					: 'border-l-white border-t-white border-r-black border-b-black'
 			} bg-retroGray active:border-t-black active:border-l-black active:border-b-white active:border-r-white`}
 		>

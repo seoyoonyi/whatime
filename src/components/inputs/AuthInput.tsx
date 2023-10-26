@@ -9,7 +9,7 @@ export interface IRegisterProps {
 }
 
 interface IAuthInputComponentProps {
-	word: string;
+	word?: string;
 	type?: 'text' | 'password' | 'email';
 	placeholder?: string;
 	inputProps?: IRegisterProps;
@@ -31,7 +31,7 @@ const AuthInput = ({
 }: IAuthInputComponentProps) => {
 	return (
 		<div>
-			<p>
+			<p className="text-sm">
 				<UnderlinedInitial word={word} />
 			</p>
 			<Input
@@ -40,7 +40,7 @@ const AuthInput = ({
 				inputProps={inputProps}
 				onChange={customOnChange}
 				autoFocus={autoFocus}
-				className={className}
+				className={`w-full mt-[2px] ${className}`}
 				error={error}
 			/>
 		</div>

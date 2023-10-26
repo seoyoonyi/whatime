@@ -5,7 +5,6 @@ import Button from '../components/buttons/Button';
 import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/buttons/ModalButton';
-import axios from 'axios';
 import { CdMusic, Keys, Drvspace7 } from '@react95/icons';
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 import SignInModal from '../components/modals/SignInModal';
@@ -149,6 +148,7 @@ const MainPage = () => {
 						onModalClick={signUpModal.open}
 						onClose={signUpModal.close}
 						onMinimize={signUpModal.toggleMinimize}
+						handleSignInModalOpen={signInModal.open}
 					/>
 				)}
 				<YouTube

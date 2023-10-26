@@ -66,13 +66,13 @@ const SignInModal = ({
 			modalRef={signInModalRef}
 			style={style}
 		>
-			<div className="px-[35px] py-[30px]">
-				<h2 className="flex justify-center pb-[25px]">
-					<Keys className="w-[77px]" />
+			<div className="px-[16px] py-[26px]">
+				<h2 className="flex justify-center pb-[26px]">
+					<Keys className="w-[66px]" />
 				</h2>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="pb-[35px] w-[250px]">
-						<div className="mb-[28px] w-full">
+					<div className="pb-[26px] w-[250px]">
+						<div className="mb-[10px] w-full">
 							<AuthInput
 								placeholder="email"
 								word="email"
@@ -80,7 +80,6 @@ const SignInModal = ({
 								autoFocus={true}
 								inputProps={register('email', signinValidationRules.email)}
 								customOnChange={(e) => setEmail(e.target.value)}
-								className="w-full mb-1"
 								error={!!errors.email}
 							/>
 
@@ -96,7 +95,6 @@ const SignInModal = ({
 								type="password"
 								inputProps={register('password', signinValidationRules.password)}
 								customOnChange={(e) => setPassword(e.target.value)}
-								className="w-full mb-1"
 								error={!!errors.password}
 							/>
 
@@ -105,16 +103,20 @@ const SignInModal = ({
 							)}
 						</div>
 					</div>
-					<div className="flex justify-center mb-[10px]">
-						<Button disabled={!email || !password} className="px-[18px] py-[3px]">
+					<div className="flex justify-center mb-[7px] w-full">
+						<Button
+							disabled={!email || !password}
+							className="w-full px-[18px] py-[3px]"
+						>
 							Sign In
 						</Button>
 					</div>
 				</form>
-				<div className="flex justify-center mb-[10px]">
+				<div className="flex items-center justify-center">
+					<span className="mr-1 text-xs opacity-50">{"Don't have an account?"}</span>
 					<Button
 						onClick={handleSignUpModalOpen}
-						className="text-sm underline border-none opacity-50"
+						className="text-xs underline border-none opacity-80"
 					>
 						Sign Up
 					</Button>
