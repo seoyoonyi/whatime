@@ -75,9 +75,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick }: IChartMo
 								</div>
 
 								<div>
-									<h4 className="text-sm md:font-bold">
-										{truncateTitle(song.musicTitle)}
-									</h4>
+									<h4 className="font-bold">{truncateTitle(song.musicTitle)}</h4>
 									<p className="text-xs">{song.artist}</p>
 								</div>
 							</div>

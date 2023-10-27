@@ -27,9 +27,9 @@ const Input = ({
 			{...inputProps}
 			onChange={onChange}
 			autoFocus={autoFocus}
-			className={`px-1 py-1 text-sm focus:outline-none focus:ring focus:ring-inset focus:ring-retroBlue-500 border ${
+			className={`px-1 py-1 focus:outline-none focus:ring focus:ring-inset focus:ring-retroBlue-500 border ${
 				error ? 'border-red' : 'border-t-black border-l-black border-b-white border-r-white'
-			} placeholder:text-sm placeholder:text-slate-400  ${className}`}
+			}  placeholder:text-slate-400  ${className}`}
 		/>
 	);
 };

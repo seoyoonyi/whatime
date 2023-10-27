@@ -31,7 +31,7 @@ const AuthInput = ({
 }: IAuthInputComponentProps) => {
 	return (
 		<div>
-			<p className="text-sm">
+			<p>
 				<UnderlinedInitial word={word} />
 			</p>
 			<Input
