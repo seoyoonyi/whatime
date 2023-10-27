@@ -87,16 +87,15 @@ const MusicModal = ({
 
 	const musicControlbuttons: IButtonProps[] = [
 		{
-			className: `w-[75px] ${
+			className: `w-[60px] xl:w-[75px] ${
 				isPrevDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
 			}`,
-
 			disabled: isPrevDisabled,
 			onClick: handlePrevSong,
 			children: <FontAwesomeIcon icon={faStepBackward} />,
 		},
 		{
-			className: 'w-[80px] cursor-pointer',
+			className: 'w-[65px] xl:w-[80px] cursor-pointer',
 			onClick: isPlayButton ? handlePlayClick : handlePauseClick,
 			children: isPlayButton ? (
 				<FontAwesomeIcon icon={faPlay} />
@@ -105,7 +104,7 @@ const MusicModal = ({
 			),
 		},
 		{
-			className: `w-[75px] ${
+			className: `w-[60px] xl:w-[75px] ${
 				isNextDisabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer'
 			}`,
 			disabled: isNextDisabled,
@@ -115,12 +114,12 @@ const MusicModal = ({
 	];
 	const userControlbuttons: IButtonProps[] = [
 		{
-			className: 'md:w-[75px] w-1/2',
+			className: 'md:w-[65px] xl:w-[75px] w-1/2',
 			onClick: handleSignInModalOpen,
 			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
-			className: 'md:w-[75px] w-1/2',
+			className: 'md:w-[65px] xl:w-[75px] w-1/2',
 			children: <FontAwesomeIcon icon={faGear} />,
 		},
 	];
@@ -140,7 +139,7 @@ const MusicModal = ({
 			<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
 
 			<Frame
-				className="py-4 px-4 md:py-[19px] md:px-[21px] w-full md:w-[620px]"
+				className="md:w-[520px] py-4 px-4 xl:py-[19px] xl:px-[21px] xl:w-[620px]"
 				boxShadow="in"
 				bg="retroGray"
 			>
@@ -155,7 +154,7 @@ const MusicModal = ({
 					<>
 						<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
 							<div className="hidden md:flex-col md:flex md:space-y-0">
-								<div className="flex-shrink-0 w-[315px] h-[177px] md:h-[122px] md:w-[218px] bg-black flex justify-center items-center overflow-hidden">
+								<div className="flex-shrink-0 h-[118px] w-[214px] bg-black flex justify-center items-center overflow-hidden">
 									<img
 										className="w-full"
 										src={thumbnailImage}
@@ -182,7 +181,7 @@ const MusicModal = ({
 						<div className="md:flex md:justify-between">
 							<div className="flex justify-between mt-[20px]  md:order-2">
 								<ButtonGroup buttons={musicControlbuttons} />
-								<Button className="w-[80px] md:ml-[30px] flex justify-center items-center ml-[5px]">
+								<Button className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]">
 									<FontAwesomeIcon icon={faPlus} />
 								</Button>
 							</div>
