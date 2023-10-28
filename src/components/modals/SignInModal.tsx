@@ -52,6 +52,7 @@ const SignInModal = ({
 		}
 
 		console.log(data);
+		alert('로그인에 성공했습니다! 현재 로그인 기능은 테스트 중입니다.');
 	}, []);
 
 	return (
