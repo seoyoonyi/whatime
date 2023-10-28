@@ -23,7 +23,7 @@ export const signupValidationRules: { [key: string]: IValidationRule } = {
 		},
 		pattern: {
 			value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-			message: 'invalid email address',
+			message: 'Invalid email address',
 		},
 	},
 	password: {
@@ -51,7 +51,7 @@ export const signupValidationRules: { [key: string]: IValidationRule } = {
 			message: 'Nickname should be less than 15 characters',
 		},
 		pattern: {
-			value: /^\S[A-Za-z가-힣\s]{1,15}\S$/,
+			value: /^[A-Za-z가-힣\s]{1,15}$/,
 			message:
 				'Nickname should contain only English and Korean characters without leading or trailing spaces',
 		},
