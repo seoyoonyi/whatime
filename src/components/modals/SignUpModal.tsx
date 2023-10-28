@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react';
 import Modal from './Modal';
-import { Computer, Keys } from '@react95/icons';
+import { Computer } from '@react95/icons';
 import AuthInput from '../inputs/AuthInput';
 import Button from '../buttons/Button';
 import { useForm } from 'react-hook-form';
@@ -70,17 +70,16 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 		return fakeDB.nicknames.includes(nickname);
 	};
 
-	// 비밀번호 강도에 따른 메시지 및 클래스 반환
 	const getPasswordStrengthMessage = (safetyLevel: string) => {
 		switch (safetyLevel) {
 			case 'high':
-				return { message: 'Strong password', colorClass: 'text-retroBlue' };
+				return { message: 'Strong password', borderColor: 'border-green' };
 			case 'medium':
-				return { message: 'Medium strength', colorClass: 'text-black' };
+				return { message: 'Medium strength', borderColor: 'border-blue' };
 			case 'low':
-				return { message: 'Weak password', colorClass: 'text-red' };
+				return { message: 'Weak password', borderColor: 'border-red' };
 			default:
-				return { message: '', colorClass: '' };
+				return { message: '', borderColor: '' };
 		}
 	};
 
@@ -110,7 +109,17 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 
 	const onSubmit = useCallback((data: IFormData) => {
 		console.log(data);
+		alert('회원가입이 완료되었습니다! 현재 회원가입 기능은 테스트 중입니다.');
 	}, []);
+
+	const isSignupDisabled = () => {
+		const isEmailValid = !checkEmailInDB(email) && email.length > 0;
+		const isPasswordValid = passwordSafety !== 'low' && password.length > 0;
+		const isNicknameValid = !checkNicknameInDB(nickname) && nickname.length > 0;
+		const isConfirmPasswordValid = confirmPassword === password;
+
+		return !isEmailValid || !isPasswordValid || !isNicknameValid || !isConfirmPasswordValid;
+	};
 
 	useEffect(() => {
 		if (password.length > 0) {
@@ -132,6 +141,19 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 			password: password.length > 0 ? passwordStrength.message : null,
 		}));
 	}, [email, nickname, password, passwordSafety]);
+
+	useEffect(() => {
+		const emailError = checkEmailInDB(email) ? 'This email is already in use.' : null;
+		const nicknameError = checkNicknameInDB(nickname)
+			? 'This nickname is already in use.'
+			: null;
+
+		setErrorMessages((prev) => ({
+			...prev,
+			email: emailError,
+			nickname: nicknameError,
+		}));
+	}, [email, nickname]);
 
 	return (
 		<Modal
@@ -159,26 +181,28 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 								autoFocus={true}
 								inputProps={register('email', signupValidationRules.email)}
 								customOnChange={(e) => setEmail(e.target.value)}
+								error={!!errorMessages.email}
 							/>
 							{errorMessages.email && (
 								<p className="text-xs text-red">{errorMessages.email}</p>
 							)}
 						</div>
-
 						<div className="w-full mb-[10px]">
 							<AuthInput
 								placeholder="password"
 								word="password"
 								type="password"
+								className={getPasswordStrengthMessage(passwordSafety).borderColor}
 								inputProps={register('password', signupValidationRules.password)}
 								customOnChange={(e) => setPassword(e.target.value)}
+								error={!!errorMessages.password}
 							/>
 
 							{errorMessages.password && (
 								<p
-									className={`text-xs ${
-										getPasswordStrengthMessage(passwordSafety).colorClass
-									}`}
+									className={`text-xs ${getPasswordStrengthMessage(
+										passwordSafety,
+									).borderColor.replace('border-', 'text-')}`}
 								>
 									{errorMessages.password}
 								</p>
@@ -189,6 +213,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 								type="password"
 								inputProps={register('confirmPassword')}
 								customOnChange={(e) => setConfirmPassword(e.target.value)}
+								error={!!errorMessages.confirmPassword}
 							/>
 							{errorMessages.confirmPassword && (
 								<p className="text-xs text-red">{errorMessages.confirmPassword}</p>
@@ -202,16 +227,13 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 								inputProps={register('nickname', signupValidationRules.nickname)}
 								customOnChange={(e) => setNickname(e.target.value)}
 							/>
-							{errorMessages.nickname && (
-								<p className="text-xs text-red">{errorMessages.nickname}</p>
+							{errors.nickname && (
+								<p className="text-xs text-red">{errors.nickname.message}</p>
 							)}
 						</div>
 					</div>
 					<div className="flex justify-center mb-[7px]">
-						<Button
-							disabled={!email || !password || !nickname || passwordSafety === 'low'}
-							className="px-[18px] py-[3px] w-full"
-						>
+						<Button disabled={isSignupDisabled()} className="px-[18px] py-[3px] w-full">
 							SignUp
 						</Button>
 					</div>
