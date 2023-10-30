@@ -17,6 +17,7 @@ interface IAuthInputComponentProps {
 	autoFocus?: boolean;
 	className?: string;
 	error?: boolean;
+	passwordSafety?: string;
 }
 
 const AuthInput = ({
@@ -28,6 +29,7 @@ const AuthInput = ({
 	autoFocus,
 	className,
 	error = false,
+	passwordSafety,
 }: IAuthInputComponentProps) => {
 	return (
 		<div>
@@ -42,6 +44,7 @@ const AuthInput = ({
 				autoFocus={autoFocus}
 				className={`w-full mt-[2px] ${className}`}
 				error={error}
+				passwordSafety={passwordSafety}
 			/>
 		</div>
 	);

@@ -192,17 +192,20 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 								placeholder="password"
 								word="password"
 								type="password"
-								className={getPasswordStrengthMessage(passwordSafety).borderColor}
+								passwordSafety={passwordSafety}
 								inputProps={register('password', signupValidationRules.password)}
 								customOnChange={(e) => setPassword(e.target.value)}
-								error={!!errorMessages.password}
 							/>
 
 							{errorMessages.password && (
 								<p
-									className={`text-xs ${getPasswordStrengthMessage(
-										passwordSafety,
-									).borderColor.replace('border-', 'text-')}`}
+									className={`text-xs ${
+										passwordSafety === 'high'
+											? 'text-green'
+											: passwordSafety === 'medium'
+											? 'text-blue'
+											: 'text-red'
+									}`}
 								>
 									{errorMessages.password}
 								</p>
