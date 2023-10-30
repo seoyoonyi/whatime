@@ -1,11 +1,11 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useEffect, useContext, MouseEvent } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
 import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/buttons/ModalButton';
-import { CdMusic, Keys, Drvspace7 } from '@react95/icons';
+import { CdMusic, Keys, Drvspace7, Computer } from '@react95/icons';
 import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 import SignInModal from '../components/modals/SignInModal';
 import SignUpModal from '../components/modals/SignUpModal';
@@ -43,6 +43,12 @@ const MainPage = () => {
 			mute: 1,
 			controls: 0,
 		},
+	};
+
+	const handleSignUpModalOpen = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+		event.stopPropagation();
+		signUpModal.open();
+		signInModal.close(event);
 	};
 
 	useEffect(() => {
@@ -132,7 +138,7 @@ const MainPage = () => {
 							display: signInModal.modalState.isMinimized ? 'none' : undefined,
 						}}
 						onModalClick={signInModal.open}
-						handleSignUpModalOpen={signUpModal.open}
+						handleSignUpModalOpen={handleSignUpModalOpen}
 						onClose={signInModal.close}
 						onMinimize={signInModal.toggleMinimize}
 					/>
@@ -165,7 +171,7 @@ const MainPage = () => {
 				<div className="relative flex items-center h-full">
 					<Button
 						onClick={musicModal.open}
-						className={`text-[14px] flex items-center justify-center  font-eng mr-4 border-none w-7 h-7 after:absolute after:top-1/2 after:-translate-y-1/2 after:right-2 after:w-[1px]  after:h-7 after:bg-retroGray after:border  after:border-b-gray after:border-r-gray after:border-t-white after:border-l-white;`}
+						className={`text-[14px] flex items-center justify-center  font-eng mr-4 border-none w-7 h-7 after:absolute after:top-1/2 after:-translate-y-1/2 after:right-2 after:w-[3px]  after:h-7 after:bg-retroGray after:border  after:border-b-black after:border-r-black after:border-l-white after:border-t-white`}
 					>
 						<div className="w-6">
 							<CdMusic className="w-auto" />
@@ -196,6 +202,14 @@ const MainPage = () => {
 						toggleMinimize={signInModal.toggleMinimize}
 						icon={<Keys className="w-auto" />}
 						label="SignIn"
+					/>
+					<ModalButton
+						modalType="signUp"
+						open={signUpModal.modalState.isOpen}
+						isMinimized={signUpModal.modalState.isMinimized}
+						toggleMinimize={signUpModal.toggleMinimize}
+						icon={<Computer className="w-auto" />}
+						label="SignUp"
 					/>
 				</div>
 			</footer>
