@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useCallback, useRef, useState } from 'react';
+import React, { MouseEvent, MouseEventHandler, useCallback, useRef, useState } from 'react';
 import Modal from './Modal';
 import { Keys } from '@react95/icons';
 import AuthInput from '../inputs/AuthInput';
@@ -10,7 +10,7 @@ interface ISignInModalProps {
 	open: boolean;
 	style: React.CSSProperties;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
-	handleSignUpModalOpen: MouseEventHandler<HTMLLIElement>;
+	handleSignUpModalOpen: (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 }
