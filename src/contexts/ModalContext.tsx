@@ -16,9 +16,10 @@ interface IModalContextType<T> {
 	modalZIndexes: ModalZIndexType;
 	setModalZIndexes: React.Dispatch<React.SetStateAction<ModalZIndexType>>;
 	secondHighestModal: ModalType | null;
+	updateModalPriority: (clickedModal: ModalKeys) => void;
 }
 
-export type ModalKeys = 'music' | 'chart';
+export type ModalKeys = 'music' | 'chart' | 'signUp' | 'signIn';
 type ModalStateType = Record<ModalKeys, { isOpen: boolean; zIndex: number }>;
 export type ModalZIndexType = Record<ModalKeys, number>;
 
@@ -45,7 +46,7 @@ const createInitialModalsState = (modalKeys: ModalKeys[]): ModalStateType => {
 	return state as ModalStateType;
 };
 
-export const ModalKeysArray: ModalKeys[] = ['music', 'chart'];
+export const ModalKeysArray: ModalKeys[] = ['music', 'chart', 'signIn', 'signUp'];
 
 const initialModalZIndexes = createInitialModalZIndexes(ModalKeysArray, 5);
 const initialModalsState = createInitialModalsState(ModalKeysArray);
@@ -65,6 +66,8 @@ const defaultContext: IModalContextType<ModalStateType> = {
 	modalZIndexes: initialModalZIndexes,
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	setModalZIndexes: () => {},
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	updateModalPriority: () => {},
 	secondHighestModal: null,
 };
 
@@ -96,6 +99,29 @@ export const ModalProvider = ({ children }: IModalContextProps) => {
 		return null;
 	};
 
+	const updateModalPriority = (clickedModal: ModalKeys) => {
+		if (clickedModal !== currentHighestModal) {
+			setModalsState((prev) => {
+				const newStates = { ...prev };
+				const currentTopModal = currentHighestModal;
+
+				newStates[clickedModal] = {
+					...newStates[clickedModal],
+					zIndex: currentHighestZIndex + 1,
+				};
+
+				if (currentTopModal) {
+					newStates[currentTopModal] = {
+						...newStates[currentTopModal],
+						zIndex: currentHighestZIndex,
+					};
+				}
+
+				return newStates;
+			});
+		}
+	};
+
 	useEffect(() => {
 		const sortedModals = Object.entries(modalsState).sort(
 			([, modalA], [, modalB]) => modalB.zIndex - modalA.zIndex,
@@ -117,6 +143,7 @@ export const ModalProvider = ({ children }: IModalContextProps) => {
 				modalZIndexes,
 				setModalZIndexes,
 				secondHighestModal: getSecondHighestModal(modalZIndexes, currentHighestModal),
+				updateModalPriority,
 			}}
 		>
 			{children}

@@ -22,20 +22,19 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		setCurrentHighestModal,
 		modalsState,
 		setModalZIndexes,
+		updateModalPriority,
 	} = useContext(ModalContext);
 
 	const [modalState, setModalState] = useState<ModalState>(initialState);
 
 	const bringToFront = () => {
-		if (modalType) {
-			const newZIndex = currentHighestZIndex + 1;
-			setModalState((prev) => ({ ...prev, zIndex: newZIndex }));
+		if (modalType && modalState.isOpen) {
 			incrementZIndex();
-			setCurrentHighestModal(modalType);
-			setModalZIndexes((prevZIndexes) => ({
-				...prevZIndexes,
-				[modalType]: newZIndex,
+			setModalState((prev) => ({
+				...prev,
+				zIndex: currentHighestZIndex + 1,
 			}));
+			setCurrentHighestModal(modalType);
 		}
 	};
 
@@ -43,8 +42,11 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		setModalState((prev) => ({
 			...prev,
 			isOpen: true,
+			isMinimized: false,
 		}));
-		bringToFront();
+		if (modalType !== undefined) {
+			updateModalPriority(modalType);
+		}
 	};
 
 	const close = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
