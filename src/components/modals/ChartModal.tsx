@@ -58,7 +58,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick }: IChartMo
 			<Frame className="overflow-y-auto max-h-96" boxShadow="in" bg="white">
 				{songs?.map((song: ISong, index: number) => (
 					<div
-						key={song.id}
+						key={song.ranking}
 						className="flex items-center justify-between p-2 border-b border-dashed md:p-4 border-retroGray"
 					>
 						<div className="flex items-center mr-2">
