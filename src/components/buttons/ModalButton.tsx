@@ -10,6 +10,7 @@ interface IModalButtonProps {
 	toggleMinimize: () => void;
 	icon: React.ReactElement;
 	label: string;
+	onModalClick: () => void;
 }
 
 const defaultState = {
@@ -25,6 +26,7 @@ const ModalButton = ({
 	toggleMinimize,
 	icon,
 	label,
+	onModalClick,
 }: IModalButtonProps) => {
 	const {
 		currentHighestModal,
@@ -50,13 +52,13 @@ const ModalButton = ({
 	const handleButtonClick = () => {
 		if (isActive) {
 			if (isMinimized) {
-				openModal();
+				onModalClick();
 			} else {
 				toggleMinimize();
 			}
 		} else {
 			if (!modalState.isOpen || isMinimized) {
-				openModal();
+				onModalClick();
 			} else {
 				bringToFront();
 			}

@@ -182,6 +182,7 @@ const MainPage = () => {
 					<ModalButton
 						modalType="music"
 						open={musicModal.modalState.isOpen}
+						onModalClick={musicModal.open}
 						isMinimized={musicModal.modalState.isMinimized}
 						toggleMinimize={musicModal.toggleMinimize}
 						icon={<CdMusic className="w-auto" />}
@@ -190,6 +191,7 @@ const MainPage = () => {
 					<ModalButton
 						modalType="chart"
 						open={chartModal.modalState.isOpen}
+						onModalClick={chartModal.open}
 						isMinimized={chartModal.modalState.isMinimized}
 						toggleMinimize={chartModal.toggleMinimize}
 						icon={<Drvspace7 className="w-auto" />}
@@ -198,6 +200,7 @@ const MainPage = () => {
 					<ModalButton
 						modalType="signIn"
 						open={signInModal.modalState.isOpen}
+						onModalClick={signInModal.open}
 						isMinimized={signInModal.modalState.isMinimized}
 						toggleMinimize={signInModal.toggleMinimize}
 						icon={<Keys className="w-auto" />}
@@ -206,6 +209,7 @@ const MainPage = () => {
 					<ModalButton
 						modalType="signUp"
 						open={signUpModal.modalState.isOpen}
+						onModalClick={signUpModal.open}
 						isMinimized={signUpModal.modalState.isMinimized}
 						toggleMinimize={signUpModal.toggleMinimize}
 						icon={<Computer className="w-auto" />}
