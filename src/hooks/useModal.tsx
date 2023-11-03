@@ -36,7 +36,6 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 				...prevZIndexes,
 				[modalType]: newZIndex,
 			}));
-			console.log(modalType, newZIndex);
 		}
 	};
 
@@ -66,7 +65,9 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		}
 	};
 
-	const toggleMinimize = () => {
+	const toggleMinimize = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+		event.stopPropagation();
+
 		setModalState((prev) => {
 			const nextMinimizedState = !prev.isMinimized;
 

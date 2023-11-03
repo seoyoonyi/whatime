@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { MouseEvent, useContext, useEffect } from 'react';
 import { ModalType } from '../../page/MainPage';
 import ModalContext from '../../contexts/ModalContext';
 import useModal from '../../hooks/useModal';
@@ -7,7 +7,7 @@ interface IModalButtonProps {
 	modalType: ModalType;
 	open: boolean;
 	isMinimized: boolean;
-	toggleMinimize: () => void;
+	toggleMinimize: (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 	icon: React.ReactElement;
 	label: string;
 	onModalClick: () => void;
@@ -37,24 +37,19 @@ const ModalButton = ({
 		currentHighestZIndex,
 	} = useContext(ModalContext);
 
-	const {
-		bringToFront,
-		open: openModal,
-		modalState,
-		isAllMinimized,
-	} = useModal(defaultState, modalType);
+	const { bringToFront, modalState } = useModal(defaultState, modalType);
 
 	const isActive = currentHighestModal === modalType && !isMinimized;
 	const buttonStyle = isActive
 		? 'bg-retroLightGray border-2 border-t-black border-l-black border-b-white border-r-white font-bold'
 		: 'bg-retroGray border-2 border-b-black border-r-black border-t-white border-l-white';
 
-	const handleButtonClick = () => {
+	const handleButtonClick = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
 		if (isActive) {
 			if (isMinimized) {
 				onModalClick();
 			} else {
-				toggleMinimize();
+				toggleMinimize(event);
 			}
 		} else {
 			if (!modalState.isOpen || isMinimized) {
