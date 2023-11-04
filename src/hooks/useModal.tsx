@@ -22,6 +22,8 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		setCurrentHighestModal,
 		modalsState,
 		setModalZIndexes,
+		openedModals,
+		setOpenedModals,
 	} = useContext(ModalContext);
 
 	const [modalState, setModalState] = useState<ModalState>(initialState);
@@ -46,6 +48,9 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 			isMinimized: false,
 		}));
 		bringToFront();
+		if (modalType && !openedModals.includes(modalType)) {
+			setOpenedModals([...openedModals, modalType]);
+		}
 	};
 
 	const close = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
@@ -55,6 +60,9 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 			isOpen: false,
 			isMinimized: false,
 		}));
+		if (modalType) {
+			setOpenedModals(openedModals.filter((m: ModalType) => m !== modalType));
+		}
 		if (modalType === currentHighestModal) {
 			const sortedModals = Object.entries(modalsState).sort(
 				([, zIndexA], [, zIndexB]) =>

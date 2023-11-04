@@ -85,7 +85,7 @@ const ModalButton = ({
 	return (
 		<button
 			onClick={handleButtonClick}
-			className={`${buttonStyle} text-[14px] w-[160px] flex justify-start pt-1 px-1 m-1 font-eng `}
+			className={`${buttonStyle} text-[14px] w-[100px] md:w-[120px] lg:w-[140px] xl:w-[160px] flex justify-start pt-1 px-1 m-1 font-eng `}
 		>
 			<div className="w-5 mr-1">{icon}</div>
 			{label}

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, MouseEvent } from 'react';
+import React, { useEffect, useContext, MouseEvent, useState } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../api/api';
 
 import { ISong } from '../types/types';
+import ModalContext from '../contexts/ModalContext';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
@@ -33,7 +34,7 @@ const MainPage = () => {
 
 	const { state, dispatch, playerRef, handleReady, handleStateChange } =
 		useContext<IMusicContext>(MusicContext);
-
+	const { openedModals } = useContext(ModalContext);
 	const { songs, currentSongIndex } = state;
 
 	const currentSong = songs[currentSongIndex];
@@ -45,10 +46,53 @@ const MainPage = () => {
 		},
 	};
 
+	const getModalInfo = (modalType: ModalType) => {
+		switch (modalType) {
+			case 'music':
+				return {
+					isOpen: musicModal.modalState.isOpen,
+					isMinimized: musicModal.modalState.isMinimized,
+					toggleMinimize: musicModal.toggleMinimize,
+					icon: <CdMusic className="w-auto" />,
+					label: 'Music',
+					onModalClick: musicModal.open,
+				};
+			case 'chart':
+				return {
+					isOpen: chartModal.modalState.isOpen,
+					isMinimized: chartModal.modalState.isMinimized,
+					toggleMinimize: chartModal.toggleMinimize,
+					icon: <Drvspace7 className="w-auto" />,
+					label: 'Chart',
+					onModalClick: chartModal.open,
+				};
+			case 'signIn':
+				return {
+					isOpen: signInModal.modalState.isOpen,
+					isMinimized: signInModal.modalState.isMinimized,
+					toggleMinimize: signInModal.toggleMinimize,
+					icon: <Keys className="w-auto" />,
+					label: 'SignIn',
+					onModalClick: signInModal.open,
+				};
+			case 'signUp':
+				return {
+					isOpen: signUpModal.modalState.isOpen,
+					isMinimized: signUpModal.modalState.isMinimized,
+					toggleMinimize: signUpModal.toggleMinimize,
+					icon: <Computer className="w-auto" />,
+					label: 'SignUp',
+					onModalClick: signUpModal.open,
+				};
+			default:
+				throw new Error('Unknown modal type: ' + modalType);
+		}
+	};
+
 	const handleSignUpModalOpen = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
 		event.stopPropagation();
-		signUpModal.open();
 		signInModal.close(event);
+		signUpModal.open();
 	};
 
 	useEffect(() => {
@@ -77,27 +121,6 @@ const MainPage = () => {
 		};
 	}, [dispatch, playerRef]);
 
-	useEffect(() => {
-		const now = new Date();
-		const utcHours = now.getUTCHours();
-		const kstHours = (utcHours + 9) % 24;
-		const nextUpdate = new Date(
-			Date.UTC(
-				now.getUTCFullYear(),
-				now.getUTCMonth(),
-				now.getUTCDate() + (kstHours >= 0 && kstHours < 12 ? 0 : 1),
-				3,
-				30,
-				0,
-				0,
-			),
-		);
-		const timeoutId = setTimeout(() => {
-			refetch();
-		}, nextUpdate.getTime() - now.getTime());
-		return () => clearTimeout(timeoutId);
-	}, [refetch]);
-
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
 			<main className="relative flex items-center justify-center w-full h-full">
@@ -111,8 +134,8 @@ const MainPage = () => {
 						onModalClick={musicModal.open}
 						onClose={musicModal.close}
 						onMinimize={musicModal.toggleMinimize}
-						handleChartModalOpen={chartModal.open}
-						handleSignInModalOpen={signInModal.open}
+						openChartModal={chartModal.open}
+						openSignInModal={signInModal.open}
 						currentSongIndex={currentSongIndex}
 						songs={songs}
 						playerRef={playerRef}
@@ -179,42 +202,22 @@ const MainPage = () => {
 					</Button>
 				</div>
 				<div className="flex">
-					<ModalButton
-						modalType="music"
-						open={musicModal.modalState.isOpen}
-						onModalClick={musicModal.open}
-						isMinimized={musicModal.modalState.isMinimized}
-						toggleMinimize={musicModal.toggleMinimize}
-						icon={<CdMusic className="w-auto" />}
-						label="Music"
-					/>
-					<ModalButton
-						modalType="chart"
-						open={chartModal.modalState.isOpen}
-						onModalClick={chartModal.open}
-						isMinimized={chartModal.modalState.isMinimized}
-						toggleMinimize={chartModal.toggleMinimize}
-						icon={<Drvspace7 className="w-auto" />}
-						label="Chart"
-					/>
-					<ModalButton
-						modalType="signIn"
-						open={signInModal.modalState.isOpen}
-						onModalClick={signInModal.open}
-						isMinimized={signInModal.modalState.isMinimized}
-						toggleMinimize={signInModal.toggleMinimize}
-						icon={<Keys className="w-auto" />}
-						label="SignIn"
-					/>
-					<ModalButton
-						modalType="signUp"
-						open={signUpModal.modalState.isOpen}
-						onModalClick={signUpModal.open}
-						isMinimized={signUpModal.modalState.isMinimized}
-						toggleMinimize={signUpModal.toggleMinimize}
-						icon={<Computer className="w-auto" />}
-						label="SignUp"
-					/>
+					{openedModals.map((modalType) => {
+						const modalInfo = getModalInfo(modalType);
+
+						return (
+							<ModalButton
+								key={modalType}
+								modalType={modalType}
+								open={modalInfo.isOpen}
+								isMinimized={modalInfo.isMinimized}
+								toggleMinimize={modalInfo.toggleMinimize}
+								icon={modalInfo.icon}
+								label={modalInfo.label}
+								onModalClick={modalInfo.onModalClick}
+							/>
+						);
+					})}
 				</div>
 			</footer>
 		</div>

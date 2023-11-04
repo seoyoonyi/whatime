@@ -29,8 +29,8 @@ interface IMusicPlayerModalProps {
 	onModalClick: MouseEventHandler<HTMLDivElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
-	handleChartModalOpen: MouseEventHandler<HTMLLIElement>;
-	handleSignInModalOpen: MouseEventHandler<HTMLLIElement>;
+	openChartModal: MouseEventHandler<HTMLLIElement>;
+	openSignInModal: MouseEventHandler<HTMLLIElement>;
 	currentSongIndex: number;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
@@ -44,8 +44,8 @@ const MusicModal = ({
 	currentSongIndex,
 	songs,
 	playerRef,
-	handleChartModalOpen,
-	handleSignInModalOpen,
+	openChartModal,
+	openSignInModal,
 	style,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
@@ -81,7 +81,7 @@ const MusicModal = ({
 	}, [currentSongIndex]);
 
 	const musicModalnavItems: INavItemProps[] = [
-		{ shortcut: 'c', label: 'hart', onClick: handleChartModalOpen },
+		{ shortcut: 'c', label: 'hart', onClick: openChartModal },
 		{ shortcut: 'p', label: 'laylist' },
 	];
 
@@ -115,7 +115,7 @@ const MusicModal = ({
 	const userControlbuttons: IButtonProps[] = [
 		{
 			className: 'md:w-[65px] xl:w-[75px] w-1/2',
-			onClick: handleSignInModalOpen,
+			onClick: openSignInModal,
 			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
@@ -136,7 +136,7 @@ const MusicModal = ({
 			modalRef={musicModalRef}
 			style={style}
 		>
-			<Navigation navItems={musicModalnavItems} onClick={handleChartModalOpen} />
+			<Navigation navItems={musicModalnavItems} onClick={openChartModal} />
 
 			<Frame
 				className="md:w-[520px] py-4 px-4 xl:py-[19px] xl:px-[21px] xl:w-[620px]"

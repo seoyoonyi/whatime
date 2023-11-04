@@ -16,6 +16,8 @@ interface IModalContextType<T> {
 	modalZIndexes: ModalZIndexType;
 	setModalZIndexes: React.Dispatch<React.SetStateAction<ModalZIndexType>>;
 	secondHighestModal: ModalType | null;
+	openedModals: ModalType[];
+	setOpenedModals: React.Dispatch<React.SetStateAction<ModalType[]>>;
 }
 
 export type ModalKeys = 'music' | 'chart' | 'signUp' | 'signIn';
@@ -66,6 +68,8 @@ const defaultContext: IModalContextType<ModalStateType> = {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	setModalZIndexes: () => {},
 	secondHighestModal: null,
+	openedModals: ['music'],
+	setOpenedModals: () => ['music'],
 };
 
 const ModalContext = createContext<IModalContextType<ModalStateType>>(defaultContext);
@@ -75,6 +79,7 @@ export const ModalProvider = ({ children }: IModalContextProps) => {
 	const [currentHighestZIndex, setCurrentHighestZIndex] = useState(5);
 	const [currentHighestModal, setCurrentHighestModal] = useState<null | ModalType>('music');
 	const [modalZIndexes, setModalZIndexes] = useState(initialModalZIndexes);
+	const [openedModals, setOpenedModals] = useState<ModalType[]>(['music']);
 
 	const incrementZIndex = () => {
 		setCurrentHighestZIndex((prev) => prev + 1);
@@ -117,6 +122,8 @@ export const ModalProvider = ({ children }: IModalContextProps) => {
 				modalZIndexes,
 				setModalZIndexes,
 				secondHighestModal: getSecondHighestModal(modalZIndexes, currentHighestModal),
+				openedModals,
+				setOpenedModals,
 			}}
 		>
 			{children}
