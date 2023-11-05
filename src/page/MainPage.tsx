@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, MouseEvent, useState } from 'react';
+import React, { useEffect, useContext, MouseEvent } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
@@ -89,10 +89,10 @@ const MainPage = () => {
 		}
 	};
 
-	const handleSignUpModalOpen = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+	const handleSignUpModalOpen = (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
 		event.stopPropagation();
 		signInModal.close(event);
-		signUpModal.open();
+		signUpModal.open(event);
 	};
 
 	useEffect(() => {

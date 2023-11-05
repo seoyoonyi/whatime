@@ -41,7 +41,8 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		}
 	};
 
-	const open = () => {
+	const open = (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+		event.stopPropagation();
 		setModalState((prev) => ({
 			...prev,
 			isOpen: true,
@@ -53,7 +54,7 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		}
 	};
 
-	const close = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+	const close = (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
 		event.stopPropagation();
 		setModalState((prev) => ({
 			...prev,
@@ -73,7 +74,7 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		}
 	};
 
-	const toggleMinimize = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+	const toggleMinimize = (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
 		event.stopPropagation();
 
 		setModalState((prev) => {

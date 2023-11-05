@@ -7,10 +7,10 @@ interface IModalButtonProps {
 	modalType: ModalType;
 	open: boolean;
 	isMinimized: boolean;
-	toggleMinimize: (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
+	toggleMinimize: (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 	icon: React.ReactElement;
 	label: string;
-	onModalClick: () => void;
+	onModalClick: (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
 
 const defaultState = {
@@ -47,13 +47,13 @@ const ModalButton = ({
 	const handleButtonClick = (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
 		if (isActive) {
 			if (isMinimized) {
-				onModalClick();
+				onModalClick(event);
 			} else {
 				toggleMinimize(event);
 			}
 		} else {
 			if (!modalState.isOpen || isMinimized) {
-				onModalClick();
+				onModalClick(event);
 			} else {
 				bringToFront();
 			}
