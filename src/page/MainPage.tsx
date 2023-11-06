@@ -14,6 +14,7 @@ import { fetchSongs } from '../api/api';
 
 import { ISong } from '../types/types';
 import ModalContext from '../contexts/ModalContext';
+import { getRefetchInterval } from '../utils/utils';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
@@ -23,13 +24,9 @@ const MainPage = () => {
 	const signInModal = useModal(undefined, 'signIn');
 	const signUpModal = useModal(undefined, 'signUp');
 
-	const {
-		data: fetchedSongs,
-		isError,
-		error,
-		refetch,
-	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+	const { data: fetchedSongs } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
+		refetchInterval: getRefetchInterval(),
 	});
 
 	const { state, dispatch, playerRef, handleReady, handleStateChange } =
