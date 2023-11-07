@@ -48,25 +48,25 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick }: IChartMo
 			modalRef={chartModalRef}
 			style={style}
 		>
-			<div className="py-2 pl-4 md:py-[5px] md:pl-[6px] flex justify-between">
-				<h2 className="text-lg font-bold md:text-xl font-eng">TOP100</h2>
-				<p className="flex items-center mt-1 text-xs md:mt-2 md:text-sm">
+			<div className="flex items-center justify-between px-1 py-2">
+				<h2 className="text-lg font-bold lg:text-xl font-eng">TOP100</h2>
+				<p className="flex items-center mt-1 text-xs">
 					<FontAwesomeIcon className="mr-2" icon={faClock} />
-					매일 12시 30분에 업데이트됩니다.
+					매일 12시 00분에 업데이트됩니다.
 				</p>
 			</div>
 			<Frame className="overflow-y-auto max-h-96" boxShadow="in" bg="white">
 				{songs?.map((song: ISong, index: number) => (
 					<div
 						key={song.ranking}
-						className="flex items-center justify-between p-2 border-b border-dashed md:p-4 border-retroGray"
+						className="flex items-center justify-between p-2 border-b border-dashed xl:p-4 border-retroGray"
 					>
-						<div className="flex items-center mr-2">
-							<div className="flex items-center font-eng justify-center w-8 h-8 md:w-10 md:h-10 text-lg md:text-xl font-bold text-center leading-[2rem] md:leading-[2.5rem] mr-2 md:mr-3">
+						<div className="flex items-center mr-3 xl:mr-4">
+							<div className="flex items-center font-eng justify-center w-8 h-8text-lg xl:text-xl font-bold text-center leading-[2rem] xl:leading-[2.5rem] mr-2 xl:mr-4">
 								{song.ranking}
 							</div>
-							<div className="flex space-x-2">
-								<div className="flex items-center justify-center w-16 h-8 overflow-hidden md:w-20 md:h-11 bg-retroGray">
+							<div className="flex items-center space-x-2">
+								<div className="flex items-center justify-center w-16 h-8 overflow-hidden xl:w-20 xl:h-11 bg-retroGray">
 									<img
 										src={song.thumbnail}
 										alt={song.musicTitle}
@@ -75,16 +75,16 @@ const ChartModal = ({ open, style, onClose, onMinimize, onModalClick }: IChartMo
 								</div>
 
 								<div>
-									<h4 className="font-bold">{truncateTitle(song.musicTitle)}</h4>
-									<p className="text-xs">{song.artist}</p>
+									<h4 className="font-bold ">{truncateTitle(song.musicTitle)}</h4>
+									<p className="text-xs xl:text-sm">{song.artist}</p>
 								</div>
 							</div>
 						</div>
 						<div>
-							<Button className="px-2 md:px-3" onClick={() => handleSongClick(index)}>
+							<Button className="px-2 xl:px-3" onClick={() => handleSongClick(index)}>
 								<FontAwesomeIcon icon={faPlay} />
 							</Button>
-							<Button className="px-2 md:px-3">
+							<Button className="px-2 xl:px-3">
 								<FontAwesomeIcon icon={faPlus} />
 							</Button>
 						</div>
