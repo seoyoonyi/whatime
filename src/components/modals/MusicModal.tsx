@@ -34,6 +34,7 @@ interface IMusicPlayerModalProps {
 	currentSongIndex: number;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
+	handleAddSongClick: (song: ISong) => void;
 }
 
 const MusicModal = ({
@@ -46,6 +47,7 @@ const MusicModal = ({
 	playerRef,
 	openChartModal,
 	openSignInModal,
+	handleAddSongClick,
 	style,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
@@ -181,7 +183,10 @@ const MusicModal = ({
 						<div className="md:flex md:justify-between">
 							<div className="flex justify-between mt-[20px]  md:order-2">
 								<ButtonGroup buttons={musicControlbuttons} />
-								<Button className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]">
+								<Button
+									className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]"
+									onClick={() => handleAddSongClick(currentSong)}
+								>
 									<FontAwesomeIcon icon={faPlus} />
 								</Button>
 							</div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, MouseEvent } from 'react';
+import React, { useEffect, useContext, MouseEvent, useState } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
@@ -15,6 +15,7 @@ import { fetchSongs } from '../api/api';
 import { ISong } from '../types/types';
 import ModalContext from '../contexts/ModalContext';
 import { getRefetchInterval } from '../utils/utils';
+import AddSongModal from '../components/modals/AddSongModal';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
@@ -33,6 +34,7 @@ const MainPage = () => {
 		useContext<IMusicContext>(MusicContext);
 	const { openedModals } = useContext(ModalContext);
 	const { songs, currentSongIndex } = state;
+	const [showAddSongModal, setShowAddSongModal] = useState(false);
 
 	const currentSong = songs[currentSongIndex];
 	const opts: YouTubeProps['opts'] = {
@@ -41,6 +43,10 @@ const MainPage = () => {
 			mute: 1,
 			controls: 0,
 		},
+	};
+
+	const handleAddSongClick = (song: ISong) => {
+		setShowAddSongModal(true);
 	};
 
 	const getModalInfo = (modalType: ModalType) => {
@@ -131,6 +137,7 @@ const MainPage = () => {
 						onModalClick={musicModal.open}
 						onClose={musicModal.close}
 						onMinimize={musicModal.toggleMinimize}
+						handleAddSongClick={handleAddSongClick}
 						openChartModal={chartModal.open}
 						openSignInModal={signInModal.open}
 						currentSongIndex={currentSongIndex}
@@ -144,6 +151,7 @@ const MainPage = () => {
 						onModalClick={chartModal.open}
 						onClose={chartModal.close}
 						onMinimize={chartModal.toggleMinimize}
+						handleAddSongClick={handleAddSongClick}
 						style={{
 							zIndex: chartModal.modalState.zIndex,
 							display: chartModal.modalState.isMinimized ? 'none' : undefined,
@@ -177,6 +185,10 @@ const MainPage = () => {
 						handleSignInModalOpen={signInModal.open}
 					/>
 				)}
+				<AddSongModal
+					isOpen={showAddSongModal}
+					onClose={() => setShowAddSongModal(false)}
+				/>
 				<YouTube
 					iframeClassName="w-full h-full flex-grow"
 					className="w-full h-full pointer-events-none"
