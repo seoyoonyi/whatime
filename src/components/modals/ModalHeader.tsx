@@ -4,9 +4,9 @@ import { faClose, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IModalHeaderProps {
-	title: string;
+	title?: string;
 	icon?: React.ReactElement;
-	onMinimize: MouseEventHandler<HTMLButtonElement>;
+	onMinimize?: MouseEventHandler<HTMLButtonElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseMove?: (e: MouseEvent<HTMLDivElement>) => void;
@@ -38,12 +38,14 @@ const ModalHeader = ({
 			</div>
 
 			<div className="flex">
-				<Button
-					onClick={onMinimize}
-					className=" w-[21px] h-[21px] flex items-center justify-center text-black "
-				>
-					<FontAwesomeIcon className="mb-[2px]" icon={faWindowMinimize} />
-				</Button>
+				{onMinimize && (
+					<Button
+						onClick={onMinimize}
+						className=" w-[21px] h-[21px] flex items-center justify-center text-black "
+					>
+						<FontAwesomeIcon className="mb-[2px]" icon={faWindowMinimize} />
+					</Button>
+				)}
 				<Button
 					onClick={onClose}
 					className="w-[21px] h-[21px] flex items-center justify-center  text-black"
