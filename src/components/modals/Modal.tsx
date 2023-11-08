@@ -6,11 +6,11 @@ import ModalHeader from './ModalHeader';
 
 interface IModalComponentProps {
 	open: boolean;
-	onModalClick: MouseEventHandler<HTMLDivElement>;
-	onMinimize: MouseEventHandler<HTMLButtonElement>;
+	onModalClick?: MouseEventHandler<HTMLDivElement>;
+	onMinimize?: MouseEventHandler<HTMLButtonElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	children: React.ReactNode;
-	title: string;
+	title?: string;
 	className?: string;
 	icon?: React.ReactElement;
 	style?: React.CSSProperties;
