@@ -1,4 +1,5 @@
-import React, { MouseEventHandler, useContext, useEffect, useRef } from 'react';
+import React, { MouseEventHandler, useEffect, useRef } from 'react';
+import useMusicStore from '../../stores/useMusicStore';
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -21,7 +22,6 @@ import {
 	faStepForward,
 	faUser,
 } from '@fortawesome/free-solid-svg-icons';
-import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -35,6 +35,7 @@ interface IMusicPlayerModalProps {
 	playerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
 	handleAddSongClick: (song: ISong) => void;
+	isLoading: boolean;
 }
 
 const MusicModal = ({
@@ -49,20 +50,33 @@ const MusicModal = ({
 	openSignInModal,
 	handleAddSongClick,
 	style,
+	isLoading,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
-	const { state, handlePlayClick, handlePrevSong, handlePauseClick, handleNextSong } =
-		useContext<IMusicContext>(MusicContext);
 
 	const {
-		songTransitionLoading,
+		handlePlayClick,
+		handlePrevSong,
+		handlePauseClick,
+		handleNextSong,
 		isPrevDisabled,
 		isNextDisabled,
-		duration,
-		currentTime,
 		isPlayButton,
-		playerLoading,
-	} = state;
+		songTransitionLoading,
+		currentTime,
+		duration,
+	} = useMusicStore((state) => ({
+		handlePlayClick: state.handlePlayClick,
+		handlePrevSong: state.handlePrevSong,
+		handlePauseClick: state.handlePauseClick,
+		handleNextSong: state.handleNextSong,
+		isPrevDisabled: state.isPrevDisabled,
+		isNextDisabled: state.isNextDisabled,
+		isPlayButton: state.isPlayButton,
+		songTransitionLoading: state.songTransitionLoading,
+		currentTime: state.currentTime,
+		duration: state.duration,
+	}));
 
 	const currentSong = songs[currentSongIndex];
 	const currentSongTitle = songTransitionLoading
@@ -145,7 +159,7 @@ const MusicModal = ({
 				boxShadow="in"
 				bg="retroGray"
 			>
-				{playerLoading ? (
+				{isLoading ? (
 					<div className="w-full flex  items-center justify-center text-black h-[176px] md:h-auto">
 						<span className="w-[30px]">
 							<img className="w-full" src="/hourglass.gif" alt="Loading..." />

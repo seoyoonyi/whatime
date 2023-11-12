@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, MouseEvent, useState } from 'react';
+import React, { useEffect, useContext, MouseEvent, useState, useRef } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
@@ -6,16 +6,16 @@ import ChartModal from '../components/modals/ChartModal';
 import useModal from '../hooks/useModal';
 import ModalButton from '../components/buttons/ModalButton';
 import { CdMusic, Keys, Drvspace7, Computer } from '@react95/icons';
-import MusicContext, { IMusicContext } from '../contexts/MusicContext';
 import SignInModal from '../components/modals/SignInModal';
 import SignUpModal from '../components/modals/SignUpModal';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../api/api';
 
-import { ISong } from '../types/types';
+import { IPlayer, ISong } from '../types/types';
 import ModalContext from '../contexts/ModalContext';
 import { getRefetchInterval } from '../utils/utils';
 import AddSongModal from '../components/modals/AddSongModal';
+import useMusicStore from '../stores/useMusicStore';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
@@ -24,16 +24,36 @@ const MainPage = () => {
 	const chartModal = useModal(undefined, 'chart');
 	const signInModal = useModal(undefined, 'signIn');
 	const signUpModal = useModal(undefined, 'signUp');
+	const playerRef = useRef<IPlayer | null>(null);
 
-	const { data: fetchedSongs } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+	const { isLoading, data: fetchedSongs } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
 		refetchInterval: getRefetchInterval(),
 	});
 
-	const { state, dispatch, playerRef, handleReady, handleStateChange } =
-		useContext<IMusicContext>(MusicContext);
+	const {
+		songs,
+		currentSongIndex,
+		handleReady,
+		handleStateChange,
+		setSongs,
+		setPrevDisabled,
+		setNextDisabled,
+		setCurrentTime,
+		setPlayerRef,
+	} = useMusicStore((state) => ({
+		songs: state.songs,
+		currentSongIndex: state.currentSongIndex,
+		playerRef: state.playerRef,
+		handleReady: state.handleReady,
+		handleStateChange: state.handleStateChange,
+		setSongs: state.setSongs,
+		setPrevDisabled: state.setPrevDisabled,
+		setNextDisabled: state.setNextDisabled,
+		setCurrentTime: state.setCurrentTime,
+		setPlayerRef: state.setPlayerRef,
+	}));
 	const { openedModals } = useContext(ModalContext);
-	const { songs, currentSongIndex } = state;
 	const [showAddSongModal, setShowAddSongModal] = useState(false);
 
 	const currentSong = songs[currentSongIndex];
@@ -45,7 +65,7 @@ const MainPage = () => {
 		},
 	};
 
-	const handleAddSongClick = (song: ISong) => {
+	const handleAddSongClick = () => {
 		setShowAddSongModal(true);
 	};
 
@@ -100,29 +120,39 @@ const MainPage = () => {
 
 	useEffect(() => {
 		if (fetchedSongs) {
-			dispatch({ type: 'SET_SONGS', payload: fetchedSongs });
+			setSongs(fetchedSongs);
 		}
-	}, [dispatch, fetchedSongs]);
+	}, [setSongs, fetchedSongs]);
 
 	useEffect(() => {
-		dispatch({ type: 'SET_PREV_DISABLED', payload: false });
-		dispatch({ type: 'SET_NEXT_DISABLED', payload: false });
+		if (playerRef && playerRef.current) {
+			setPlayerRef(playerRef.current);
+		}
+	}, [setPlayerRef, playerRef]);
 
-		const timer = setInterval(() => {
+	useEffect(() => {
+		setPrevDisabled(false);
+		setNextDisabled(false);
+		let timer: number;
+
+		const updateCurrentTime = () => {
 			if (playerRef.current) {
 				const newCurrentTime = Math.round(playerRef.current.getCurrentTime());
-				dispatch({ type: 'SET_CURRENT_TIME', payload: newCurrentTime });
+				setCurrentTime(newCurrentTime);
 			}
-		}, 1000);
+		};
+
+		if (playerRef.current) {
+			timer = window.setInterval(updateCurrentTime, 1000);
+		}
 
 		return () => {
+			clearInterval(timer);
 			if (playerRef.current) {
 				playerRef.current.stopVideo();
-				playerRef.current = null;
 			}
-			clearInterval(timer);
 		};
-	}, [dispatch, playerRef]);
+	}, [setCurrentTime, playerRef, currentSongIndex]);
 
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
@@ -143,6 +173,7 @@ const MainPage = () => {
 						currentSongIndex={currentSongIndex}
 						songs={songs}
 						playerRef={playerRef}
+						isLoading={isLoading}
 					/>
 				)}
 				{chartModal.modalState.isOpen && (

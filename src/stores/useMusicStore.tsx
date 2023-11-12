@@ -19,7 +19,6 @@ interface IMusicState {
 	isPlayButton: boolean;
 	isFirstPlay: boolean;
 	playerRef: IPlayer | null;
-
 	setPlayerRef: (player: IPlayer | null) => void;
 	handleReady: YouTubeProps['onReady'];
 	handleStateChange: YouTubeProps['onStateChange'];
@@ -29,6 +28,20 @@ interface IMusicState {
 	handleNextSong: () => void;
 	handlePrevSong: () => void;
 	handleTimeUpdate: (newTime: number) => void;
+	setSongs: (songs: ISong[]) => void;
+	setPlay: (isPlaying: boolean) => void;
+	setVolume: (volume: number) => void;
+	setMute: (isMuted: boolean) => void;
+	setPlayerLoading: (playerLoading: boolean) => void;
+	setSongLoaded: (isSongLoaded: boolean) => void;
+	setCurrentSongIndex: (currentSongIndex: number) => void;
+	setCurrentTime: (currentTime: number) => void;
+	setDuration: (duration: number) => void;
+	setSongTransitionLoading: (songTransitionLoading: boolean) => void;
+	setPrevDisabled: (isPrevDisabled: boolean) => void;
+	setNextDisabled: (isNextDisabled: boolean) => void;
+	setPlayButton: (isPlayButton: boolean) => void;
+	setFirstPlay: (isFirstPlay: boolean) => void;
 }
 
 const useMusicStore = create<IMusicState>((set, get) => ({
@@ -47,6 +60,20 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	isPlayButton: true,
 	isFirstPlay: true,
 	playerRef: null,
+	setSongs: (songs: ISong[]) => set({ songs }),
+	setPlay: (isPlaying: boolean) => set({ isPlaying }),
+	setVolume: (volume: number) => set({ volume }),
+	setMute: (isMuted: boolean) => set({ isMuted }),
+	setPlayerLoading: (playerLoading: boolean) => set({ playerLoading }),
+	setSongLoaded: (isSongLoaded: boolean) => set({ isSongLoaded }),
+	setCurrentSongIndex: (currentSongIndex: number) => set({ currentSongIndex }),
+	setCurrentTime: (currentTime: number) => set({ currentTime }),
+	setDuration: (duration: number) => set({ duration }),
+	setSongTransitionLoading: (songTransitionLoading: boolean) => set({ songTransitionLoading }),
+	setPrevDisabled: (isPrevDisabled: boolean) => set({ isPrevDisabled }),
+	setNextDisabled: (isNextDisabled: boolean) => set({ isNextDisabled }),
+	setPlayButton: (isPlayButton: boolean) => set({ isPlayButton }),
+	setFirstPlay: (isFirstPlay: boolean) => set({ isFirstPlay }),
 
 	setPlayerRef: (player) => set({ playerRef: player }),
 
@@ -84,6 +111,10 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 					isSongLoaded: true,
 					songTransitionLoading: false,
 				});
+
+				setInterval(() => {
+					set({ currentTime: event.target.getCurrentTime() });
+				}, 1000);
 				break;
 
 			case 2:

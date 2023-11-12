@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useState, useContext } from 'react';
-import MusicContext, { IMusicContext } from '../contexts/MusicContext';
+import React, { useEffect, useCallback, useState } from 'react';
+import useMusicStore from '../stores/useMusicStore';
 
 interface IProgressBarProps {
 	className?: string;
@@ -7,9 +7,18 @@ interface IProgressBarProps {
 
 const ProgressBar = ({ className }: IProgressBarProps) => {
 	const [isDragging, setDragging] = useState<boolean>(false);
-	const { state, handleTimeUpdate } = useContext<IMusicContext>(MusicContext);
 
-	const { isPlaying, duration, currentTime: initialCurrentTime = duration / 2 } = state;
+	const {
+		isPlaying,
+		duration,
+		currentTime: initialCurrentTime,
+		handleTimeUpdate,
+	} = useMusicStore((state) => ({
+		isPlaying: state.isPlaying,
+		duration: state.duration,
+		currentTime: state.currentTime,
+		handleTimeUpdate: state.handleTimeUpdate,
+	}));
 	const [currentTime, setCurrentTime] = useState<number>(initialCurrentTime);
 
 	const calculateProgress = useCallback(
