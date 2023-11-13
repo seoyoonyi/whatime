@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useReducer, useRef } from 'react';
-import { IMusicState, MusicActions, musicReducer } from '../reducers/musicReducer';
+import { IMusicState, MusicActions, musicReducer } from '../reducers/musicReducer.temp.js';
 import mock from '../data/mock.json';
-import { IPlayer, ISong } from '../types/types';
+import { IPlayer, ISong } from '../types/types.js';
 import { YouTubeProps } from 'react-youtube';
 
 interface IMusicContextProps {
