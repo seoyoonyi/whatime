@@ -2,6 +2,7 @@ import create from 'zustand';
 import { YouTubeProps } from 'react-youtube';
 import { ISong, IPlayer } from '../types/types';
 import mock from '../data/mock.json';
+import { useRef } from 'react';
 
 interface IMusicState {
 	songs: ISong[];
@@ -18,8 +19,7 @@ interface IMusicState {
 	isNextDisabled: boolean;
 	isPlayButton: boolean;
 	isFirstPlay: boolean;
-	playerRef: IPlayer | null;
-	setPlayerRef: (player: IPlayer | null) => void;
+	playerRef: React.MutableRefObject<IPlayer | null>;
 	handleReady: YouTubeProps['onReady'];
 	handleStateChange: YouTubeProps['onStateChange'];
 	handleSongClick: (index: number) => void;
@@ -59,7 +59,8 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	isNextDisabled: false,
 	isPlayButton: true,
 	isFirstPlay: true,
-	playerRef: null,
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	playerRef: useRef<IPlayer | null>(null),
 	setSongs: (songs: ISong[]) => set({ songs }),
 	setPlay: (isPlaying: boolean) => set({ isPlaying }),
 	setVolume: (volume: number) => set({ volume }),
@@ -74,9 +75,6 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	setNextDisabled: (isNextDisabled: boolean) => set({ isNextDisabled }),
 	setPlayButton: (isPlayButton: boolean) => set({ isPlayButton }),
 	setFirstPlay: (isFirstPlay: boolean) => set({ isFirstPlay }),
-
-	setPlayerRef: (player) => set({ playerRef: player }),
-
 	handleReady: (event) => {
 		const { volume, isMuted } = get();
 		const player = event.target;
@@ -95,7 +93,6 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 			player.unMute();
 		}
 	},
-
 	handleStateChange: (event) => {
 		const { currentSongIndex, songs } = get();
 		switch (event.data) {
@@ -125,28 +122,25 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 				break;
 		}
 	},
-
 	handlePlayClick: () => {
 		const { playerRef, isFirstPlay, isMuted } = get();
-		if (playerRef) {
-			playerRef.playVideo();
+		if (playerRef.current) {
+			playerRef.current.playVideo();
 			if (isFirstPlay && isMuted) {
-				playerRef.unMute();
+				playerRef.current.unMute();
 				set({ isMuted: false });
 			}
 			set({ isPlayButton: false, isFirstPlay: false });
 		}
 	},
-
 	handlePauseClick: () => {
-		const playerRef = get().playerRef;
+		const playerRef = get().playerRef.current;
 		if (playerRef) {
 			set({ isPlaying: false });
 			playerRef.pauseVideo();
 			set({ isPlayButton: true });
 		}
 	},
-
 	handleNextSong: () => {
 		const { currentSongIndex, songs, isSongLoaded, isNextDisabled, playerRef } = get();
 		if (!isSongLoaded || isNextDisabled) return;
@@ -155,7 +149,7 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 		if (newIndex >= songs.length) newIndex = 0;
 
 		const videoId = new URL(songs[newIndex].url).searchParams.get('v') || '';
-		if (playerRef) playerRef.loadVideoById(videoId);
+		if (playerRef.current) playerRef.current.loadVideoById(videoId);
 
 		set({
 			currentSongIndex: newIndex,
@@ -175,7 +169,7 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 		if (newIndex < 0) newIndex = songs.length - 1;
 
 		const videoId = new URL(songs[newIndex].url).searchParams.get('v') || '';
-		if (playerRef) playerRef.loadVideoById(videoId);
+		if (playerRef.current) playerRef.current.loadVideoById(videoId);
 
 		set({
 			currentSongIndex: newIndex,
@@ -185,19 +179,17 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 			isPlaying: true,
 		});
 	},
-
 	handleSongClick: (index: number) => {
 		const { songs, playerRef } = get();
 		const videoId = new URL(songs[index].url).searchParams.get('v') || '';
-		if (playerRef) {
-			playerRef.loadVideoById(videoId);
+		if (playerRef.current) {
+			playerRef.current.loadVideoById(videoId);
 			get().handlePlayClick();
 		}
 		set({ currentSongIndex: index });
 	},
-
 	handleTimeUpdate: (newTime: number) => {
-		const playerRef = get().playerRef;
+		const playerRef = get().playerRef.current;
 		if (playerRef) {
 			playerRef.seekTo(newTime);
 			set({ currentTime: newTime, isPlaying: true });

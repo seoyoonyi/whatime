@@ -24,7 +24,6 @@ const MainPage = () => {
 	const chartModal = useModal(undefined, 'chart');
 	const signInModal = useModal(undefined, 'signIn');
 	const signUpModal = useModal(undefined, 'signUp');
-	const playerRef = useRef<IPlayer | null>(null);
 
 	const { isLoading, data: fetchedSongs } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
@@ -40,7 +39,7 @@ const MainPage = () => {
 		setPrevDisabled,
 		setNextDisabled,
 		setCurrentTime,
-		setPlayerRef,
+		playerRef,
 	} = useMusicStore((state) => ({
 		songs: state.songs,
 		currentSongIndex: state.currentSongIndex,
@@ -51,7 +50,6 @@ const MainPage = () => {
 		setPrevDisabled: state.setPrevDisabled,
 		setNextDisabled: state.setNextDisabled,
 		setCurrentTime: state.setCurrentTime,
-		setPlayerRef: state.setPlayerRef,
 	}));
 	const { openedModals } = useContext(ModalContext);
 	const [showAddSongModal, setShowAddSongModal] = useState(false);
@@ -123,12 +121,6 @@ const MainPage = () => {
 			setSongs(fetchedSongs);
 		}
 	}, [setSongs, fetchedSongs]);
-
-	useEffect(() => {
-		if (playerRef && playerRef.current) {
-			setPlayerRef(playerRef.current);
-		}
-	}, [setPlayerRef, playerRef]);
 
 	useEffect(() => {
 		setPrevDisabled(false);

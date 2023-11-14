@@ -1,28 +1,48 @@
-import React, { ChangeEvent, useContext, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styles from './volumebar.module.css';
 import { Mute, Unmute } from '@react95/icons';
-import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
+import useMusicStore from '../../stores/useMusicStore';
 
 const VolumeBar = () => {
 	const volumeRef = useRef<HTMLInputElement>(null);
 	const [playerReady, setPlayerReady] = useState(false);
-	const { state, dispatch, playerRef } = useContext<IMusicContext>(MusicContext);
+	const {
+		volume,
+		isMuted,
+		isPlaying,
+		isFirstPlay,
+		playerRef,
+		setVolume,
+		setMute,
+		setPlayButton,
+		setFirstPlay,
+	} = useMusicStore((state) => ({
+		volume: state.volume,
+		isMuted: state.isMuted,
+		isPlaying: state.isPlaying,
+		isFirstPlay: state.isFirstPlay,
+		playerRef: state.playerRef,
+		setVolume: state.setVolume,
+		setMute: state.setMute,
+		setPlayButton: state.setPlayButton,
+		setFirstPlay: state.setFirstPlay,
+	}));
 
-	const { volume, isMuted, isPlaying, isFirstPlay } = state;
 	const player = playerRef.current;
 
 	const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const volume = e.target.valueAsNumber;
-		dispatch({ type: 'SET_VOLUME', payload: volume * 100 });
+
+		setVolume(volume * 100);
 
 		if (player && 'setVolume' in player && playerReady) {
 			if (volume <= 0) {
 				player.setVolume(0);
-				dispatch({ type: 'SET_MUTE', payload: true });
+				setMute(true);
 			} else {
 				player.setVolume(volume * 100);
 				if (isMuted) {
-					dispatch({ type: 'SET_MUTE', payload: false });
+					setMute(false);
 					player.unMute();
 				}
 			}
@@ -33,20 +53,20 @@ const VolumeBar = () => {
 		if (player && playerReady) {
 			if (isMuted) {
 				player.unMute();
-				dispatch({ type: 'SET_MUTE', payload: false });
+				setMute(false);
 
 				if (isFirstPlay && isPlaying) {
-					dispatch({ type: 'SET_PLAY_BUTTON', payload: false });
-					dispatch({ type: 'SET_FIRST_PLAY', payload: false });
+					setPlayButton(false);
+					setFirstPlay(false);
 				}
 
 				if (volume <= 0) {
-					dispatch({ type: 'SET_VOLUME', payload: 100 });
+					setVolume(100);
 					player.setVolume(100);
 				}
 			} else {
 				player.mute();
-				dispatch({ type: 'SET_MUTE', payload: true });
+				setMute(true);
 			}
 		}
 	};

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useContext, useRef, useState } from 'react';
+import React, { MouseEventHandler, useRef } from 'react';
 import Modal from './Modal';
 import { ISong } from '../../types/types';
 import { truncateTitle } from '../../utils/utils';
@@ -8,9 +8,9 @@ import Frame from '../Frame';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
-import MusicContext, { IMusicContext } from '../../contexts/MusicContext';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../../api/api';
+import useMusicStore from '../../stores/useMusicStore';
 
 interface IChartModal {
 	open: boolean;
@@ -30,7 +30,11 @@ const ChartModal = ({
 	handleAddSongClick,
 }: IChartModal) => {
 	const chartModalRef = useRef(null);
-	const { handleSongClick } = useContext<IMusicContext>(MusicContext);
+
+	const { handleSongClick } = useMusicStore((state) => ({
+		handleSongClick: state.handleSongClick,
+	}));
+
 	const {
 		data: songs,
 		isError,
