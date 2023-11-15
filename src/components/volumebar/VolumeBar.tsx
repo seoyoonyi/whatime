@@ -2,16 +2,20 @@ import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styles from './volumebar.module.css';
 import { Mute, Unmute } from '@react95/icons';
 import useMusicStore from '../../stores/useMusicStore';
+import { IPlayer } from '../../types/types';
+interface IVolumeBar {
+	playerRef: React.MutableRefObject<IPlayer | null>;
+}
 
-const VolumeBar = () => {
+const VolumeBar = ({ playerRef }: IVolumeBar) => {
 	const volumeRef = useRef<HTMLInputElement>(null);
 	const [playerReady, setPlayerReady] = useState(false);
+
 	const {
 		volume,
 		isMuted,
 		isPlaying,
 		isFirstPlay,
-		playerRef,
 		setVolume,
 		setMute,
 		setPlayButton,
@@ -21,7 +25,6 @@ const VolumeBar = () => {
 		isMuted: state.isMuted,
 		isPlaying: state.isPlaying,
 		isFirstPlay: state.isFirstPlay,
-		playerRef: state.playerRef,
 		setVolume: state.setVolume,
 		setMute: state.setMute,
 		setPlayButton: state.setPlayButton,
@@ -49,7 +52,9 @@ const VolumeBar = () => {
 		}
 	};
 
-	const toggleMute = () => {
+	const toggleMute = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+		e.stopPropagation();
+
 		if (player && playerReady) {
 			if (isMuted) {
 				player.unMute();

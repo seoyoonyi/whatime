@@ -190,7 +190,7 @@ const MusicModal = ({
 									<div>{`${formatTime(currentTime)} / ${formatTime(
 										duration,
 									)}`}</div>
-									<VolumeBar />
+									<VolumeBar playerRef={playerRef} />
 								</div>
 							</div>
 						</div>

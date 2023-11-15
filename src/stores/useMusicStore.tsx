@@ -2,7 +2,7 @@ import create from 'zustand';
 import { YouTubeProps } from 'react-youtube';
 import { ISong, IPlayer } from '../types/types';
 import mock from '../data/mock.json';
-import { useRef } from 'react';
+import { createRef, useRef } from 'react';
 
 interface IMusicState {
 	songs: ISong[];
@@ -19,7 +19,7 @@ interface IMusicState {
 	isNextDisabled: boolean;
 	isPlayButton: boolean;
 	isFirstPlay: boolean;
-	playerRef: React.MutableRefObject<IPlayer | null>;
+	playerRef: React.RefObject<IPlayer>;
 	handleReady: YouTubeProps['onReady'];
 	handleStateChange: YouTubeProps['onStateChange'];
 	handleSongClick: (index: number) => void;
@@ -59,8 +59,7 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	isNextDisabled: false,
 	isPlayButton: true,
 	isFirstPlay: true,
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	playerRef: useRef<IPlayer | null>(null),
+	playerRef: createRef<IPlayer>(),
 	setSongs: (songs: ISong[]) => set({ songs }),
 	setPlay: (isPlaying: boolean) => set({ isPlaying }),
 	setVolume: (volume: number) => set({ volume }),

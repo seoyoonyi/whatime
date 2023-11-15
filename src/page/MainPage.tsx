@@ -43,13 +43,13 @@ const MainPage = () => {
 	} = useMusicStore((state) => ({
 		songs: state.songs,
 		currentSongIndex: state.currentSongIndex,
-		playerRef: state.playerRef,
 		handleReady: state.handleReady,
 		handleStateChange: state.handleStateChange,
 		setSongs: state.setSongs,
 		setPrevDisabled: state.setPrevDisabled,
 		setNextDisabled: state.setNextDisabled,
 		setCurrentTime: state.setCurrentTime,
+		playerRef: state.playerRef,
 	}));
 	const { openedModals } = useContext(ModalContext);
 	const [showAddSongModal, setShowAddSongModal] = useState(false);
@@ -141,9 +141,11 @@ const MainPage = () => {
 		return () => {
 			clearInterval(timer);
 			if (playerRef.current) {
+				// eslint-disable-next-line react-hooks/exhaustive-deps
 				playerRef.current.stopVideo();
 			}
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setCurrentTime, playerRef, currentSongIndex]);
 
 	return (
