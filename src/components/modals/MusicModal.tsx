@@ -32,7 +32,7 @@ interface IMusicPlayerModalProps {
 	openChartModal: MouseEventHandler<HTMLLIElement>;
 	openSignInModal: MouseEventHandler<HTMLLIElement>;
 	currentSongIndex: number;
-	playerRef: React.MutableRefObject<IPlayer | null>;
+	localPlayerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
 	handleAddSongClick: (song: ISong) => void;
 	isLoading: boolean;
@@ -45,7 +45,7 @@ const MusicModal = ({
 	onModalClick,
 	currentSongIndex,
 	songs,
-	playerRef,
+	localPlayerRef,
 	openChartModal,
 	openSignInModal,
 	handleAddSongClick,
@@ -87,10 +87,10 @@ const MusicModal = ({
 	const thumbnailImage = songTransitionLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
 
 	useEffect(() => {
-		if (playerRef.current && songs[currentSongIndex]) {
-			playerRef.current.src = songs[currentSongIndex].url;
-			if (typeof playerRef.current.play === 'function') {
-				playerRef.current.play();
+		if (localPlayerRef.current && songs[currentSongIndex]) {
+			localPlayerRef.current.src = songs[currentSongIndex].url;
+			if (typeof localPlayerRef.current.play === 'function') {
+				localPlayerRef.current.play();
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,7 +190,7 @@ const MusicModal = ({
 									<div>{`${formatTime(currentTime)} / ${formatTime(
 										duration,
 									)}`}</div>
-									<VolumeBar playerRef={playerRef} />
+									<VolumeBar localPlayerRef={localPlayerRef} />
 								</div>
 							</div>
 						</div>

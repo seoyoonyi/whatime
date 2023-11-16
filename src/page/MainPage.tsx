@@ -120,7 +120,7 @@ const MainPage = () => {
 	};
 	useEffect(() => {
 		if (localPlayerRef.current) {
-			setPlayerRef(localPlayerRef);
+			setPlayerRef(localPlayerRef.current);
 		}
 	}, [setPlayerRef, localPlayerRef]);
 
@@ -131,29 +131,26 @@ const MainPage = () => {
 	}, [setSongs, fetchedSongs]);
 
 	useEffect(() => {
+		if (!localPlayerRef.current) return;
+
 		setPrevDisabled(false);
 		setNextDisabled(false);
-		let timer: number;
 
 		const updateCurrentTime = () => {
 			if (localPlayerRef.current) {
-				const newCurrentTime = Math.round(localPlayerRef.current.getCurrentTime());
-				setCurrentTime(newCurrentTime);
+				setCurrentTime(Math.round(localPlayerRef.current.getCurrentTime()));
 			}
 		};
 
-		if (localPlayerRef.current) {
-			timer = window.setInterval(updateCurrentTime, 1000);
-		}
+		const timer = setInterval(updateCurrentTime, 1000);
 
 		return () => {
 			clearInterval(timer);
+
 			if (localPlayerRef.current) {
-				// eslint-disable-next-line react-hooks/exhaustive-deps
 				localPlayerRef.current.stopVideo();
 			}
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [setCurrentTime, localPlayerRef, currentSongIndex]);
 
 	return (
@@ -174,7 +171,7 @@ const MainPage = () => {
 						openSignInModal={signInModal.open}
 						currentSongIndex={currentSongIndex}
 						songs={songs}
-						playerRef={localPlayerRef}
+						localPlayerRef={localPlayerRef}
 						isLoading={isLoading}
 					/>
 				)}

@@ -2,7 +2,6 @@ import create from 'zustand';
 import { YouTubeProps } from 'react-youtube';
 import { ISong, IPlayer } from '../types/types';
 import mock from '../data/mock.json';
-import { useRef } from 'react';
 
 interface IMusicState {
 	songs: ISong[];
@@ -19,8 +18,8 @@ interface IMusicState {
 	isNextDisabled: boolean;
 	isPlayButton: boolean;
 	isFirstPlay: boolean;
-	playerRef: React.MutableRefObject<IPlayer | null>;
-	setPlayerRef: (ref: React.MutableRefObject<IPlayer | null>) => void;
+	playerRef: IPlayer | null;
+	setPlayerRef: (player: IPlayer | null) => void;
 	handleReady: YouTubeProps['onReady'];
 	handleStateChange: YouTubeProps['onStateChange'];
 	handleSongClick: (index: number) => void;
@@ -60,8 +59,8 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	isNextDisabled: false,
 	isPlayButton: true,
 	isFirstPlay: true,
-	playerRef: { current: null },
-	setPlayerRef: (ref) => set({ playerRef: ref }),
+	playerRef: null,
+	setPlayerRef: (player) => set({ playerRef: player }),
 	setSongs: (songs: ISong[]) => set({ songs }),
 	setPlay: (isPlaying: boolean) => set({ isPlaying }),
 	setVolume: (volume: number) => set({ volume }),
@@ -77,9 +76,9 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	setPlayButton: (isPlayButton: boolean) => set({ isPlayButton }),
 	setFirstPlay: (isFirstPlay: boolean) => set({ isFirstPlay }),
 	handleReady: (event) => {
-		const { volume, isMuted, setPlayerRef } = get();
+		const { isMuted, setPlayerRef } = get();
 		const player = event.target;
-		setPlayerRef({ current: player });
+		setPlayerRef(player);
 
 		set({
 			playerRef: player,
@@ -97,28 +96,30 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 		}
 	},
 	handleStateChange: (event) => {
-		const { currentSongIndex, songs } = get();
+		const {
+			setPlayerLoading,
+			setSongLoaded,
+			setFirstPlay,
+			setDuration,
+			setPlay,
+			handleNextSong,
+		} = get();
 		switch (event.data) {
 			case 0:
-				set({ playerLoading: true, isSongLoaded: false, isFirstPlay: false });
-				get().handleNextSong();
+				setPlayerLoading(true);
+				setSongLoaded(false);
+				setFirstPlay(false);
+				handleNextSong();
 				break;
 
 			case 1:
-				set({
-					playerLoading: false,
-					duration: event.target.getDuration(),
-					isSongLoaded: true,
-					songTransitionLoading: false,
-				});
-
-				setInterval(() => {
-					set({ currentTime: event.target.getCurrentTime() });
-				}, 1000);
+				setPlayerLoading(false);
+				setDuration(event.target.getDuration());
+				setSongLoaded(true);
 				break;
 
 			case 2:
-				set({ isPlaying: false });
+				setPlay(false);
 				break;
 
 			default:
@@ -127,17 +128,18 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	},
 	handlePlayClick: () => {
 		const { playerRef, isFirstPlay, isMuted } = get();
-		if (playerRef.current) {
-			playerRef.current.playVideo();
+
+		if (playerRef) {
+			playerRef.playVideo();
 			if (isFirstPlay && isMuted) {
-				playerRef.current.unMute();
+				playerRef.unMute();
 				set({ isMuted: false });
 			}
 			set({ isPlayButton: false, isFirstPlay: false });
 		}
 	},
 	handlePauseClick: () => {
-		const playerRef = get().playerRef.current;
+		const playerRef = get().playerRef;
 		if (playerRef) {
 			set({ isPlaying: false });
 			playerRef.pauseVideo();
@@ -152,7 +154,7 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 		if (newIndex >= songs.length) newIndex = 0;
 
 		const videoId = new URL(songs[newIndex].url).searchParams.get('v') || '';
-		if (playerRef.current) playerRef.current.loadVideoById(videoId);
+		if (playerRef) playerRef.loadVideoById(videoId);
 
 		set({
 			currentSongIndex: newIndex,
@@ -172,7 +174,7 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 		if (newIndex < 0) newIndex = songs.length - 1;
 
 		const videoId = new URL(songs[newIndex].url).searchParams.get('v') || '';
-		if (playerRef.current) playerRef.current.loadVideoById(videoId);
+		if (playerRef) playerRef.loadVideoById(videoId);
 
 		set({
 			currentSongIndex: newIndex,
@@ -185,14 +187,14 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	handleSongClick: (index: number) => {
 		const { songs, playerRef } = get();
 		const videoId = new URL(songs[index].url).searchParams.get('v') || '';
-		if (playerRef.current) {
-			playerRef.current.loadVideoById(videoId);
+		if (playerRef) {
+			playerRef.loadVideoById(videoId);
 			get().handlePlayClick();
 		}
 		set({ currentSongIndex: index });
 	},
 	handleTimeUpdate: (newTime: number) => {
-		const playerRef = get().playerRef.current;
+		const playerRef = get().playerRef;
 		if (playerRef) {
 			playerRef.seekTo(newTime);
 			set({ currentTime: newTime, isPlaying: true });
