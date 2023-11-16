@@ -20,6 +20,30 @@ import useMusicStore from '../stores/useMusicStore';
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
 const MainPage = () => {
+	const {
+		songs,
+		currentSongIndex,
+		handleReady,
+		handleStateChange,
+		setSongs,
+		setPrevDisabled,
+		setNextDisabled,
+		setCurrentTime,
+		setPlayerRef,
+	} = useMusicStore((state) => ({
+		songs: state.songs,
+		currentSongIndex: state.currentSongIndex,
+		handleReady: state.handleReady,
+		handleStateChange: state.handleStateChange,
+		setSongs: state.setSongs,
+		setPrevDisabled: state.setPrevDisabled,
+		setNextDisabled: state.setNextDisabled,
+		setCurrentTime: state.setCurrentTime,
+		setPlayerRef: state.setPlayerRef,
+	}));
+
+	const localPlayerRef = useRef<IPlayer | null>(null);
+
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
 	const chartModal = useModal(undefined, 'chart');
 	const signInModal = useModal(undefined, 'signIn');
@@ -30,27 +54,6 @@ const MainPage = () => {
 		refetchInterval: getRefetchInterval(),
 	});
 
-	const {
-		songs,
-		currentSongIndex,
-		handleReady,
-		handleStateChange,
-		setSongs,
-		setPrevDisabled,
-		setNextDisabled,
-		setCurrentTime,
-		playerRef,
-	} = useMusicStore((state) => ({
-		songs: state.songs,
-		currentSongIndex: state.currentSongIndex,
-		handleReady: state.handleReady,
-		handleStateChange: state.handleStateChange,
-		setSongs: state.setSongs,
-		setPrevDisabled: state.setPrevDisabled,
-		setNextDisabled: state.setNextDisabled,
-		setCurrentTime: state.setCurrentTime,
-		playerRef: state.playerRef,
-	}));
 	const { openedModals } = useContext(ModalContext);
 	const [showAddSongModal, setShowAddSongModal] = useState(false);
 
@@ -115,6 +118,11 @@ const MainPage = () => {
 		signInModal.close(event);
 		signUpModal.open(event);
 	};
+	useEffect(() => {
+		if (localPlayerRef.current) {
+			setPlayerRef(localPlayerRef);
+		}
+	}, [setPlayerRef, localPlayerRef]);
 
 	useEffect(() => {
 		if (fetchedSongs) {
@@ -128,25 +136,25 @@ const MainPage = () => {
 		let timer: number;
 
 		const updateCurrentTime = () => {
-			if (playerRef.current) {
-				const newCurrentTime = Math.round(playerRef.current.getCurrentTime());
+			if (localPlayerRef.current) {
+				const newCurrentTime = Math.round(localPlayerRef.current.getCurrentTime());
 				setCurrentTime(newCurrentTime);
 			}
 		};
 
-		if (playerRef.current) {
+		if (localPlayerRef.current) {
 			timer = window.setInterval(updateCurrentTime, 1000);
 		}
 
 		return () => {
 			clearInterval(timer);
-			if (playerRef.current) {
+			if (localPlayerRef.current) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
-				playerRef.current.stopVideo();
+				localPlayerRef.current.stopVideo();
 			}
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [setCurrentTime, playerRef, currentSongIndex]);
+	}, [setCurrentTime, localPlayerRef, currentSongIndex]);
 
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
@@ -166,7 +174,7 @@ const MainPage = () => {
 						openSignInModal={signInModal.open}
 						currentSongIndex={currentSongIndex}
 						songs={songs}
-						playerRef={playerRef}
+						playerRef={localPlayerRef}
 						isLoading={isLoading}
 					/>
 				)}

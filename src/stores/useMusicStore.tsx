@@ -2,7 +2,7 @@ import create from 'zustand';
 import { YouTubeProps } from 'react-youtube';
 import { ISong, IPlayer } from '../types/types';
 import mock from '../data/mock.json';
-import { createRef, useRef } from 'react';
+import { useRef } from 'react';
 
 interface IMusicState {
 	songs: ISong[];
@@ -19,7 +19,8 @@ interface IMusicState {
 	isNextDisabled: boolean;
 	isPlayButton: boolean;
 	isFirstPlay: boolean;
-	playerRef: React.RefObject<IPlayer>;
+	playerRef: React.MutableRefObject<IPlayer | null>;
+	setPlayerRef: (ref: React.MutableRefObject<IPlayer | null>) => void;
 	handleReady: YouTubeProps['onReady'];
 	handleStateChange: YouTubeProps['onStateChange'];
 	handleSongClick: (index: number) => void;
@@ -59,7 +60,8 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	isNextDisabled: false,
 	isPlayButton: true,
 	isFirstPlay: true,
-	playerRef: createRef<IPlayer>(),
+	playerRef: { current: null },
+	setPlayerRef: (ref) => set({ playerRef: ref }),
 	setSongs: (songs: ISong[]) => set({ songs }),
 	setPlay: (isPlaying: boolean) => set({ isPlaying }),
 	setVolume: (volume: number) => set({ volume }),
@@ -75,8 +77,10 @@ const useMusicStore = create<IMusicState>((set, get) => ({
 	setPlayButton: (isPlayButton: boolean) => set({ isPlayButton }),
 	setFirstPlay: (isFirstPlay: boolean) => set({ isFirstPlay }),
 	handleReady: (event) => {
-		const { volume, isMuted } = get();
+		const { volume, isMuted, setPlayerRef } = get();
 		const player = event.target;
+		setPlayerRef({ current: player });
+
 		set({
 			playerRef: player,
 			playerLoading: false,
