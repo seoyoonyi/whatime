@@ -4,6 +4,10 @@ import mockData from '../data/mock.json';
 const apiUrl = process.env.REACT_APP_API_URL as string;
 
 export const fetchSongs = async () => {
+	if (process.env.NODE_ENV === 'development') {
+		return mockData.data;
+	}
+
 	try {
 		const response = await axios.get(apiUrl);
 		if (response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
