@@ -27,4 +27,5 @@ export interface IPlayer {
 	mute: () => void;
 	unMute: () => void;
 	on: (event: string, callback: () => void) => void;
+	destroy(): void;
 }
