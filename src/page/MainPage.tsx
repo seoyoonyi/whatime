@@ -15,34 +15,24 @@ import { IPlayer, ISong } from '../types/types';
 import ModalContext from '../contexts/ModalContext';
 import { getRefetchInterval } from '../utils/utils';
 import AddSongModal from '../components/modals/AddSongModal';
-import useMusicStore from '../stores/useMusicStore';
+import useMusicPlayer from '../hooks/useMusicPlayer';
+import { useMusicStore } from '../stores/useMusicStore';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
 const MainPage = () => {
-	const {
-		songs,
-		currentSongIndex,
-		handleReady,
-		handleStateChange,
-		setSongs,
-		setPrevDisabled,
-		setNextDisabled,
-		setCurrentTime,
-		setPlayerRef,
-	} = useMusicStore((state) => ({
-		songs: state.songs,
-		currentSongIndex: state.currentSongIndex,
-		handleReady: state.handleReady,
-		handleStateChange: state.handleStateChange,
-		setSongs: state.setSongs,
-		setPrevDisabled: state.setPrevDisabled,
-		setNextDisabled: state.setNextDisabled,
-		setCurrentTime: state.setCurrentTime,
-		setPlayerRef: state.setPlayerRef,
-	}));
+	const playerRef = useRef<IPlayer | null>(null);
+	const { setSongs, songs, currentSongIndex, setPrevDisabled, setNextDisabled, setCurrentTime } =
+		useMusicStore((state) => ({
+			setSongs: state.setSongs,
+			songs: state.songs,
+			currentSongIndex: state.currentSongIndex,
+			setPrevDisabled: state.setPrevDisabled,
+			setNextDisabled: state.setNextDisabled,
+			setCurrentTime: state.setCurrentTime,
+		}));
 
-	const localPlayerRef = useRef<IPlayer | null>(null);
+	const { handleReady, handleStateChange } = useMusicPlayer({ playerRef });
 
 	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
 	const chartModal = useModal(undefined, 'chart');
@@ -119,44 +109,34 @@ const MainPage = () => {
 		signUpModal.open(event);
 	};
 	useEffect(() => {
-		if (localPlayerRef.current) {
-			setPlayerRef(localPlayerRef.current);
-		}
-	}, [setPlayerRef, localPlayerRef]);
-
-	useEffect(() => {
 		if (fetchedSongs) {
 			setSongs(fetchedSongs);
 		}
-	}, [setSongs, fetchedSongs]);
+	}, [fetchedSongs, setSongs]);
 
 	useEffect(() => {
-		if (!localPlayerRef.current) return;
-
 		setPrevDisabled(false);
 		setNextDisabled(false);
 
-		const updateCurrentTime = () => {
-			if (localPlayerRef.current) {
-				setCurrentTime(Math.round(localPlayerRef.current.getCurrentTime()));
+		const timer = setInterval(() => {
+			if (playerRef.current) {
+				const newCurrentTime = Math.round(playerRef.current.getCurrentTime());
+				setCurrentTime(newCurrentTime);
 			}
-		};
-
-		const timer = setInterval(updateCurrentTime, 1000);
-
+		}, 1000);
 		return () => {
-			clearInterval(timer);
-
-			if (localPlayerRef.current) {
-				localPlayerRef.current.stopVideo();
+			if (playerRef.current) {
+				playerRef.current.stopVideo();
+				playerRef.current = null;
 			}
+			clearInterval(timer);
 		};
-	}, [setCurrentTime, localPlayerRef, currentSongIndex]);
+	}, [playerRef, setCurrentTime, setNextDisabled, setPrevDisabled]);
 
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
 			<main className="relative flex items-center justify-center w-full h-full">
-				{musicModal.modalState.isOpen && (
+				{currentSong && musicModal.modalState.isOpen && (
 					<MusicModal
 						open={musicModal.modalState.isOpen}
 						style={{
@@ -171,8 +151,8 @@ const MainPage = () => {
 						openSignInModal={signInModal.open}
 						currentSongIndex={currentSongIndex}
 						songs={songs}
-						localPlayerRef={localPlayerRef}
 						isLoading={isLoading}
+						playerRef={playerRef}
 					/>
 				)}
 				{chartModal.modalState.isOpen && (
@@ -186,6 +166,7 @@ const MainPage = () => {
 							zIndex: chartModal.modalState.zIndex,
 							display: chartModal.modalState.isMinimized ? 'none' : undefined,
 						}}
+						playerRef={playerRef}
 					/>
 				)}
 				{signInModal.modalState.isOpen && (
@@ -219,14 +200,16 @@ const MainPage = () => {
 					isOpen={showAddSongModal}
 					onClose={() => setShowAddSongModal(false)}
 				/>
-				<YouTube
-					iframeClassName="w-full h-full flex-grow"
-					className="w-full h-full pointer-events-none"
-					videoId={new URL(currentSong.url).searchParams.get('v') || ''}
-					opts={opts}
-					onReady={handleReady}
-					onStateChange={handleStateChange}
-				/>
+				{currentSong && (
+					<YouTube
+						iframeClassName="w-full h-full flex-grow"
+						className="w-full h-full pointer-events-none"
+						videoId={new URL(currentSong.url).searchParams.get('v') || ''}
+						opts={opts}
+						onReady={handleReady}
+						onStateChange={handleStateChange}
+					/>
+				)}
 			</main>
 
 			<footer className="flex items-center w-full h-10 px-7 bg-retroGray">

@@ -1,5 +1,5 @@
 import React, { MouseEventHandler, useEffect, useRef } from 'react';
-import useMusicStore from '../../stores/useMusicStore';
+
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -22,6 +22,8 @@ import {
 	faStepForward,
 	faUser,
 } from '@fortawesome/free-solid-svg-icons';
+import useMusicPlayer from '../../hooks/useMusicPlayer';
+import { useMusicStore } from '../../stores/useMusicStore';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -32,10 +34,10 @@ interface IMusicPlayerModalProps {
 	openChartModal: MouseEventHandler<HTMLLIElement>;
 	openSignInModal: MouseEventHandler<HTMLLIElement>;
 	currentSongIndex: number;
-	localPlayerRef: React.MutableRefObject<IPlayer | null>;
 	songs: ISong[];
 	handleAddSongClick: (song: ISong) => void;
 	isLoading: boolean;
+	playerRef: React.MutableRefObject<IPlayer | null>;
 }
 
 const MusicModal = ({
@@ -45,52 +47,42 @@ const MusicModal = ({
 	onModalClick,
 	currentSongIndex,
 	songs,
-	localPlayerRef,
 	openChartModal,
 	openSignInModal,
 	handleAddSongClick,
 	style,
 	isLoading,
+	playerRef,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
 
-	const {
-		handlePlayClick,
-		handlePrevSong,
-		handlePauseClick,
-		handleNextSong,
-		isPrevDisabled,
-		isNextDisabled,
-		isPlayButton,
-		songTransitionLoading,
-		currentTime,
-		duration,
-	} = useMusicStore((state) => ({
-		handlePlayClick: state.handlePlayClick,
-		handlePrevSong: state.handlePrevSong,
-		handlePauseClick: state.handlePauseClick,
-		handleNextSong: state.handleNextSong,
-		isPrevDisabled: state.isPrevDisabled,
-		isNextDisabled: state.isNextDisabled,
-		isPlayButton: state.isPlayButton,
-		songTransitionLoading: state.songTransitionLoading,
-		currentTime: state.currentTime,
-		duration: state.duration,
-	}));
+	const { isPrevDisabled, isNextDisabled, isPlayButton, currentTime, duration } = useMusicStore(
+		(state) => ({
+			isPrevDisabled: state.isPrevDisabled,
+			isNextDisabled: state.isNextDisabled,
+			isPlayButton: state.isPlayButton,
+			currentTime: state.currentTime,
+			duration: state.duration,
+		}),
+	);
+
+	const { handlePlayClick, handlePauseClick, handleNextSong, handlePrevSong } = useMusicPlayer({
+		playerRef,
+	});
 
 	const currentSong = songs[currentSongIndex];
-	const currentSongTitle = songTransitionLoading
+	const currentSongTitle = isLoading
 		? 'Loading...'
 		: truncateTitle(he.decode(currentSong.musicTitle));
 
-	const currentSongArtist = songTransitionLoading ? 'Please wait...' : currentSong.artist;
-	const thumbnailImage = songTransitionLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
+	const currentSongArtist = isLoading ? 'Please wait...' : currentSong.artist;
+	const thumbnailImage = isLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
 
 	useEffect(() => {
-		if (localPlayerRef.current && songs[currentSongIndex]) {
-			localPlayerRef.current.src = songs[currentSongIndex].url;
-			if (typeof localPlayerRef.current.play === 'function') {
-				localPlayerRef.current.play();
+		if (playerRef.current && songs[currentSongIndex]) {
+			playerRef.current.src = songs[currentSongIndex].url;
+			if (typeof playerRef.current.play === 'function') {
+				playerRef.current.play();
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,7 +166,7 @@ const MusicModal = ({
 									<img
 										className="w-full"
 										src={thumbnailImage}
-										alt={songTransitionLoading ? 'loading' : currentSongTitle}
+										alt={isLoading ? 'loading' : currentSongTitle}
 									/>
 								</div>
 							</div>
@@ -185,12 +177,12 @@ const MusicModal = ({
 								<div className="font-kor font-semibold mb-[24px]">
 									{currentSongArtist}
 								</div>
-								<ProgressBar className="h-[4px] mb-[17px]" />
+								<ProgressBar className="h-[4px] mb-[17px]" playerRef={playerRef} />
 								<div className="flex items-center justify-between">
 									<div>{`${formatTime(currentTime)} / ${formatTime(
 										duration,
 									)}`}</div>
-									<VolumeBar localPlayerRef={localPlayerRef} />
+									<VolumeBar playerRef={playerRef} />
 								</div>
 							</div>
 						</div>

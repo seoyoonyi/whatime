@@ -1,25 +1,21 @@
 import React, { useEffect, useCallback, useState } from 'react';
-import useMusicStore from '../stores/useMusicStore';
+
+import { useMusicStore } from '../stores/useMusicStore';
+import { IPlayer } from '../types/types';
 
 interface IProgressBarProps {
 	className?: string;
+	playerRef: React.MutableRefObject<IPlayer | null>;
 }
 
-const ProgressBar = ({ className }: IProgressBarProps) => {
+const ProgressBar = ({ className, playerRef }: IProgressBarProps) => {
 	const [isDragging, setDragging] = useState<boolean>(false);
-
-	const {
-		isPlaying,
-		duration,
-		currentTime: initialCurrentTime,
-		handleTimeUpdate,
-	} = useMusicStore((state) => ({
+	const { isPlaying, currentTime, duration, setCurrentTime } = useMusicStore((state) => ({
 		isPlaying: state.isPlaying,
-		duration: state.duration,
 		currentTime: state.currentTime,
-		handleTimeUpdate: state.handleTimeUpdate,
+		duration: state.duration,
+		setCurrentTime: state.setCurrentTime,
 	}));
-	const [currentTime, setCurrentTime] = useState<number>(initialCurrentTime);
 
 	const calculateProgress = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -28,11 +24,12 @@ const ProgressBar = ({ className }: IProgressBarProps) => {
 			const clickedX = Math.max(e.clientX - progressBar.getBoundingClientRect().left, 0);
 			const newTime = Math.max((clickedX / progressContainerWidth) * duration, 0);
 			setCurrentTime(newTime);
-			handleTimeUpdate(newTime);
+			if (playerRef.current) {
+				playerRef.current.seekTo(newTime);
+			}
 		},
-		[duration, handleTimeUpdate],
+		[duration, setCurrentTime, playerRef],
 	);
-
 	const handleMouseDownOnCircle = useCallback(
 		(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
 			e.stopPropagation();
@@ -60,18 +57,11 @@ const ProgressBar = ({ className }: IProgressBarProps) => {
 		},
 		[calculateProgress, isDragging],
 	);
-
 	useEffect(() => {
 		if (isPlaying && currentTime >= duration) {
-			const initialTimeForNextTrack = 0;
-			setCurrentTime(initialTimeForNextTrack);
-			handleTimeUpdate(initialTimeForNextTrack);
+			setCurrentTime(0);
 		}
-	}, [currentTime, duration, isPlaying, handleTimeUpdate]);
-
-	useEffect(() => {
-		setCurrentTime(initialCurrentTime);
-	}, [initialCurrentTime]);
+	}, [currentTime, duration, isPlaying, setCurrentTime]);
 
 	return (
 		<div

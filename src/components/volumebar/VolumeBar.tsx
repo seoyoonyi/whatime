@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styles from './volumebar.module.css';
 import { Mute, Unmute } from '@react95/icons';
-import useMusicStore from '../../stores/useMusicStore';
+import { useMusicStore } from '../../stores/useMusicStore';
 import { IPlayer } from '../../types/types';
 interface IVolumeBar {
-	localPlayerRef: React.MutableRefObject<IPlayer | null>;
+	playerRef: React.MutableRefObject<IPlayer | null>;
 }
 
-const VolumeBar = ({ localPlayerRef }: IVolumeBar) => {
+const VolumeBar = ({ playerRef }: IVolumeBar) => {
 	const volumeRef = useRef<HTMLInputElement>(null);
 	const [playerReady, setPlayerReady] = useState(false);
 
@@ -31,7 +31,7 @@ const VolumeBar = ({ localPlayerRef }: IVolumeBar) => {
 		setFirstPlay: state.setFirstPlay,
 	}));
 
-	const player = localPlayerRef.current;
+	const player = playerRef.current;
 
 	const handleVolumeChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const volume = e.target.valueAsNumber;

@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, useRef } from 'react';
 import Modal from './Modal';
-import { ISong } from '../../types/types';
+import { IPlayer, ISong } from '../../types/types';
 import { truncateTitle } from '../../utils/utils';
 import Button from '../buttons/Button';
 import { Drvspace7 } from '@react95/icons';
@@ -10,7 +10,7 @@ import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../../api/api';
-import useMusicStore from '../../stores/useMusicStore';
+import useMusicPlayer from '../../hooks/useMusicPlayer';
 
 interface IChartModal {
 	open: boolean;
@@ -19,6 +19,7 @@ interface IChartModal {
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onModalClick: MouseEventHandler<HTMLDivElement>;
 	handleAddSongClick: (song: ISong) => void;
+	playerRef: React.MutableRefObject<IPlayer | null>;
 }
 
 const ChartModal = ({
@@ -28,12 +29,11 @@ const ChartModal = ({
 	onMinimize,
 	onModalClick,
 	handleAddSongClick,
+	playerRef,
 }: IChartModal) => {
 	const chartModalRef = useRef(null);
 
-	const { handleSongClick } = useMusicStore((state) => ({
-		handleSongClick: state.handleSongClick,
-	}));
+	const { handleSongClick } = useMusicPlayer({ playerRef });
 
 	const {
 		data: songs,
