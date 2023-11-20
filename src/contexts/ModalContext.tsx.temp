@@ -79,6 +79,7 @@ export const ModalProvider = ({ children }: IModalContextProps) => {
 	const [currentHighestZIndex, setCurrentHighestZIndex] = useState(5);
 	const [currentHighestModal, setCurrentHighestModal] = useState<null | ModalType>('music');
 	const [modalZIndexes, setModalZIndexes] = useState(initialModalZIndexes);
+	// eslint-disable-next-line prettier/prettier
 	const [openedModals, setOpenedModals] = useState<ModalType[]>(['music']);
 
 	const incrementZIndex = () => {
