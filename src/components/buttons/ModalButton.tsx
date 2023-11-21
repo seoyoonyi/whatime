@@ -1,7 +1,7 @@
-import React, { MouseEvent, useContext, useEffect } from 'react';
+import React, { MouseEvent, useEffect } from 'react';
 import { ModalType } from '../../page/MainPage';
-import ModalContext from '../../contexts/ModalContext';
 import useModal from '../../hooks/useModal';
+import { ModalZIndexType, useModalStore } from '../../stores/useModalStore';
 
 interface IModalButtonProps {
 	modalType: ModalType;
@@ -35,7 +35,7 @@ const ModalButton = ({
 		setModalZIndexes,
 		incrementZIndex,
 		currentHighestZIndex,
-	} = useContext(ModalContext);
+	} = useModalStore();
 
 	const { bringToFront, modalState } = useModal(defaultState, modalType);
 
@@ -62,11 +62,12 @@ const ModalButton = ({
 
 	useEffect(() => {
 		if (open && !isMinimized) {
+			const newZIndex = currentHighestZIndex + 1;
 			incrementZIndex();
-			setModalZIndexes((prevState) => ({
-				...prevState,
-				[modalType]: currentHighestZIndex + 1,
-			}));
+			setModalZIndexes({
+				...modalZIndexes,
+				[modalType]: newZIndex,
+			});
 			setCurrentHighestModal(modalType);
 		} else if (!open || isMinimized) {
 			const sortedModals = Object.entries(modalZIndexes)

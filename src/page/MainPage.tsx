@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, MouseEvent, useState, useRef } from 'react';
+import React, { useEffect, MouseEvent, useState, useRef } from 'react';
 import MusicModal from '../components/modals/MusicModal';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
@@ -12,11 +12,11 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../api/api';
 
 import { IPlayer, ISong } from '../types/types';
-import ModalContext from '../contexts/ModalContext';
 import { getRefetchInterval } from '../utils/utils';
 import AddSongModal from '../components/modals/AddSongModal';
 import useMusicPlayer from '../hooks/useMusicPlayer';
 import { useMusicStore } from '../stores/useMusicStore';
+import { useModalStore } from '../stores/useModalStore';
 
 export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
 
@@ -44,7 +44,7 @@ const MainPage = () => {
 		refetchInterval: getRefetchInterval(),
 	});
 
-	const { openedModals } = useContext(ModalContext);
+	const { openedModals } = useModalStore();
 	const [showAddSongModal, setShowAddSongModal] = useState(false);
 
 	const currentSong = songs[currentSongIndex];

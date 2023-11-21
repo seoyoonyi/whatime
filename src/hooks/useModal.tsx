@@ -1,6 +1,6 @@
-import { MouseEvent, useContext, useState } from 'react';
-import ModalContext from '../contexts/ModalContext';
+import { MouseEvent, useState } from 'react';
 import { ModalType } from '../page/MainPage';
+import { useModalStore } from '../stores/useModalStore';
 
 type ModalState = {
 	isOpen: boolean;
@@ -24,20 +24,23 @@ const useModal = (initialState = defaultState, modalType?: ModalType) => {
 		setModalZIndexes,
 		openedModals,
 		setOpenedModals,
-	} = useContext(ModalContext);
+		modalZIndexes,
+	} = useModalStore();
 
 	const [modalState, setModalState] = useState<ModalState>(initialState);
 
 	const bringToFront = () => {
 		if (modalType) {
 			const newZIndex = currentHighestZIndex + 1;
+
 			setModalState((prev) => ({ ...prev, zIndex: newZIndex }));
 			incrementZIndex();
 			setCurrentHighestModal(modalType);
-			setModalZIndexes((prevZIndexes) => ({
-				...prevZIndexes,
+
+			setModalZIndexes({
+				...modalZIndexes,
 				[modalType]: newZIndex,
-			}));
+			});
 		}
 	};
 
