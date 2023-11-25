@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, useRef } from 'react';
 import Modal from './Modal';
 import { IPlayer, ISong } from '../../types/types';
-import { truncateTitle } from '../../utils/utils';
+import { formatDate, truncateTitle } from '../../utils/utils';
 import Button from '../buttons/Button';
 import { Drvspace7 } from '@react95/icons';
 import Frame from '../Frame';
@@ -61,7 +61,12 @@ const ChartModal = ({
 				style={style}
 			>
 				<div className="flex items-center justify-between px-1 py-2">
-					<h2 className="text-lg font-bold lg:text-xl font-eng">TOP100</h2>
+					<div className="flex items-center">
+						<h2 className="text-lg font-bold lg:text-xl font-eng">TOP100</h2>
+						<span className="mt-1 ml-1 text-xs">
+							{formatDate(songs?.[0]?.rankDate)}
+						</span>
+					</div>
 					<p className="flex items-center mt-1 text-xs">
 						<FontAwesomeIcon className="mr-2" icon={faClock} />
 						매일 12시 00분에 업데이트됩니다.
@@ -87,7 +92,7 @@ const ChartModal = ({
 									</div>
 
 									<div>
-										<h4 className="font-bold ">
+										<h4 className="font-bold">
 											{truncateTitle(song.musicTitle)}
 										</h4>
 										<p className="text-xs xl:text-sm">{song.artist}</p>

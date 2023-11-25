@@ -7,6 +7,14 @@ export const formatTime = (seconds: number): string => {
 	const secs = Math.floor(seconds % 60);
 	return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
+export const formatDate = (dateString?: string): string => {
+	const dateParts = dateString?.split('-');
+	const year = dateParts?.[0]?.substring(2);
+	const month = dateParts?.[1];
+	const day = dateParts?.[2];
+
+	return `${year}.${month}.${day}`;
+};
 
 export const truncateTitle = (title: string, maxLength = 20) =>
 	title.length > maxLength ? `${title.substring(0, maxLength)}...` : title;
