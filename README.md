@@ -90,13 +90,6 @@
 
     <br>
 
-### 🎶 모달 창 드래그 기능
-
--   모달 창을 드래그하여 원하는 위치로 이동시킬 수 있습니다.
-    ![드래그2-min](https://github.com/MelodyMate/melodymate-front/assets/89791868/2795bffa-d1bb-4c3e-ae50-ac7bc24bddbc)
-
-    <br>
-
 ### 🎶 회원가입, 로그인, 플레이리스트, 믹스테이프는 곧 업데이트 될 예정입니다. 🔧
 
 <br>
