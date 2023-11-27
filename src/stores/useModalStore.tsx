@@ -3,7 +3,7 @@ import { ModalType } from '../page/MainPage';
 
 export type ModalKeys = 'music' | 'chart' | 'signUp' | 'signIn';
 
-type ModalStateType = Record<ModalKeys, { isOpen: boolean; zIndex: number }>;
+type ModalStateType = Record<ModalKeys, { isOpen: boolean; zIndex: number; isMinimized: boolean }>;
 export type ModalZIndexType = Record<ModalKeys, number>;
 
 interface IModalStore {
@@ -33,7 +33,7 @@ const createInitialModalZIndexes = (
 const createInitialModalsState = (modalKeys: ModalKeys[]): ModalStateType => {
 	const state: Partial<ModalStateType> = {};
 	for (const key of modalKeys) {
-		state[key] = { isOpen: false, zIndex: 0 };
+		state[key] = { isOpen: false, zIndex: 0, isMinimized: false };
 	}
 	return state as ModalStateType;
 };
