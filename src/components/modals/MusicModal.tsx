@@ -28,7 +28,7 @@ import { useMusicStore } from '../../stores/useMusicStore';
 interface IMusicPlayerModalProps {
 	open: boolean;
 	style: React.CSSProperties;
-	onModalClick: MouseEventHandler<HTMLDivElement>;
+	onOpen: MouseEventHandler<HTMLDivElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	openChartModal: MouseEventHandler<HTMLLIElement>;
@@ -44,7 +44,7 @@ const MusicModal = ({
 	open,
 	onClose,
 	onMinimize,
-	onModalClick,
+	onOpen,
 	currentSongIndex,
 	songs,
 	openChartModal,
@@ -138,7 +138,7 @@ const MusicModal = ({
 			open={open}
 			onClose={onClose}
 			onMinimize={onMinimize}
-			onModalClick={onModalClick}
+			onOpen={onOpen}
 			icon={<CdMusic className="w-auto" />}
 			title="Music"
 			modalRef={musicModalRef}

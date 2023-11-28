@@ -9,10 +9,10 @@ import { signupValidationRules } from '../../utils/validationRules';
 interface ISignUpModalProps {
 	open: boolean;
 	style: React.CSSProperties;
-	onModalClick: MouseEventHandler<HTMLDivElement>;
+	onOpen: MouseEventHandler<HTMLDivElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
-	handleSignInModalOpen: MouseEventHandler<HTMLLIElement>;
+	handleSignInModalOpen: MouseEventHandler<HTMLButtonElement>;
 }
 
 interface IFormData {
@@ -39,7 +39,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 	style,
 	onClose,
 	onMinimize,
-	onModalClick,
+	onOpen,
 	handleSignInModalOpen,
 }) => {
 	const signUpModalRef = useRef<HTMLDivElement | null>(null);
@@ -161,7 +161,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 			open={open}
 			onClose={onClose}
 			onMinimize={onMinimize}
-			onModalClick={onModalClick}
+			onOpen={onOpen}
 			icon={<Computer className="w-auto" />}
 			title="SignUp"
 			modalRef={signUpModalRef}

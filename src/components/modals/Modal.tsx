@@ -6,7 +6,7 @@ import ModalHeader from './ModalHeader';
 
 interface IModalComponentProps {
 	open: boolean;
-	onModalClick?: MouseEventHandler<HTMLDivElement>;
+	onOpen?: MouseEventHandler<HTMLDivElement>;
 	onMinimize?: MouseEventHandler<HTMLButtonElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	children: React.ReactNode;
@@ -24,7 +24,7 @@ interface IModalComponentProps {
 const Modal = ({
 	open,
 	icon,
-	onModalClick,
+	onOpen,
 	onMinimize,
 	onClose,
 	children,
@@ -52,7 +52,7 @@ const Modal = ({
 			boxShadow="out"
 			bg="retroGray"
 			className={`p-[3px] ${className}`}
-			onModalClick={onModalClick}
+			onOpen={onOpen}
 			style={{
 				transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
 				userSelect: 'none',

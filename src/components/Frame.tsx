@@ -6,11 +6,11 @@ interface IFrame {
 	bg?: 'white' | 'retroGray';
 	className?: string;
 	style?: React.CSSProperties;
-	onModalClick?: React.MouseEventHandler<HTMLDivElement>;
+	onOpen?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 const Frame = forwardRef<HTMLDivElement, IFrame>(
-	({ children, boxShadow, bg, className, style, onModalClick }, ref) => {
+	({ children, boxShadow, bg, className, style, onOpen }, ref) => {
 		let boxShadowClass: string | null = '';
 		let bgClass: string | null = '';
 
@@ -42,7 +42,7 @@ const Frame = forwardRef<HTMLDivElement, IFrame>(
 			<div
 				className={`${boxShadowClass} ${bgClass} ${className}`}
 				ref={ref}
-				onClick={onModalClick}
+				onClick={onOpen}
 				style={style}
 			>
 				{children}

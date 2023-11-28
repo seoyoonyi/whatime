@@ -17,7 +17,7 @@ interface IChartModal {
 	style: React.CSSProperties;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
-	onModalClick: MouseEventHandler<HTMLDivElement>;
+	onOpen: MouseEventHandler<HTMLDivElement>;
 	handleAddSongClick: (song: ISong) => void;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 }
@@ -27,7 +27,7 @@ const ChartModal = ({
 	style,
 	onClose,
 	onMinimize,
-	onModalClick,
+	onOpen,
 	handleAddSongClick,
 	playerRef,
 }: IChartModal) => {
@@ -54,7 +54,7 @@ const ChartModal = ({
 				open={open}
 				onClose={onClose}
 				onMinimize={onMinimize}
-				onModalClick={onModalClick}
+				onOpen={onOpen}
 				icon={<Drvspace7 className="w-auto" />}
 				title="Chart"
 				modalRef={chartModalRef}

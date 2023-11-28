@@ -9,7 +9,7 @@ import { signinValidationRules } from '../../utils/validationRules';
 interface ISignInModalProps {
 	open: boolean;
 	style: React.CSSProperties;
-	onModalClick: MouseEventHandler<HTMLDivElement>;
+	onOpen: MouseEventHandler<HTMLDivElement>;
 	handleSignUpModalOpen: (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
@@ -25,7 +25,7 @@ const SignInModal = ({
 	style,
 	onClose,
 	onMinimize,
-	onModalClick,
+	onOpen,
 	handleSignUpModalOpen,
 }: ISignInModalProps) => {
 	const signInModalRef = useRef(null);
@@ -61,7 +61,7 @@ const SignInModal = ({
 			open={open}
 			onClose={onClose}
 			onMinimize={onMinimize}
-			onModalClick={onModalClick}
+			onOpen={onOpen}
 			icon={<Keys className="w-auto" />}
 			title="Sign In"
 			modalRef={signInModalRef}
