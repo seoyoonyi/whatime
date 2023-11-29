@@ -69,7 +69,7 @@ const MainPage = () => {
 					toggleMinimize: musicModal.toggleMinimize,
 					icon: <CdMusic className="w-auto" />,
 					label: 'Music',
-					onModalClick: musicModal.open,
+					onOpen: musicModal.open,
 				};
 			case 'chart':
 				return {
@@ -78,7 +78,7 @@ const MainPage = () => {
 					toggleMinimize: chartModal.toggleMinimize,
 					icon: <Drvspace7 className="w-auto" />,
 					label: 'Chart',
-					onModalClick: chartModal.open,
+					onOpen: chartModal.open,
 				};
 			case 'signIn':
 				return {
@@ -87,7 +87,7 @@ const MainPage = () => {
 					toggleMinimize: signInModal.toggleMinimize,
 					icon: <Keys className="w-auto" />,
 					label: 'SignIn',
-					onModalClick: signInModal.open,
+					onOpen: signInModal.open,
 				};
 			case 'signUp':
 				return {
@@ -96,7 +96,7 @@ const MainPage = () => {
 					toggleMinimize: signUpModal.toggleMinimize,
 					icon: <Computer className="w-auto" />,
 					label: 'SignUp',
-					onModalClick: signUpModal.open,
+					onOpen: signUpModal.open,
 				};
 			default:
 				throw new Error('Unknown modal type: ' + modalType);
@@ -143,7 +143,7 @@ const MainPage = () => {
 							zIndex: musicModal.modalState.zIndex,
 							display: musicModal.modalState.isMinimized ? 'none' : undefined,
 						}}
-						onModalClick={musicModal.open}
+						onOpen={musicModal.open}
 						onClose={musicModal.close}
 						onMinimize={musicModal.toggleMinimize}
 						handleAddSongClick={handleAddSongClick}
@@ -158,7 +158,7 @@ const MainPage = () => {
 				{chartModal.modalState.isOpen && (
 					<ChartModal
 						open={chartModal.modalState.isOpen}
-						onModalClick={chartModal.open}
+						onOpen={chartModal.open}
 						onClose={chartModal.close}
 						onMinimize={chartModal.toggleMinimize}
 						handleAddSongClick={handleAddSongClick}
@@ -176,7 +176,7 @@ const MainPage = () => {
 							zIndex: signInModal.modalState.zIndex,
 							display: signInModal.modalState.isMinimized ? 'none' : undefined,
 						}}
-						onModalClick={signInModal.open}
+						onOpen={signInModal.open}
 						handleSignUpModalOpen={handleSignUpModalOpen}
 						onClose={signInModal.close}
 						onMinimize={signInModal.toggleMinimize}
@@ -190,7 +190,7 @@ const MainPage = () => {
 							zIndex: signUpModal.modalState.zIndex,
 							display: signUpModal.modalState.isMinimized ? 'none' : undefined,
 						}}
-						onModalClick={signUpModal.open}
+						onOpen={signUpModal.open}
 						onClose={signUpModal.close}
 						onMinimize={signUpModal.toggleMinimize}
 						handleSignInModalOpen={signInModal.open}
@@ -236,7 +236,7 @@ const MainPage = () => {
 								toggleMinimize={modalInfo.toggleMinimize}
 								icon={modalInfo.icon}
 								label={modalInfo.label}
-								onModalClick={modalInfo.onModalClick}
+								onOpen={modalInfo.onOpen}
 							/>
 						);
 					})}
