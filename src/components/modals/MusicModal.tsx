@@ -24,6 +24,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import useMusicPlayer from '../../hooks/useMusicPlayer';
 import { useMusicStore } from '../../stores/useMusicStore';
+import useModal from '../../hooks/useModal';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -31,11 +32,8 @@ interface IMusicPlayerModalProps {
 	onOpen: MouseEventHandler<HTMLDivElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
-	openChartModal: MouseEventHandler<HTMLLIElement>;
-	openSignInModal: MouseEventHandler<HTMLLIElement>;
 	currentSongIndex: number;
 	songs: ISong[];
-	handleAddSongClick: (song: ISong) => void;
 	isLoading: boolean;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 }
@@ -47,14 +45,13 @@ const MusicModal = ({
 	onOpen,
 	currentSongIndex,
 	songs,
-	openChartModal,
-	openSignInModal,
-	handleAddSongClick,
 	style,
 	isLoading,
 	playerRef,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
+	const chartModal = useModal(undefined, 'chart');
+	const signInModal = useModal(undefined, 'signIn');
 
 	const { isPrevDisabled, isNextDisabled, isPlayButton, currentTime, duration } = useMusicStore(
 		(state) => ({
@@ -89,7 +86,7 @@ const MusicModal = ({
 	}, [currentSongIndex]);
 
 	const musicModalnavItems: INavItemProps[] = [
-		{ shortcut: 'c', label: 'hart', onClick: openChartModal },
+		{ shortcut: 'c', label: 'hart', onClick: chartModal.open },
 		{ shortcut: 'p', label: 'laylist' },
 	];
 
@@ -123,7 +120,7 @@ const MusicModal = ({
 	const userControlbuttons: IButtonProps[] = [
 		{
 			className: 'md:w-[65px] xl:w-[75px] w-1/2',
-			onClick: openSignInModal,
+			onClick: signInModal.open,
 			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
@@ -144,7 +141,7 @@ const MusicModal = ({
 			modalRef={musicModalRef}
 			style={style}
 		>
-			<Navigation navItems={musicModalnavItems} onClick={openChartModal} />
+			<Navigation navItems={musicModalnavItems} onClick={chartModal.open} />
 
 			<Frame
 				className="md:w-[520px] py-4 px-4 xl:py-[19px] xl:px-[21px] xl:w-[620px]"
@@ -189,10 +186,7 @@ const MusicModal = ({
 						<div className="md:flex md:justify-between">
 							<div className="flex justify-between mt-[20px]  md:order-2">
 								<ButtonGroup buttons={musicControlbuttons} />
-								<Button
-									className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]"
-									onClick={() => handleAddSongClick(currentSong)}
-								>
+								<Button className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]">
 									<FontAwesomeIcon icon={faPlus} />
 								</Button>
 							</div>

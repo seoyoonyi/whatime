@@ -1,7 +1,7 @@
 import React, { MouseEvent, useEffect } from 'react';
 import { ModalType } from '../../page/MainPage';
 import useModal from '../../hooks/useModal';
-import { ModalZIndexType, useModalStore } from '../../stores/useModalStore';
+import { useModalStore } from '../../stores/useModalStore';
 
 interface IModalButtonProps {
 	modalType: ModalType;

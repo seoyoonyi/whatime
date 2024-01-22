@@ -18,19 +18,10 @@ interface IChartModal {
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	onOpen: MouseEventHandler<HTMLDivElement>;
-	handleAddSongClick: (song: ISong) => void;
 	playerRef: React.MutableRefObject<IPlayer | null>;
 }
 
-const ChartModal = ({
-	open,
-	style,
-	onClose,
-	onMinimize,
-	onOpen,
-	handleAddSongClick,
-	playerRef,
-}: IChartModal) => {
+const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: IChartModal) => {
 	const chartModalRef = useRef(null);
 
 	const { handleSongClick } = useMusicPlayer({ playerRef });
@@ -106,10 +97,7 @@ const ChartModal = ({
 								>
 									<FontAwesomeIcon icon={faPlay} />
 								</Button>
-								<Button
-									className="px-2 xl:px-3"
-									onClick={() => handleAddSongClick(song)}
-								>
+								<Button className="px-2 xl:px-3">
 									<FontAwesomeIcon icon={faPlus} />
 								</Button>
 							</div>

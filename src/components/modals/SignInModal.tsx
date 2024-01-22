@@ -5,12 +5,12 @@ import AuthInput from '../inputs/AuthInput';
 import Button from '../buttons/Button';
 import { useForm } from 'react-hook-form';
 import { signinValidationRules } from '../../utils/validationRules';
+import useModal from '../../hooks/useModal';
 
 interface ISignInModalProps {
 	open: boolean;
 	style: React.CSSProperties;
 	onOpen: MouseEventHandler<HTMLDivElement>;
-	handleSignUpModalOpen: (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => void;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
 }
@@ -20,15 +20,10 @@ interface IFormData {
 	password: string;
 }
 
-const SignInModal = ({
-	open,
-	style,
-	onClose,
-	onMinimize,
-	onOpen,
-	handleSignUpModalOpen,
-}: ISignInModalProps) => {
+const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalProps) => {
 	const signInModalRef = useRef(null);
+	const signInModal = useModal(undefined, 'signIn');
+	const signUpModal = useModal(undefined, 'signUp');
 	const {
 		register,
 		handleSubmit,
@@ -37,6 +32,12 @@ const SignInModal = ({
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+
+	const handleSignUpModalOpen = (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
+		event.stopPropagation();
+		signInModal.close(event);
+		signUpModal.open(event);
+	};
 
 	const onSubmit = useCallback((data: IFormData) => {
 		// TODO:: 더미 데이터 (실제로는 IndexedDB에서 가져온 데이터나 API 응답을 사용해야 함)

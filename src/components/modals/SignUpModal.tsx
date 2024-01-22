@@ -5,6 +5,7 @@ import AuthInput from '../inputs/AuthInput';
 import Button from '../buttons/Button';
 import { useForm } from 'react-hook-form';
 import { signupValidationRules } from '../../utils/validationRules';
+import useModal from '../../hooks/useModal';
 
 interface ISignUpModalProps {
 	open: boolean;
@@ -12,7 +13,6 @@ interface ISignUpModalProps {
 	onOpen: MouseEventHandler<HTMLDivElement>;
 	onClose: MouseEventHandler<HTMLButtonElement>;
 	onMinimize: MouseEventHandler<HTMLButtonElement>;
-	handleSignInModalOpen: MouseEventHandler<HTMLButtonElement>;
 }
 
 interface IFormData {
@@ -34,15 +34,10 @@ const fakeDB = {
 	nicknames: ['testNickname', 'exampleNickname'],
 };
 
-const SignUpModal: React.FC<ISignUpModalProps> = ({
-	open,
-	style,
-	onClose,
-	onMinimize,
-	onOpen,
-	handleSignInModalOpen,
-}) => {
+const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMinimize, onOpen }) => {
 	const signUpModalRef = useRef<HTMLDivElement | null>(null);
+	const signInModal = useModal(undefined, 'signIn');
+
 	const {
 		register,
 		handleSubmit,
@@ -244,7 +239,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({
 				<div className="flex items-center justify-center">
 					<span className="mr-1 text-xs opacity-50">Already have an account?</span>
 					<Button
-						onClick={handleSignInModalOpen}
+						onClick={signInModal.open}
 						className="text-xs underline border-none opacity-80"
 					>
 						Sign Up
