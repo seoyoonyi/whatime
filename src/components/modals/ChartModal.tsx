@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, useRef } from 'react';
 import Modal from './Modal';
 import { IPlayer, ISong } from '../../types/types';
-import { formatDate, truncateTitle } from '../../utils/utils';
+import { formatDate, handleImageError, truncateTitle } from '../../utils/utils';
 import Button from '../buttons/Button';
 import { Drvspace7 } from '@react95/icons';
 import Frame from '../Frame';
@@ -77,6 +77,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: ICh
 									<div className="flex items-center justify-center w-16 h-8 overflow-hidden xl:w-20 xl:h-11 bg-retroGray">
 										<img
 											src={song.thumbnail}
+											onError={handleImageError}
 											alt={song.musicTitle}
 											className="w-auto"
 										/>

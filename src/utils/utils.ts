@@ -28,3 +28,9 @@ export const getRefetchInterval = () => {
 	nextMidnightKST.setHours(0, 0, 0, 0);
 	return nextMidnightKST.getTime() - currentKST.getTime();
 };
+
+export const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+	const target = e.currentTarget;
+	target.onerror = null;
+	target.src = '/no-thumbnail.png';
+};
