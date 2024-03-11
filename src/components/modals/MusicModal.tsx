@@ -68,12 +68,18 @@ const MusicModal = ({
 	});
 
 	const currentSong = songs[currentSongIndex];
-	const currentSongTitle = isLoading
-		? 'Loading...'
-		: truncateTitle(he.decode(currentSong.musicTitle));
+	const currentSongTitle =
+		isLoading || !currentSong
+			? 'Loading...'
+			: truncateTitle(he.decode(currentSong.musicTitle || 'Unknown Title'));
 
-	const currentSongArtist = isLoading ? 'Please wait...' : currentSong.artist;
-	const thumbnailImage = isLoading ? '/no-thumbnail.png' : currentSong?.thumbnail;
+	const currentSongArtist =
+		isLoading || !currentSong ? 'Please wait...' : currentSong.artist || 'Unknown Artist';
+
+	const thumbnailImage =
+		isLoading || !currentSong
+			? '/no-thumbnail.png'
+			: currentSong.thumbnail || '/no-thumbnail.png';
 
 	useEffect(() => {
 		if (playerRef.current && songs[currentSongIndex]) {
