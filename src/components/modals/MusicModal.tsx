@@ -24,7 +24,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import useMusicPlayer from '../../hooks/useMusicPlayer';
 import { useMusicStore } from '../../stores/useMusicStore';
-import useModal from '../../hooks/useModal';
+import { useModalStore } from '../../stores/useModalStore';
+import { MODAL_KEYS } from '../../configs/modalKeys';
+import { ModalType } from '../../types/modalTypes';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -50,8 +52,7 @@ const MusicModal = ({
 	playerRef,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
-	const chartModal = useModal(undefined, 'chart');
-	const signInModal = useModal(undefined, 'signIn');
+	const { closeModal, openModal } = useModalStore();
 
 	const { isPrevDisabled, isNextDisabled, isPlayButton, currentTime, duration } = useMusicStore(
 		(state) => ({
@@ -81,6 +82,14 @@ const MusicModal = ({
 			? '/no-thumbnail.png'
 			: currentSong.thumbnail || '/no-thumbnail.png';
 
+	const handleOpenChartModal = () => {
+		openModal(MODAL_KEYS.CHART as ModalType);
+	};
+
+	const handleOpenSignInModal = () => {
+		openModal(MODAL_KEYS.SIGN_IN as ModalType);
+	};
+
 	useEffect(() => {
 		if (playerRef.current && songs[currentSongIndex]) {
 			playerRef.current.src = songs[currentSongIndex].url;
@@ -88,11 +97,10 @@ const MusicModal = ({
 				playerRef.current.play();
 			}
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentSongIndex]);
+	}, [currentSongIndex, songs, playerRef]);
 
 	const musicModalnavItems: INavItemProps[] = [
-		{ shortcut: 'c', label: 'hart', onClick: chartModal.open },
+		{ shortcut: 'c', label: 'hart', onClick: handleOpenChartModal },
 		{ shortcut: 'p', label: 'laylist' },
 	];
 
@@ -126,7 +134,7 @@ const MusicModal = ({
 	const userControlbuttons: IButtonProps[] = [
 		{
 			className: 'md:w-[65px] xl:w-[75px] w-1/2',
-			onClick: signInModal.open,
+			onClick: handleOpenSignInModal,
 			children: <FontAwesomeIcon icon={faUser} />,
 		},
 		{
@@ -146,8 +154,9 @@ const MusicModal = ({
 			title="Music"
 			modalRef={musicModalRef}
 			style={style}
+			modalKey={MODAL_KEYS.MUSIC as ModalType}
 		>
-			<Navigation navItems={musicModalnavItems} onClick={chartModal.open} />
+			<Navigation navItems={musicModalnavItems} onClick={handleOpenChartModal} />
 
 			<Frame
 				className="md:w-[520px] py-4 px-4 xl:py-[19px] xl:px-[21px] xl:w-[620px]"

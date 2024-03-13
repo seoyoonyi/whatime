@@ -5,7 +5,9 @@ import AuthInput from '../inputs/AuthInput';
 import Button from '../buttons/Button';
 import { useForm } from 'react-hook-form';
 import { signinValidationRules } from '../../utils/validationRules';
-import useModal from '../../hooks/useModal';
+import { useModalStore } from '../../stores/useModalStore';
+import { MODAL_KEYS } from '../../configs/modalKeys';
+import { ModalType } from '../../types/modalTypes';
 
 interface ISignInModalProps {
 	open: boolean;
@@ -22,22 +24,27 @@ interface IFormData {
 
 const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalProps) => {
 	const signInModalRef = useRef(null);
-	const signInModal = useModal(undefined, 'signIn');
-	const signUpModal = useModal(undefined, 'signUp');
+	const signInModalKey = 'signIn';
+	const signUpModalKey = 'signUp';
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm<IFormData>();
 
+	const { closeModal, openModal } = useModalStore();
+
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const handleSignUpModalOpen = (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => {
-		event.stopPropagation();
-		signInModal.close(event);
-		signUpModal.open(event);
-	};
+	const handleSignUpModalOpen = useCallback(
+		(event: MouseEvent<HTMLButtonElement>) => {
+			event.stopPropagation();
+			closeModal(signInModalKey);
+			openModal(signUpModalKey);
+		},
+		[closeModal, openModal],
+	);
 
 	const onSubmit = useCallback((data: IFormData) => {
 		// TODO:: 더미 데이터 (실제로는 IndexedDB에서 가져온 데이터나 API 응답을 사용해야 함)
@@ -52,7 +59,6 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 			return;
 		}
 
-		console.log(data);
 		alert('로그인에 성공했습니다! 현재 로그인 기능은 테스트 중입니다.');
 	}, []);
 
@@ -67,6 +73,7 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 			title="Sign In"
 			modalRef={signInModalRef}
 			style={style}
+			modalKey={MODAL_KEYS.SIGN_IN as ModalType}
 		>
 			<div className="px-[16px] py-[26px]">
 				<h2 className="flex justify-center pb-[26px]">

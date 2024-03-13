@@ -1,8 +1,9 @@
 import React, { MouseEvent, MouseEventHandler, RefObject, useLayoutEffect } from 'react';
-import useModal from '../../hooks/useModal';
 import useDrag from '../../hooks/useDrag';
 import Frame from '../Frame';
 import ModalHeader from './ModalHeader';
+import { useModalStore } from '../../stores/useModalStore';
+import { ModalType } from '../../types/modalTypes';
 
 interface IModalComponentProps {
 	open: boolean;
@@ -19,6 +20,7 @@ interface IModalComponentProps {
 	onMouseDown?: (e: MouseEvent<HTMLDivElement>) => void;
 	onMouseLeave?: () => void;
 	modalRef: RefObject<HTMLDivElement>;
+	modalKey: ModalType;
 }
 
 const Modal = ({
@@ -32,8 +34,11 @@ const Modal = ({
 	className,
 	style,
 	modalRef,
+	modalKey,
 }: IModalComponentProps) => {
-	const { modalState } = useModal();
+	const { modalsState } = useModalStore();
+	const modalInfo = modalsState[modalKey];
+	const zIndex = modalInfo.zIndex;
 
 	const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
 		useDrag(modalRef);
@@ -56,7 +61,7 @@ const Modal = ({
 			style={{
 				transform: `translate3d(${modalPos.x}px, ${modalPos.y}px, 0)`,
 				userSelect: 'none',
-				zIndex: modalState.zIndex,
+				zIndex,
 				...style,
 			}}
 		>

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
-import useModal from '../hooks/useModal';
 import { CdMusic } from '@react95/icons';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../api/api';
@@ -10,14 +9,15 @@ import { IPlayer, ISong } from '../types/types';
 import { getRefetchInterval } from '../utils/utils';
 import useMusicPlayer from '../hooks/useMusicPlayer';
 import { useMusicStore } from '../stores/useMusicStore';
-import ModalButtonManager from '../components/modals/ModalButtonManager';
+import ModalButtonManager from '../components/buttons/ModalButtonManager';
 import ModalManager from '../components/modals/ModalManager';
-
-export type ModalType = 'music' | 'chart' | 'signIn' | 'signUp';
+import { useModalStore } from '../stores/useModalStore';
+import { MODAL_KEYS } from '../configs/modalKeys';
+import { ModalType } from '../types/modalTypes';
 
 const MainPage = () => {
 	const playerRef = useRef<IPlayer | null>(null);
-	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
+	const { openModal } = useModalStore();
 
 	const { setSongs, songs, currentSongIndex, setPrevDisabled, setNextDisabled, setCurrentTime } =
 		useMusicStore((state) => ({
@@ -31,7 +31,7 @@ const MainPage = () => {
 
 	const { handleReady, handleStateChange } = useMusicPlayer({ playerRef });
 
-	const { data: fetchedSongs } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+	const { data: fetchedSongs, isLoading } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
 		refetchInterval: getRefetchInterval(),
 	});
@@ -45,16 +45,8 @@ const MainPage = () => {
 		},
 	};
 
-	const additionalProps = {
-		open: musicModal.modalState.isOpen,
-		style: { zIndex: musicModal.modalState.zIndex },
-		onOpen: musicModal.open,
-		onClose: musicModal.close,
-		onMinimize: musicModal.toggleMinimize,
-		currentSongIndex,
-		songs,
-		isLoading: false,
-		playerRef,
+	const handleOpenMusicModal = () => {
+		openModal(MODAL_KEYS.MUSIC as ModalType);
 	};
 
 	useEffect(() => {
@@ -85,7 +77,12 @@ const MainPage = () => {
 	return (
 		<div className="flex flex-col w-full h-screen bg-black ">
 			<main className="relative flex items-center justify-center w-full h-full">
-				<ModalManager {...additionalProps} />
+				<ModalManager
+					currentSongIndex={currentSongIndex}
+					songs={songs}
+					isLoading={isLoading}
+					playerRef={playerRef}
+				/>
 
 				{currentSong && (
 					<YouTube
@@ -102,7 +99,7 @@ const MainPage = () => {
 			<footer className="flex items-center w-full h-10 px-7 bg-retroGray">
 				<div className="relative flex items-center h-full">
 					<Button
-						onClick={musicModal.open}
+						onClick={handleOpenMusicModal}
 						className={`text-[14px] flex items-center justify-center  font-eng mr-4 border-none w-7 h-7 after:absolute after:top-1/2 after:-translate-y-1/2 after:right-2 after:w-[3px]  after:h-7 after:bg-retroGray after:border  after:border-b-black after:border-r-black after:border-l-white after:border-t-white`}
 					>
 						<div className="w-6">

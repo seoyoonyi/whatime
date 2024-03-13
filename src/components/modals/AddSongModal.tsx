@@ -1,6 +1,8 @@
-import React, { MouseEventHandler, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Modal from './Modal';
 import Button from '../buttons/Button';
+import { MODAL_KEYS } from '../../configs/modalKeys';
+import { ModalType } from '../../types/modalTypes';
 
 interface IAddSongModal {
 	onClose: () => void;
@@ -32,6 +34,7 @@ const AddSongModal = ({ isOpen, onClose }: IAddSongModal) => {
 			onClose={handleClose}
 			modalRef={AddSongModalRef}
 			style={{ zIndex: 100 }}
+			modalKey={MODAL_KEYS.ADD_SONG as ModalType}
 		>
 			<div className="flex flex-col justify-center px-20 py-10 space-y-1">
 				{showConfirm ? (

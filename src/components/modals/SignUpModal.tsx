@@ -5,7 +5,9 @@ import AuthInput from '../inputs/AuthInput';
 import Button from '../buttons/Button';
 import { useForm } from 'react-hook-form';
 import { signupValidationRules } from '../../utils/validationRules';
-import useModal from '../../hooks/useModal';
+import { useModalStore } from '../../stores/useModalStore';
+import { ModalType } from '../../types/modalTypes';
+import { MODAL_KEYS } from '../../configs/modalKeys';
 
 interface ISignUpModalProps {
 	open: boolean;
@@ -36,7 +38,7 @@ const fakeDB = {
 
 const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMinimize, onOpen }) => {
 	const signUpModalRef = useRef<HTMLDivElement | null>(null);
-	const signInModal = useModal(undefined, 'signIn');
+	const { closeModal, openModal } = useModalStore();
 
 	const {
 		register,
@@ -116,6 +118,11 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMini
 		return !isEmailValid || !isPasswordValid || !isNicknameValid || !isConfirmPasswordValid;
 	};
 
+	const handleOpenSignInModal = () => {
+		closeModal(MODAL_KEYS.SIGN_UP as ModalType);
+		openModal(MODAL_KEYS.SIGN_IN as ModalType);
+	};
+
 	useEffect(() => {
 		if (password.length > 0) {
 			checkPasswordSafety();
@@ -161,6 +168,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMini
 			title="SignUp"
 			modalRef={signUpModalRef}
 			style={style}
+			modalKey={MODAL_KEYS.SIGN_UP as ModalType}
 		>
 			<div className="px-[16px] py-[26px]">
 				<h2 className="flex justify-center pb-[26px]">
@@ -239,7 +247,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMini
 				<div className="flex items-center justify-center">
 					<span className="mr-1 text-xs opacity-50">Already have an account?</span>
 					<Button
-						onClick={signInModal.open}
+						onClick={handleOpenSignInModal}
 						className="text-xs underline border-none opacity-80"
 					>
 						Sign Up

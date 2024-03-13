@@ -11,6 +11,8 @@ import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSongs } from '../../api/api';
 import useMusicPlayer from '../../hooks/useMusicPlayer';
+import { MODAL_KEYS } from '../../configs/modalKeys';
+import { ModalType } from '../../types/modalTypes';
 
 interface IChartModal {
 	open: boolean;
@@ -50,6 +52,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: ICh
 				title="Chart"
 				modalRef={chartModalRef}
 				style={style}
+				modalKey={MODAL_KEYS.CHART as ModalType}
 			>
 				<div className="flex items-center justify-between px-1 py-2">
 					<div className="flex items-center">

@@ -1,15 +1,10 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import { MODAL_COMPONENTS } from '../../configs/modalComponents';
 import { useModalStore } from '../../stores/useModalStore';
-import useModal from '../../hooks/useModal';
 import { IPlayer, ISong } from '../../types/types';
+import { ModalType } from '../../types/modalTypes';
 
 interface IModalManagerProps {
-	open: boolean;
-	style: React.CSSProperties;
-	onOpen: MouseEventHandler<HTMLDivElement>;
-	onClose: MouseEventHandler<HTMLButtonElement>;
-	onMinimize: MouseEventHandler<HTMLButtonElement>;
 	currentSongIndex: number;
 	songs: ISong[];
 	isLoading: boolean;
@@ -17,27 +12,33 @@ interface IModalManagerProps {
 }
 
 const ModalManager = (props: IModalManagerProps) => {
-	const { openedModals } = useModalStore();
-
-	const musicModal = useModal({ isOpen: true, isMinimized: false, zIndex: 5 }, 'music');
-	const chartModal = useModal(undefined, 'chart');
-	const signInModal = useModal(undefined, 'signIn');
-	const signUpModal = useModal(undefined, 'signUp');
+	const { modalsState, openModal, closeModal, toggleMinimizeModal } = useModalStore();
 
 	return (
 		<>
-			{openedModals.map((modalType) => {
-				const ModalComponent = MODAL_COMPONENTS[modalType];
-				const modalProps = {
-					music: musicModal,
-					chart: chartModal,
-					signIn: signInModal,
-					signUp: signUpModal,
-				}[modalType];
+			{Object.entries(modalsState).map(([modalType, modalInfo]) => {
+				const ModalComponent = MODAL_COMPONENTS[modalType as ModalType];
+				if (!modalInfo.isOpen) return null;
 
-				const combinedProps = { ...modalProps, ...props };
+				const additionalProps = {
+					...props,
+					open: modalInfo.isOpen,
+					style: { zIndex: modalInfo.zIndex },
+					onOpen: (e: React.MouseEvent<HTMLDivElement>) => {
+						e.stopPropagation();
+						openModal(modalType as ModalType);
+					},
+					onClose: (e: React.MouseEvent<HTMLButtonElement>) => {
+						e.stopPropagation();
+						closeModal(modalType as ModalType);
+					},
+					onMinimize: (e: React.MouseEvent<HTMLButtonElement>) => {
+						e.stopPropagation();
+						toggleMinimizeModal(modalType as ModalType);
+					},
+				};
 
-				return <ModalComponent key={modalType} {...combinedProps} />;
+				return <ModalComponent key={modalType} {...additionalProps} />;
 			})}
 		</>
 	);
