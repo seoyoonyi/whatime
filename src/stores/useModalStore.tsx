@@ -51,9 +51,9 @@ const initialModalsState = createInitialModalsState(ModalKeysArray);
 export const useModalStore = create<IModalStore>((set, get) => ({
 	modalsState: initialModalsState,
 	currentHighestZIndex: 5,
-	currentHighestModal: null,
+	currentHighestModal: 'music',
 	modalZIndexes: initialModalZIndexes,
-	openedModals: [],
+	openedModals: ['music'],
 	setModalsState: (newState: ModalStateType) => set(() => ({ modalsState: newState })),
 	setCurrentHighestModal: (modal: ModalType | null) =>
 		set(() => ({ currentHighestModal: modal })),
@@ -120,18 +120,33 @@ export const useModalStore = create<IModalStore>((set, get) => ({
 			};
 		});
 	},
-	closeModal: (modalType: ModalType) =>
+	closeModal: (modalType: ModalType) => {
 		set((state) => {
 			const newState = {
 				...state.modalsState,
 				[modalType]: { ...state.modalsState[modalType], isOpen: false },
 			};
+
+			const updatedOpenedModals = state.openedModals.filter((m) => m !== modalType);
+
+			let nextHighestModal = null;
+			if (updatedOpenedModals.length > 0) {
+				const highestZIndexModal = updatedOpenedModals.reduce((prev, current) => {
+					return state.modalsState[prev].zIndex > state.modalsState[current].zIndex
+						? prev
+						: current;
+				});
+
+				nextHighestModal = highestZIndexModal;
+			}
+
 			return {
 				modalsState: newState,
-				openedModals: state.openedModals.filter((m) => m !== modalType),
-				currentHighestModal: modalType,
+				openedModals: updatedOpenedModals,
+				currentHighestModal: nextHighestModal,
 			};
-		}),
+		});
+	},
 	toggleMinimizeModal: (modalType: ModalType) => {
 		set((state) => {
 			const isMinimized = !state.modalsState[modalType].isMinimized;
@@ -143,23 +158,37 @@ export const useModalStore = create<IModalStore>((set, get) => ({
 				},
 			};
 
-			if (!isMinimized) {
-				const newZIndex = state.currentHighestZIndex + 1;
-				updatedModalState[modalType].zIndex = newZIndex;
+			let updatedCurrentHighestModal = state.currentHighestModal;
+			let newZIndex = state.currentHighestZIndex;
 
-				return {
-					modalsState: updatedModalState,
-					currentHighestZIndex: newZIndex,
-					currentHighestModal: modalType,
-					modalZIndexes: {
-						...state.modalZIndexes,
-						[modalType]: newZIndex,
-					},
-				};
+			if (isMinimized && modalType === state.currentHighestModal) {
+				const nextHighestModalEntry = Object.entries(state.modalsState)
+					.filter(
+						([key, { isOpen, isMinimized }]) =>
+							isOpen && !isMinimized && key !== modalType,
+					)
+					.sort(([, a], [, b]) => b.zIndex - a.zIndex)[0];
+
+				const nextHighestModal = nextHighestModalEntry
+					? (nextHighestModalEntry[0] as ModalType)
+					: null;
+
+				if (nextHighestModal) {
+					updatedCurrentHighestModal = nextHighestModal;
+					newZIndex = state.modalsState[nextHighestModal].zIndex;
+				} else {
+					updatedCurrentHighestModal = null;
+				}
 			}
 
 			return {
 				modalsState: updatedModalState,
+				currentHighestZIndex: newZIndex,
+				currentHighestModal: updatedCurrentHighestModal,
+				modalZIndexes: {
+					...state.modalZIndexes,
+					[modalType]: state.modalsState[modalType].zIndex,
+				},
 			};
 		});
 	},

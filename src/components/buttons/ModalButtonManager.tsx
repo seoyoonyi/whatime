@@ -5,7 +5,7 @@ import { CdMusic, Keys, Drvspace7, Computer } from '@react95/icons';
 import { ModalType } from '../../types/modalTypes';
 
 const ModalButtonManager = () => {
-	const { modalsState, toggleMinimizeModal, openModal } = useModalStore();
+	const { modalsState, toggleMinimizeModal, openModal, openedModals } = useModalStore();
 
 	const modalIcons = {
 		music: <CdMusic className="w-auto" />,
@@ -31,8 +31,9 @@ const ModalButtonManager = () => {
 
 	return (
 		<>
-			{Object.entries(modalsState).map(([modalType, modalInfo]) => {
-				if (!modalInfo.isOpen) return null;
+			{openedModals.map((modalType) => {
+				const modalInfo = modalsState[modalType];
+				if (!modalInfo || !modalInfo.isOpen) return null;
 
 				return (
 					<ModalButton

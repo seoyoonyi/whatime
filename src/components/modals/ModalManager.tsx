@@ -18,11 +18,12 @@ const ModalManager = (props: IModalManagerProps) => {
 		<>
 			{Object.entries(modalsState).map(([modalType, modalInfo]) => {
 				const ModalComponent = MODAL_COMPONENTS[modalType as ModalType];
-				if (!modalInfo.isOpen) return null;
+				if (!modalInfo.isOpen || modalInfo.isMinimized) return null;
 
 				const additionalProps = {
 					...props,
 					open: modalInfo.isOpen,
+					isMinimized: modalInfo.isMinimized,
 					style: { zIndex: modalInfo.zIndex },
 					onOpen: (e: React.MouseEvent<HTMLDivElement>) => {
 						e.stopPropagation();

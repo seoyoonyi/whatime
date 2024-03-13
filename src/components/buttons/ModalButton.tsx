@@ -13,12 +13,6 @@ interface IModalButtonProps {
 	onOpen: (event: MouseEvent<HTMLElement, globalThis.MouseEvent>) => void;
 }
 
-const defaultState = {
-	isOpen: false,
-	isMinimized: false,
-	zIndex: 5,
-};
-
 const ModalButton = ({
 	modalType,
 	icon,
@@ -35,6 +29,7 @@ const ModalButton = ({
 		incrementZIndex,
 		currentHighestZIndex,
 		bringToFront,
+		setCurrentHighestModal,
 	} = useModalStore();
 
 	const modalInfo = modalsState[modalType];
@@ -66,6 +61,7 @@ const ModalButton = ({
 			const newZIndex = currentHighestZIndex + 1;
 			incrementZIndex();
 			setModalZIndexes(modalType, newZIndex);
+			setCurrentHighestModal(modalType);
 		}
 	}, [open, isMinimized, modalType]);
 
