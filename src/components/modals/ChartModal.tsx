@@ -48,7 +48,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: ICh
 				onClose={onClose}
 				onMinimize={onMinimize}
 				onOpen={onOpen}
-				icon={<Drvspace7 className="w-auto" />}
+				icon={<Drvspace7 />}
 				title="Chart"
 				modalRef={chartModalRef}
 				style={style}

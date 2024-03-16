@@ -164,7 +164,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMini
 			onClose={onClose}
 			onMinimize={onMinimize}
 			onOpen={onOpen}
-			icon={<Computer className="w-auto" />}
+			icon={<Computer />}
 			title="SignUp"
 			modalRef={signUpModalRef}
 			style={style}

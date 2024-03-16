@@ -69,7 +69,7 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 			onClose={onClose}
 			onMinimize={onMinimize}
 			onOpen={onOpen}
-			icon={<Keys className="w-auto" />}
+			icon={<Keys />}
 			title="Sign In"
 			modalRef={signInModalRef}
 			style={style}

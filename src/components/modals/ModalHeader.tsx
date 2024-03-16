@@ -2,6 +2,7 @@ import React, { MouseEvent, MouseEventHandler } from 'react';
 import Button from '../buttons/Button';
 import { faClose, faWindowMinimize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import IconWrapper from '../IconWrapper';
 
 interface IModalHeaderProps {
 	title?: string;
@@ -33,7 +34,9 @@ const ModalHeader = ({
 			className="flex justify-between bg-retroBlue py-[3px] px-[6px] text-white"
 		>
 			<div className="flex">
-				<div className="w-5 mr-1">{icon}</div>
+				<div className="mr-1">
+					<IconWrapper icon={icon} width={20} height={20} />
+				</div>
 				<h2 className="font-bold font-eng">{title}</h2>
 			</div>
 

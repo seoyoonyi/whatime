@@ -102,9 +102,7 @@ const MainPage = () => {
 						onClick={handleOpenMusicModal}
 						className={`text-[14px] flex items-center justify-center  font-eng mr-4 border-none w-7 h-7 after:absolute after:top-1/2 after:-translate-y-1/2 after:right-2 after:w-[3px]  after:h-7 after:bg-retroGray after:border  after:border-b-black after:border-r-black after:border-l-white after:border-t-white`}
 					>
-						<div className="w-6">
-							<CdMusic className="w-auto" />
-						</div>
+						<CdMusic width={24} height={24} />
 					</Button>
 				</div>
 				<div className="flex">

@@ -8,10 +8,10 @@ const ModalButtonManager = () => {
 	const { modalsState, toggleMinimizeModal, openModal, openedModals } = useModalStore();
 
 	const modalIcons = {
-		music: <CdMusic className="w-auto" />,
-		chart: <Drvspace7 className="w-auto" />,
-		signIn: <Keys className="w-auto" />,
-		signUp: <Computer className="w-auto" />,
+		music: <CdMusic />,
+		chart: <Drvspace7 />,
+		signIn: <Keys />,
+		signUp: <Computer />,
 	};
 
 	const modalLabels = {

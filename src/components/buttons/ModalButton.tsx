@@ -1,6 +1,7 @@
 import React, { MouseEvent, useEffect } from 'react';
 import { useModalStore } from '../../stores/useModalStore';
 import { ModalType } from '../../types/modalTypes';
+import IconWrapper from '../IconWrapper';
 
 interface IModalButtonProps {
 	modalType: ModalType;
@@ -72,7 +73,9 @@ const ModalButton = ({
 			onClick={handleButtonClick}
 			className={`${buttonStyle} text-[14px] w-[100px] md:w-[120px] lg:w-[140px] xl:w-[160px] flex justify-start pt-1 px-1 m-1 font-eng `}
 		>
-			<div className="w-5 mr-1">{icon}</div>
+			<div className="mr-1">
+				<IconWrapper icon={icon} width={20} height={20} />
+			</div>
 			{label}
 		</button>
 	);

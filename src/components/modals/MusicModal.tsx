@@ -150,7 +150,7 @@ const MusicModal = ({
 			onClose={onClose}
 			onMinimize={onMinimize}
 			onOpen={onOpen}
-			icon={<CdMusic className="w-auto" />}
+			icon={<CdMusic />}
 			title="Music"
 			modalRef={musicModalRef}
 			style={style}
