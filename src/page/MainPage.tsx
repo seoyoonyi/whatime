@@ -39,6 +39,7 @@ const MainPage = () => {
 	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
 		refetchInterval: getRefetchInterval(),
+		retry: false,
 		onError: (error) => {
 			console.error('Fetching songs failed:', error);
 			setSongs(mockData.data);
