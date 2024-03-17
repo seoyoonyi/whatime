@@ -9,7 +9,7 @@ export const fetchSongs = async () => {
 	}
 
 	try {
-		const response = await axios.get(apiUrl);
+		const response = await axios.get(apiUrl, { timeout: 3000 });
 		if (response.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
 			return response.data.data;
 		} else {
