@@ -14,6 +14,7 @@ import ModalManager from '../components/modals/ModalManager';
 import { useModalStore } from '../stores/useModalStore';
 import { MODAL_KEYS } from '../configs/modalKeys';
 import { ModalType } from '../types/modalTypes';
+import mockData from '../data/mock.json';
 
 const MainPage = () => {
 	const playerRef = useRef<IPlayer | null>(null);
@@ -31,9 +32,17 @@ const MainPage = () => {
 
 	const { handleReady, handleStateChange } = useMusicPlayer({ playerRef });
 
-	const { data: fetchedSongs, isLoading } = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+	const {
+		data: fetchedSongs,
+		isLoading,
+		error,
+	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
 		staleTime: Infinity,
 		refetchInterval: getRefetchInterval(),
+		onError: (error) => {
+			console.error('Fetching songs failed:', error);
+			setSongs(mockData.data);
+		},
 	});
 
 	const currentSong = songs[currentSongIndex];
