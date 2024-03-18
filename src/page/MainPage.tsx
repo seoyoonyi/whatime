@@ -3,8 +3,7 @@ import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
 import { CdMusic } from '@react95/icons';
 import { useQuery } from '@tanstack/react-query';
-import { fetchSongs } from '../api/api';
-
+import { Music, apiUrl } from '../api/musicApi';
 import { IPlayer, ISong } from '../types/types';
 import { getRefetchInterval } from '../utils/utils';
 import useMusicPlayer from '../hooks/useMusicPlayer';
@@ -31,12 +30,12 @@ const MainPage = () => {
 		}));
 
 	const { handleReady, handleStateChange } = useMusicPlayer({ playerRef });
-
+	const music = new Music(apiUrl);
 	const {
 		data: fetchedSongs,
 		isLoading,
 		error,
-	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+	} = useQuery<ISong[], Error>(['songs'], music.fetchSongs, {
 		staleTime: Infinity,
 		refetchInterval: getRefetchInterval(),
 		retry: false,

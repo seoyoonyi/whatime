@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@tanstack/react-query';
-import { fetchSongs } from '../../api/api';
+import { Music, apiUrl } from '../../api/musicApi';
 import useMusicPlayer from '../../hooks/useMusicPlayer';
 import { MODAL_KEYS } from '../../configs/modalKeys';
 import { ModalType } from '../../types/modalTypes';
@@ -25,14 +25,13 @@ interface IChartModal {
 
 const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: IChartModal) => {
 	const chartModalRef = useRef(null);
-
 	const { handleSongClick } = useMusicPlayer({ playerRef });
-
+	const music = new Music(apiUrl);
 	const {
 		data: songs,
 		isError,
 		error,
-	} = useQuery<ISong[], Error>(['songs'], fetchSongs, {
+	} = useQuery<ISong[], Error>(['songs'], music.fetchSongs, {
 		staleTime: Infinity,
 	});
 
