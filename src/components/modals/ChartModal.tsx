@@ -9,10 +9,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useQuery } from '@tanstack/react-query';
-import { Music, apiUrl } from '../../api/musicApi';
 import useMusicPlayer from '../../hooks/useMusicPlayer';
 import { MODAL_KEYS } from '../../configs/modalKeys';
 import { ModalType } from '../../types/modalTypes';
+import { useMusicService } from '../../hooks/useMusicService';
 
 interface IChartModal {
 	open: boolean;
@@ -25,13 +25,14 @@ interface IChartModal {
 
 const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: IChartModal) => {
 	const chartModalRef = useRef(null);
+	const musicService = useMusicService();
 	const { handleSongClick } = useMusicPlayer({ playerRef });
-	const music = new Music(apiUrl);
+
 	const {
 		data: songs,
 		isError,
 		error,
-	} = useQuery<ISong[], Error>(['songs'], music.fetchSongs, {
+	} = useQuery<ISong[], Error>(['songs'], () => musicService.fetchChartSongs(), {
 		staleTime: Infinity,
 	});
 

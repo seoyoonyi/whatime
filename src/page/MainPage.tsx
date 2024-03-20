@@ -3,7 +3,7 @@ import YouTube, { YouTubeProps } from 'react-youtube';
 import Button from '../components/buttons/Button';
 import { CdMusic } from '@react95/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Music, apiUrl } from '../api/musicApi';
+
 import { IPlayer, ISong } from '../types/types';
 import { getRefetchInterval } from '../utils/utils';
 import useMusicPlayer from '../hooks/useMusicPlayer';
@@ -14,11 +14,14 @@ import { useModalStore } from '../stores/useModalStore';
 import { MODAL_KEYS } from '../configs/modalKeys';
 import { ModalType } from '../types/modalTypes';
 import mockData from '../data/mock.json';
+import { useMusicService } from '../hooks/useMusicService';
 
 const MainPage = () => {
 	const playerRef = useRef<IPlayer | null>(null);
-	const { openModal } = useModalStore();
 
+	const musicService = useMusicService();
+
+	const { openModal } = useModalStore();
 	const { setSongs, songs, currentSongIndex, setPrevDisabled, setNextDisabled, setCurrentTime } =
 		useMusicStore((state) => ({
 			setSongs: state.setSongs,
@@ -28,14 +31,13 @@ const MainPage = () => {
 			setNextDisabled: state.setNextDisabled,
 			setCurrentTime: state.setCurrentTime,
 		}));
-
 	const { handleReady, handleStateChange } = useMusicPlayer({ playerRef });
-	const music = new Music(apiUrl);
+
 	const {
 		data: fetchedSongs,
 		isLoading,
 		error,
-	} = useQuery<ISong[], Error>(['songs'], music.fetchSongs, {
+	} = useQuery<ISong[], Error>(['songs'], () => musicService.fetchChartSongs(), {
 		staleTime: Infinity,
 		refetchInterval: getRefetchInterval(),
 		retry: false,
