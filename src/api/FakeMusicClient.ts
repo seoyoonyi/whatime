@@ -1,10 +1,10 @@
-import axios from 'axios';
+import mockData from '../data/mock.json';
+import { ISong } from '../types/types';
 
 export default class FakeMusicClient {
-	async fetchChartSongs() {
+	async fetchChartSongs(): Promise<ISong[]> {
 		try {
-			const response = await axios.get('../data/mock.json');
-			return response.data;
+			return Promise.resolve(mockData.data);
 		} catch (error) {
 			console.error('Mock data fetch error:', error);
 			throw error;
