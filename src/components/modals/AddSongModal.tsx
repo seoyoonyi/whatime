@@ -1,16 +1,18 @@
-import React, { useRef, useState } from 'react';
+import React, { MouseEventHandler, useRef, useState } from 'react';
 import Modal from './Modal';
 import Button from '../buttons/Button';
-import { MODAL_KEYS } from '../../configs/modalKeys';
 import { ModalType } from '../../types/modalTypes';
+import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 
 interface IAddSongModal {
-	onClose: () => void;
-	isOpen: boolean;
+	open: boolean;
+	onClose: MouseEventHandler<HTMLButtonElement>;
 }
 
-const AddSongModal = ({ isOpen, onClose }: IAddSongModal) => {
+const AddSongModal = ({ open, onClose }: IAddSongModal) => {
 	const AddSongModalRef = useRef(null);
+	const { key } = MODAL_CONFIGS.addSong;
+
 	const [showConfirm, setShowConfirm] = useState(false);
 
 	const handleAddToPlaylist = () => {
@@ -21,20 +23,20 @@ const AddSongModal = ({ isOpen, onClose }: IAddSongModal) => {
 		console.log('Added to mixtape');
 	};
 
-	const handleClose = () => {
+	const handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setShowConfirm(false);
-		onClose();
+		onClose(event);
 	};
 
-	if (!isOpen) return null;
+	if (!open) return null;
 	return (
 		<Modal
 			className="absolute"
-			open={isOpen}
+			open={open}
 			onClose={handleClose}
 			modalRef={AddSongModalRef}
 			style={{ zIndex: 100 }}
-			modalKey={MODAL_KEYS.ADD_SONG as ModalType}
+			modalKey={key as ModalType}
 		>
 			<div className="flex flex-col justify-center px-20 py-10 space-y-1">
 				{showConfirm ? (

@@ -38,7 +38,7 @@ const Modal = ({
 }: IModalComponentProps) => {
 	const { modalsState } = useModalStore();
 	const modalInfo = modalsState[modalKey];
-	const zIndex = modalInfo.zIndex;
+	const zIndex = modalInfo?.zIndex;
 
 	const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
 		useDrag(modalRef);

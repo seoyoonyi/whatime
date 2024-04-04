@@ -6,8 +6,8 @@ import Button from '../buttons/Button';
 import { useForm } from 'react-hook-form';
 import { signinValidationRules } from '../../utils/validationRules';
 import { useModalStore } from '../../stores/useModalStore';
-import { MODAL_KEYS } from '../../configs/modalKeys';
 import { ModalType } from '../../types/modalTypes';
+import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 
 interface ISignInModalProps {
 	open: boolean;
@@ -24,8 +24,9 @@ interface IFormData {
 
 const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalProps) => {
 	const signInModalRef = useRef(null);
-	const signInModalKey = 'signIn';
-	const signUpModalKey = 'signUp';
+	const { key: signUpKey } = MODAL_CONFIGS.signUp;
+	const { key: signInKey } = MODAL_CONFIGS.signIn;
+
 	const {
 		register,
 		handleSubmit,
@@ -40,10 +41,10 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 	const handleSignUpModalOpen = useCallback(
 		(event: MouseEvent<HTMLButtonElement>) => {
 			event.stopPropagation();
-			closeModal(signInModalKey);
-			openModal(signUpModalKey);
+			closeModal(signInKey as ModalType);
+			openModal(signUpKey as ModalType);
 		},
-		[closeModal, openModal],
+		[closeModal, openModal, signInKey, signUpKey],
 	);
 
 	const onSubmit = useCallback((data: IFormData) => {
@@ -73,7 +74,7 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 			title="Sign In"
 			modalRef={signInModalRef}
 			style={style}
-			modalKey={MODAL_KEYS.SIGN_IN as ModalType}
+			modalKey={signInKey as ModalType}
 		>
 			<div className="px-[16px] py-[26px]">
 				<h2 className="flex justify-center pb-[26px]">
