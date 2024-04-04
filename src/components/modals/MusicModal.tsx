@@ -1,5 +1,4 @@
 import React, { MouseEventHandler, useEffect, useRef } from 'react';
-
 import Modal from './Modal';
 import ProgressBar from '../ProgressBar';
 import VolumeBar from '../volumebar/VolumeBar';
@@ -10,7 +9,6 @@ import Navigation from '../Navigation';
 import he from 'he';
 import { formatTime, handleImageError, truncateTitle } from '../../utils/utils';
 import { IPlayer, ISong } from '../../types/types';
-import { CdMusic } from '@react95/icons';
 import Frame from '../Frame';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -25,8 +23,8 @@ import {
 import useMusicPlayer from '../../hooks/useMusicPlayer';
 import { useMusicStore } from '../../stores/useMusicStore';
 import { useModalStore } from '../../stores/useModalStore';
-import { MODAL_KEYS } from '../../configs/modalKeys';
 import { ModalType } from '../../types/modalTypes';
+import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 
 interface IMusicPlayerModalProps {
 	open: boolean;
@@ -52,7 +50,12 @@ const MusicModal = ({
 	playerRef,
 }: IMusicPlayerModalProps) => {
 	const musicModalRef = useRef(null);
-	const { closeModal, openModal } = useModalStore();
+	const { icon: IconComponent, label: title, key: musicKey } = MODAL_CONFIGS.music;
+	const { key: chartKey } = MODAL_CONFIGS.chart;
+	const { key: signInKey } = MODAL_CONFIGS.signIn;
+	const { key: addSongKey } = MODAL_CONFIGS.addSong;
+
+	const { openModal } = useModalStore();
 
 	const { isPrevDisabled, isNextDisabled, isPlayButton, currentTime, duration } = useMusicStore(
 		(state) => ({
@@ -83,11 +86,15 @@ const MusicModal = ({
 			: currentSong.thumbnail || '/no-thumbnail.png';
 
 	const handleOpenChartModal = () => {
-		openModal(MODAL_KEYS.CHART as ModalType);
+		openModal(chartKey as ModalType);
 	};
 
 	const handleOpenSignInModal = () => {
-		openModal(MODAL_KEYS.SIGN_IN as ModalType);
+		openModal(signInKey as ModalType);
+	};
+
+	const handleOpenAddSongModal = () => {
+		openModal(addSongKey as ModalType);
 	};
 
 	useEffect(() => {
@@ -150,11 +157,11 @@ const MusicModal = ({
 			onClose={onClose}
 			onMinimize={onMinimize}
 			onOpen={onOpen}
-			icon={<CdMusic />}
-			title="Music"
+			icon={<IconComponent />}
+			title={title}
 			modalRef={musicModalRef}
 			style={style}
-			modalKey={MODAL_KEYS.MUSIC as ModalType}
+			modalKey={musicKey as ModalType}
 		>
 			<Navigation navItems={musicModalnavItems} onClick={handleOpenChartModal} />
 
@@ -163,7 +170,7 @@ const MusicModal = ({
 				boxShadow="in"
 				bg="retroGray"
 			>
-				{isLoading ? (
+				{/* {isLoading ? (
 					<div className="w-full flex  items-center justify-center text-black h-[176px] md:h-auto">
 						<span className="w-[30px]">
 							<img className="w-full" src="/hourglass.gif" alt="Loading..." />
@@ -171,48 +178,45 @@ const MusicModal = ({
 						<p>Loading...</p>
 					</div>
 				) : (
-					<>
-						<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
-							<div className="hidden md:flex-col md:flex md:space-y-0">
-								<div className="flex-shrink-0 h-[118px] w-[214px] bg-black flex justify-center items-center overflow-hidden">
-									<img
-										className="w-full"
-										src={thumbnailImage}
-										onError={handleImageError}
-										alt={isLoading ? 'loading' : currentSongTitle}
-									/>
-								</div>
-							</div>
-							<div className="w-full">
-								<div className="text-xl font-extrabold font-kor">
-									{currentSongTitle}
-								</div>
-								<div className="font-kor font-semibold mb-[24px]">
-									{currentSongArtist}
-								</div>
-								<ProgressBar className="h-[4px] mb-[17px]" playerRef={playerRef} />
-								<div className="flex items-center justify-between">
-									<div>{`${formatTime(currentTime)} / ${formatTime(
-										duration,
-									)}`}</div>
-									<VolumeBar playerRef={playerRef} />
-								</div>
-							</div>
-						</div>
-						<div className="md:flex md:justify-between">
-							<div className="flex justify-between mt-[20px]  md:order-2">
-								<ButtonGroup buttons={musicControlbuttons} />
-								<Button className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]">
-									<FontAwesomeIcon icon={faPlus} />
-								</Button>
-							</div>
-							<ButtonGroup
-								buttons={userControlbuttons}
-								className="mt-[5px] md:mt-[20px] md:order-1"
+					<> */}
+				<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
+					<div className="hidden md:flex-col md:flex md:space-y-0">
+						<div className="flex-shrink-0 h-[118px] w-[214px] bg-black flex justify-center items-center overflow-hidden">
+							<img
+								className="w-full"
+								src={thumbnailImage}
+								onError={handleImageError}
+								alt={isLoading ? 'loading' : currentSongTitle}
 							/>
 						</div>
-					</>
-				)}
+					</div>
+					<div className="w-full">
+						<div className="text-xl font-extrabold font-kor">{currentSongTitle}</div>
+						<div className="font-kor font-semibold mb-[24px]">{currentSongArtist}</div>
+						<ProgressBar className="h-[4px] mb-[17px]" playerRef={playerRef} />
+						<div className="flex items-center justify-between">
+							<div>{`${formatTime(currentTime)} / ${formatTime(duration)}`}</div>
+							<VolumeBar playerRef={playerRef} />
+						</div>
+					</div>
+				</div>
+				<div className="md:flex md:justify-between">
+					<div className="flex justify-between mt-[20px]  md:order-2">
+						<ButtonGroup buttons={musicControlbuttons} />
+						<Button
+							className="w-[60px] xl:w-[80px] xl:ml-[33px] flex justify-center items-center ml-[10px]"
+							onClick={handleOpenAddSongModal}
+						>
+							<FontAwesomeIcon icon={faPlus} />
+						</Button>
+					</div>
+					<ButtonGroup
+						buttons={userControlbuttons}
+						className="mt-[5px] md:mt-[20px] md:order-1"
+					/>
+				</div>
+				{/* </>
+				)} */}
 			</Frame>
 			<p className="font-medium font-kor text-[13px] flex justify-end pt-[6px] pb-[5px]">
 				Hello, World

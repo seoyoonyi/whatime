@@ -11,13 +11,14 @@ import { useMusicStore } from '../stores/useMusicStore';
 import ModalButtonManager from '../components/buttons/ModalButtonManager';
 import ModalManager from '../components/modals/ModalManager';
 import { useModalStore } from '../stores/useModalStore';
-import { MODAL_KEYS } from '../configs/modalKeys';
 import { ModalType } from '../types/modalTypes';
 import mockData from '../data/mock.json';
 import { useMusicService } from '../hooks/useMusicService';
+import { MODAL_CONFIGS } from '../configs/modalConfigs';
 
 const MainPage = () => {
 	const playerRef = useRef<IPlayer | null>(null);
+	const { key } = MODAL_CONFIGS.music;
 
 	const musicService = useMusicService();
 
@@ -57,7 +58,7 @@ const MainPage = () => {
 	};
 
 	const handleOpenMusicModal = () => {
-		openModal(MODAL_KEYS.MUSIC as ModalType);
+		openModal(key as ModalType);
 	};
 
 	useEffect(() => {

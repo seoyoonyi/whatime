@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { signupValidationRules } from '../../utils/validationRules';
 import { useModalStore } from '../../stores/useModalStore';
 import { ModalType } from '../../types/modalTypes';
-import { MODAL_KEYS } from '../../configs/modalKeys';
+import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 
 interface ISignUpModalProps {
 	open: boolean;
@@ -38,6 +38,8 @@ const fakeDB = {
 
 const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMinimize, onOpen }) => {
 	const signUpModalRef = useRef<HTMLDivElement | null>(null);
+	const { key: signUpKey } = MODAL_CONFIGS.signUp;
+	const { key: signInKey } = MODAL_CONFIGS.signIn;
 	const { closeModal, openModal } = useModalStore();
 
 	const {
@@ -119,8 +121,8 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMini
 	};
 
 	const handleOpenSignInModal = () => {
-		closeModal(MODAL_KEYS.SIGN_UP as ModalType);
-		openModal(MODAL_KEYS.SIGN_IN as ModalType);
+		closeModal(signUpKey as ModalType);
+		openModal(signInKey as ModalType);
 	};
 
 	useEffect(() => {
@@ -168,7 +170,7 @@ const SignUpModal: React.FC<ISignUpModalProps> = ({ open, style, onClose, onMini
 			title="SignUp"
 			modalRef={signUpModalRef}
 			style={style}
-			modalKey={MODAL_KEYS.SIGN_UP as ModalType}
+			modalKey={signUpKey as ModalType}
 		>
 			<div className="px-[16px] py-[26px]">
 				<h2 className="flex justify-center pb-[26px]">

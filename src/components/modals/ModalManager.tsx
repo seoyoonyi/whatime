@@ -1,8 +1,9 @@
-import React from 'react';
-import { MODAL_COMPONENTS } from '../../configs/modalComponents';
+import React, { Suspense } from 'react';
 import { useModalStore } from '../../stores/useModalStore';
-import { IPlayer, ISong } from '../../types/types';
 import { ModalType } from '../../types/modalTypes';
+import { IPlayer, ISong } from '../../types/types';
+import { MODAL_CONFIGS } from '../../configs/modalConfigs';
+import LoadingModal from './LoadingModal';
 
 interface IModalManagerProps {
 	currentSongIndex: number;
@@ -17,8 +18,9 @@ const ModalManager = (props: IModalManagerProps) => {
 	return (
 		<>
 			{Object.entries(modalsState).map(([modalType, modalInfo]) => {
-				const ModalComponent = MODAL_COMPONENTS[modalType as ModalType];
 				if (!modalInfo.isOpen || modalInfo.isMinimized) return null;
+
+				const { component: ModalComponent } = MODAL_CONFIGS[modalType as ModalType];
 
 				const additionalProps = {
 					...props,
@@ -39,7 +41,11 @@ const ModalManager = (props: IModalManagerProps) => {
 					},
 				};
 
-				return <ModalComponent key={modalType} {...additionalProps} />;
+				return (
+					<Suspense fallback={<LoadingModal {...additionalProps} />} key={modalType}>
+						<ModalComponent key={modalType} {...additionalProps} />
+					</Suspense>
+				);
 			})}
 		</>
 	);
