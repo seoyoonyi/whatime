@@ -1,4 +1,4 @@
-import React, { MouseEvent, MouseEventHandler, RefObject, useLayoutEffect } from 'react';
+import React, { MouseEvent, MouseEventHandler, RefObject, useEffect, useLayoutEffect } from 'react';
 import useDrag from '../../hooks/useDrag';
 import Frame from '../Frame';
 import ModalHeader from './ModalHeader';
@@ -36,18 +36,35 @@ const Modal = ({
 	modalRef,
 	modalKey,
 }: IModalComponentProps) => {
-	const { modalsState } = useModalStore();
+	const {
+		modalsState,
+
+		incrementZIndex,
+		currentHighestZIndex,
+		setModalZIndexes,
+		setCurrentHighestModal,
+	} = useModalStore((state) => ({
+		modalsState: state.modalsState,
+
+		incrementZIndex: state.incrementZIndex,
+		currentHighestZIndex: state.currentHighestZIndex,
+		setModalZIndexes: state.setModalZIndexes,
+		setCurrentHighestModal: state.setCurrentHighestModal,
+	}));
 	const modalInfo = modalsState[modalKey];
-	const zIndex = modalInfo?.zIndex;
+	const zIndex = modalInfo.zIndex;
 
 	const { modalPos, handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } =
 		useDrag(modalRef);
 
-	useLayoutEffect(() => {
-		if (modalRef && 'current' in modalRef && modalRef.current) {
-			modalRef.current.style.transform = `translate(${modalPos.x}px, ${modalPos.y}px)`;
+	useEffect(() => {
+		if (open && !modalInfo.isMinimized && (modalKey === 'addSong' || modalKey === 'loading')) {
+			const newZIndex = currentHighestZIndex + 1;
+			setModalZIndexes(modalKey, newZIndex);
+			setCurrentHighestModal(modalKey);
+			incrementZIndex();
 		}
-	}, [modalPos, modalRef]);
+	}, [open, modalInfo.isMinimized, modalKey]);
 
 	if (!open) return null;
 

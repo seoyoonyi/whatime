@@ -36,14 +36,14 @@ const createInitialModalsState = (modalKeys: ModalType[]): ModalStateType => {
 	const state: Partial<ModalStateType> = {};
 	for (const key of modalKeys) {
 		if (key === 'music') {
-			state[key] = { isOpen: true, zIndex: 5, isMinimized: false };
+			state[key] = { isOpen: true, zIndex: 6, isMinimized: false };
 		} else {
 			state[key] = { isOpen: false, zIndex: 0, isMinimized: false };
 		}
 	}
 	return state as ModalStateType;
 };
-const ModalKeysArray: ModalType[] = ['music', 'chart', 'signIn', 'signUp'];
+const ModalKeysArray: ModalType[] = ['music', 'chart', 'signIn', 'signUp', 'loading', 'addSong'];
 
 const initialModalZIndexes = createInitialModalZIndexes(ModalKeysArray, 5);
 const initialModalsState = createInitialModalsState(ModalKeysArray);
@@ -51,7 +51,7 @@ const initialModalsState = createInitialModalsState(ModalKeysArray);
 export const useModalStore = create<IModalStore>((set, get) => ({
 	modalsState: initialModalsState,
 	currentHighestZIndex: 5,
-	currentHighestModal: 'music',
+	currentHighestModal: null,
 	modalZIndexes: initialModalZIndexes,
 	openedModals: ['music'],
 	setModalsState: (newState: ModalStateType) => set(() => ({ modalsState: newState })),
