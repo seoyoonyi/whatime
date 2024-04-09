@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { ISong } from '../types/types';
 
 interface IMusicState {

@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import { ModalType } from '../types/modalTypes';
 
 type ModalStateType = Record<ModalType, { isOpen: boolean; zIndex: number; isMinimized: boolean }>;
