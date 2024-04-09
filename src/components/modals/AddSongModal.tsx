@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useRef, useState } from 'react';
+import React, { CSSProperties, MouseEventHandler, useRef, useState } from 'react';
 import Modal from './Modal';
 import Button from '../buttons/Button';
 import { ModalType } from '../../types/modalTypes';
@@ -7,9 +7,10 @@ import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 interface IAddSongModal {
 	open: boolean;
 	onClose: MouseEventHandler<HTMLButtonElement>;
+	style: CSSProperties;
 }
 
-const AddSongModal = ({ open, onClose }: IAddSongModal) => {
+const AddSongModal = ({ open, onClose, style }: IAddSongModal) => {
 	const AddSongModalRef = useRef(null);
 	const { key } = MODAL_CONFIGS.addSong;
 
@@ -35,7 +36,7 @@ const AddSongModal = ({ open, onClose }: IAddSongModal) => {
 			open={open}
 			onClose={handleClose}
 			modalRef={AddSongModalRef}
-			style={{ zIndex: 100 }}
+			style={style}
 			modalKey={key as ModalType}
 		>
 			<div className="flex flex-col justify-center px-20 py-10 space-y-1">

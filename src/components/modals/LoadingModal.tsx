@@ -2,8 +2,6 @@ import React, { MouseEventHandler, useRef } from 'react';
 import Modal from './Modal';
 import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 import { ModalType } from '../../types/modalTypes';
-import { useModalStore } from '../../stores/useModalStore';
-
 interface ILoadingModalProps {
 	open: boolean;
 	style: React.CSSProperties;
@@ -13,25 +11,19 @@ interface ILoadingModalProps {
 const LoadingModal = ({ open, style, onClose }: ILoadingModalProps) => {
 	const loadingModalRef = useRef(null);
 	const { key } = MODAL_CONFIGS.loading;
+	const safeZIndex = typeof style.zIndex === 'number' ? style.zIndex + 2 : 9999;
 
-	const { currentHighestZIndex } = useModalStore((state) => ({
-		currentHighestZIndex: state.currentHighestZIndex,
-	}));
-
-	const loadingModalZIndex = currentHighestZIndex + 1;
-
-	const modalStyle = {
+	const updatedStyle = {
 		...style,
-		zIndex: loadingModalZIndex,
+		zIndex: safeZIndex,
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center">
+		<div style={updatedStyle} className="fixed inset-0 flex items-center justify-center">
 			<Modal
 				open={open}
 				onClose={onClose}
 				modalRef={loadingModalRef}
-				style={modalStyle}
 				modalKey={key as ModalType}
 			>
 				<div className="flex items-center justify-center w-[289px] h-[150px] text-black">

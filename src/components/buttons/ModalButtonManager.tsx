@@ -4,36 +4,43 @@ import ModalButton from './ModalButton';
 import { ModalType } from '../../types/modalTypes';
 import { MODAL_CONFIGS } from '../../configs/modalConfigs';
 
+type MainModalType = Exclude<ModalType, 'addSong' | 'loading'>;
+
 const ModalButtonManager = () => {
 	const { modalsState, toggleMinimizeModal, openModal, openedModals } = useModalStore();
 
-	const handleToggleMinimize = (modalType: ModalType) => () => {
+	const handleToggleMinimize = (modalType: MainModalType) => () => {
 		toggleMinimizeModal(modalType);
 	};
 
-	const handleOpenModal = (modalType: ModalType) => () => {
+	const handleOpenModal = (modalType: MainModalType) => () => {
 		openModal(modalType);
 	};
 
 	return (
 		<>
 			{openedModals
-				.filter((modalType) => !['addSong'].includes(modalType))
+				.filter(
+					(modalType): modalType is MainModalType =>
+						!['addSong', 'loading'].includes(modalType),
+				)
 				.map((modalType) => {
 					const modalInfo = modalsState[modalType];
 					if (!modalInfo || !modalInfo.isOpen) return null;
-					const { icon: Icon, label } = MODAL_CONFIGS[modalType];
+					const config = MODAL_CONFIGS[modalType];
+					if (!('icon' in config && 'label' in config)) return null;
 
+					const { icon: Icon, label } = config;
 					return (
 						<ModalButton
 							key={modalType}
-							modalType={modalType as ModalType}
+							modalType={modalType}
 							open={modalInfo.isOpen}
 							isMinimized={modalInfo.isMinimized}
-							toggleMinimize={handleToggleMinimize(modalType as ModalType)}
+							toggleMinimize={handleToggleMinimize(modalType)}
 							icon={<Icon />}
 							label={label}
-							onOpen={handleOpenModal(modalType as ModalType)}
+							onOpen={handleOpenModal(modalType)}
 						/>
 					);
 				})}
