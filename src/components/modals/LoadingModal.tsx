@@ -19,7 +19,7 @@ const LoadingModal = ({ open, style, onClose }: ILoadingModalProps) => {
 				open={open}
 				onClose={onClose}
 				modalRef={loadingModalRef}
-				style={style}
+				style={{ zIndex: 100 }}
 				modalKey={key as ModalType}
 			>
 				<div className="flex items-center justify-center w-[289px] h-[150px] text-black">
