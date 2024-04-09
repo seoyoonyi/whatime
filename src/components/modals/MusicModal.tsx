@@ -170,15 +170,6 @@ const MusicModal = ({
 				boxShadow="in"
 				bg="retroGray"
 			>
-				{/* {isLoading ? (
-					<div className="w-full flex  items-center justify-center text-black h-[176px] md:h-auto">
-						<span className="w-[30px]">
-							<img className="w-full" src="/hourglass.gif" alt="Loading..." />
-						</span>
-						<p>Loading...</p>
-					</div>
-				) : (
-					<> */}
 				<div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-[20px]">
 					<div className="hidden md:flex-col md:flex md:space-y-0">
 						<div className="flex-shrink-0 h-[118px] w-[214px] bg-black flex justify-center items-center overflow-hidden">

@@ -24,7 +24,7 @@ const LoadingModal = ({ open, style, onClose }: ILoadingModalProps) => {
 			>
 				<div className="flex items-center justify-center w-[289px] h-[150px] text-black">
 					<span className="w-[30px]">
-						<img className="w-full" src="/hourglass.gif" alt="Loading..." />
+						<img className="w-full" src="/hourglass.webp" alt="Loading..." />
 					</span>
 					<p>Loading...</p>
 				</div>
