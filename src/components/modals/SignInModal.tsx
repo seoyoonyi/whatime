@@ -38,6 +38,14 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
+	const REST_API_KEY = process.env.REACT_APP_REST_API;
+	const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+	const link = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+
+	const kakaoLoginHandler = () => {
+		window.location.href = link;
+	};
+
 	const handleSignUpModalOpen = useCallback(
 		(event: MouseEvent<HTMLButtonElement>) => {
 			event.stopPropagation();
@@ -122,6 +130,12 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 						</Button>
 					</div>
 				</form>
+				<div className="flex flex-col my-5 space-y-1">
+					<Button className="w-full px-[18px] py-[3px]" onClick={kakaoLoginHandler}>
+						카카오 로그인
+					</Button>
+					<Button className="w-full px-[18px] py-[3px]">구글 로그인</Button>
+				</div>
 				<div className="flex items-center justify-center">
 					<span className="mr-1 text-xs opacity-50">{"Don't have an account?"}</span>
 					<Button
