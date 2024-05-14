@@ -7,10 +7,9 @@ import { Drvspace7 } from '@react95/icons';
 import Frame from '../Frame';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
-import { faPlay, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useQuery } from '@tanstack/react-query';
+import { faPlay, faPlus, faRedo } from '@fortawesome/free-solid-svg-icons';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import useMusicPlayer from '../../hooks/useMusicPlayer';
-
 import { ModalType } from '../../types/modalTypes';
 import { useMusicService } from '../../hooks/useMusicService';
 import { MODAL_CONFIGS } from '../../configs/modalConfigs';
@@ -29,6 +28,7 @@ const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: ICh
 	const { key } = MODAL_CONFIGS.chart;
 	const musicService = useMusicService();
 	const { handleSongClick } = useMusicPlayer({ playerRef });
+	const queryClient = useQueryClient();
 
 	const {
 		data: songs,
@@ -41,6 +41,10 @@ const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: ICh
 	if (isError) {
 		console.error('Failed to fetch songs using React Query', error);
 	}
+
+	const refetchSongs = () => {
+		queryClient.invalidateQueries(['songs']);
+	};
 
 	return (
 		<>
@@ -56,17 +60,21 @@ const ChartModal = ({ open, style, onClose, onMinimize, onOpen, playerRef }: ICh
 				style={style}
 				modalKey={key as ModalType}
 			>
-				<div className="flex items-center justify-between px-1 py-2">
-					<div className="flex items-center">
+				<div className="flex flex-col px-1 py-2">
+					<div className="flex items-start justify-between">
 						<h2 className="text-lg font-bold lg:text-xl font-eng">TOP100</h2>
-						<span className="mt-1 ml-1 text-xs">
-							{formatDate(songs?.[0]?.rankDate)}
-						</span>
+						<Button onClick={refetchSongs} className="px-3 py-[1px] text-xs">
+							Refresh
+							<FontAwesomeIcon icon={faRedo} size="sm" className="ml-1" />
+						</Button>
 					</div>
-					<p className="flex items-center mt-1 text-xs">
-						<FontAwesomeIcon className="mr-2" icon={faClock} />
-						매일 12시 00분에 업데이트됩니다.
-					</p>
+					<div className="flex justify-between">
+						<span className="text-xs">{formatDate(songs?.[0]?.rankDate)}</span>
+						<p className="flex items-center text-xs">
+							<FontAwesomeIcon icon={faClock} className="mr-1" />
+							매일 12시 00분에 업데이트됩니다.
+						</p>
+					</div>
 				</div>
 				<Frame className="overflow-y-auto max-h-96" boxShadow="in" bg="white">
 					{songs?.map((song: ISong, index: number) => (
