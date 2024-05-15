@@ -26,6 +26,9 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 	const signInModalRef = useRef(null);
 	const { key: signUpKey } = MODAL_CONFIGS.signUp;
 	const { key: signInKey } = MODAL_CONFIGS.signIn;
+	const REST_API_KEY = process.env.REACT_APP_REST_API;
+	const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+	const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
 
 	const {
 		register,
@@ -38,12 +41,17 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const REST_API_KEY = process.env.REACT_APP_REST_API;
-	const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
-	const link = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+	const handleOpenKakaoLoginModal = () => {
+		const width = 500;
+		const height = 600;
+		const left = (window.outerWidth - width) / 2 + window.screenX;
+		const top = (window.outerHeight - height) / 2 + window.screenY;
 
-	const kakaoLoginHandler = () => {
-		window.location.href = link;
+		window.open(
+			kakaoLoginUrl,
+			'KakaoLogin',
+			`toolbar=no, width=${width}, height=${height}, top=${top}, left=${left}`,
+		);
 	};
 
 	const handleSignUpModalOpen = useCallback(
@@ -131,7 +139,10 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 					</div>
 				</form>
 				<div className="flex flex-col my-5 space-y-1">
-					<Button className="w-full px-[18px] py-[3px]" onClick={kakaoLoginHandler}>
+					<Button
+						className="w-full px-[18px] py-[3px]"
+						onClick={handleOpenKakaoLoginModal}
+					>
 						카카오 로그인
 					</Button>
 					<Button className="w-full px-[18px] py-[3px]">구글 로그인</Button>
