@@ -26,6 +26,8 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 	const signInModalRef = useRef(null);
 	const { key: signUpKey } = MODAL_CONFIGS.signUp;
 	const { key: signInKey } = MODAL_CONFIGS.signIn;
+	const REDIRECT_URI = process.env.REACT_APP_REDIRECT_URI;
+	const kakaoLoginUrl = `${REDIRECT_URI}`;
 
 	const {
 		register,
@@ -37,6 +39,31 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+
+	const handleOpenKakaoLoginModal = () => {
+		const width = 500;
+		const height = 600;
+		const left = (window.outerWidth - width) / 2 + window.screenX;
+		const top = (window.outerHeight - height) / 2 + window.screenY;
+
+		const kakaoWindow = window.open(
+			kakaoLoginUrl,
+			'KakaoLogin',
+			`toolbar=no, width=${width}, height=${height}, top=${top}, left=${left}`,
+		);
+
+		window.addEventListener('message', (event) => {
+			if (event.origin !== REDIRECT_URI) return;
+
+			if (event.data === 'kakao_login_success') {
+				if (kakaoWindow) {
+					kakaoWindow.close();
+				}
+				alert('카카오 로그인이 성공했습니다!');
+				closeModal(signInKey as ModalType);
+			}
+		});
+	};
 
 	const handleSignUpModalOpen = useCallback(
 		(event: MouseEvent<HTMLButtonElement>) => {
@@ -93,9 +120,7 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 								error={!!errors.email}
 							/>
 
-							{errors.email && (
-								<p className="text-xs text-red">{errors.email.message}</p>
-							)}
+							{errors.email && <p className="text-xs text-red">{errors.email.message}</p>}
 						</div>
 
 						<div className="w-full">
@@ -108,20 +133,21 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 								error={!!errors.password}
 							/>
 
-							{errors.password && (
-								<p className="text-xs text-red">{errors.password.message}</p>
-							)}
+							{errors.password && <p className="text-xs text-red">{errors.password.message}</p>}
 						</div>
 					</div>
 					<div className="flex justify-center mb-[7px] w-full">
-						<Button
-							disabled={!email || !password}
-							className="w-full px-[18px] py-[3px]"
-						>
+						<Button disabled={!email || !password} className="w-full px-[18px] py-[3px]">
 							Sign In
 						</Button>
 					</div>
 				</form>
+				<div className="flex flex-col my-5 space-y-1">
+					<Button className="w-full px-[18px] py-[3px]" onClick={handleOpenKakaoLoginModal}>
+						카카오 로그인
+					</Button>
+					<Button className="w-full px-[18px] py-[3px]">구글 로그인</Button>
+				</div>
 				<div className="flex items-center justify-center">
 					<span className="mr-1 text-xs opacity-50">{"Don't have an account?"}</span>
 					<Button
