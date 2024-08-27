@@ -120,7 +120,9 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 								error={!!errors.email}
 							/>
 
-							{errors.email && <p className="text-xs text-red">{errors.email.message}</p>}
+							{errors.email && (
+								<p className="text-xs text-red">{errors.email.message}</p>
+							)}
 						</div>
 
 						<div className="w-full">
@@ -133,17 +135,25 @@ const SignInModal = ({ open, style, onClose, onMinimize, onOpen }: ISignInModalP
 								error={!!errors.password}
 							/>
 
-							{errors.password && <p className="text-xs text-red">{errors.password.message}</p>}
+							{errors.password && (
+								<p className="text-xs text-red">{errors.password.message}</p>
+							)}
 						</div>
 					</div>
 					<div className="flex justify-center mb-[7px] w-full">
-						<Button disabled={!email || !password} className="w-full px-[18px] py-[3px]">
+						<Button
+							disabled={!email || !password}
+							className="w-full px-[18px] py-[3px]"
+						>
 							Sign In
 						</Button>
 					</div>
 				</form>
 				<div className="flex flex-col my-5 space-y-1">
-					<Button className="w-full px-[18px] py-[3px]" onClick={handleOpenKakaoLoginModal}>
+					<Button
+						className="w-full px-[18px] py-[3px]"
+						onClick={handleOpenKakaoLoginModal}
+					>
 						카카오 로그인
 					</Button>
 					<Button className="w-full px-[18px] py-[3px]">구글 로그인</Button>
