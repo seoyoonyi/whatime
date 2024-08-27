@@ -8,7 +8,7 @@ export default class MusicClient {
 	private httpClient: AxiosInstance;
 
 	constructor() {
-		this.httpClient = axios.create({ baseURL: apiUrl });
+		this.httpClient = axios.create({ baseURL: apiUrl, withCredentials: true });
 	}
 
 	async fetchChartSongs(): Promise<ISong[]> {
